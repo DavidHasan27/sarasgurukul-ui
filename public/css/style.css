@@ -6357,7 +6357,11 @@ a.close.disabled {
 /* #17a2b8 */
 
 .bg-primary {
-  background-color: #0169B5 !important;
+  background-color: #FFA500 !important;
+}
+
+.bg-org-image {
+  background-image: linear-gradient(to right top, #fb812e, #fb7b2d, #fb742c, #fb6d2b, #fb662b, #fb622b, #fb5f2b, #fb5b2b, #fb5a2b, #fb5a2b, #fb592c, #fb582c);
 }
 
 a.bg-primary:hover, a.bg-primary:focus,
@@ -6367,7 +6371,7 @@ button.bg-primary:focus {
 }
 
 .bg-secondary {
-  background-color: #00394f !important;
+  background-color: #230801 !important;
 }
 
 a.bg-secondary:hover, a.bg-secondary:focus,

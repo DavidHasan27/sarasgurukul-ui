@@ -4,16 +4,46 @@ const Home = () => {
       {/* Navbar Start  */}
       <div className="container-fluid bg-light position-relative shadow">
         <nav className="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0 px-lg-5">
-          <a
-            href=""
-            className="navbar-brand font-weight-bold text-secondary"
-            style={{ fontSize: 40 }}
-          >
-            <img
-              src="img/svg_log.svg"
-              style={{ height: 50, marginRight: 50 }}
-            ></img>
-            <span className="text-primary">Sara's Gurukul</span>
+          <a href="" className="navbar-brand font-weight-bold text-secondary">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                textAlign: "left",
+              }}
+            >
+              <img src="img/logo.png" style={{ height: 60 }}></img>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginLeft: 16,
+                }}
+              >
+                <span
+                  style={{
+                    color: "#FA6D2E",
+                    fontFamily: "GFS Didot",
+                    fontWeight: 700,
+                    fontSize: 40,
+                    lineHeight: 1,
+                  }}
+                >
+                  SARA's Gurukul
+                </span>
+                <span
+                  style={{
+                    color: "#FA6D2E",
+                    fontFamily: "GFS Didot",
+                    fontSize: 16,
+                  }}
+                >
+                  Pre-Primary School
+                </span>
+              </div>
+            </div>
           </a>
           <button
             type="button"
@@ -74,7 +104,8 @@ const Home = () => {
 
       {/* <!-- Header Start --> */}
       <div
-        className="container-fluid bg-primary px-0 px-md-5 mb-5"
+        className="container-fluid bg-org-image px-0 px-md-5 mb-5"
+        style={{ overflowY: "hidden" }}
         // style={{ backgroundColor: "#0169B5" }}
       >
         <div className="row align-items-center px-3">
@@ -82,14 +113,17 @@ const Home = () => {
             <h4 className="text-white mb-4 mt-5 mt-lg-0">
               Sara's Gurukul Center
             </h4>
-            <h1 className="display-3 font-weight-bold text-white">
+            <h1
+              className="display-3 font-weight-bold"
+              style={{ color: "#FFF9F0" }}
+            >
               New Approach to Kids Education
             </h1>
             <p className="text-white mb-4">
-              Sea ipsum kasd eirmod kasd magna, est sea et diam ipsum est amet
-              sed sit. Ipsum dolor no justo dolor et, lorem ut dolor erat dolore
-              sed ipsum at ipsum nonumy amet. Clita lorem dolore sed stet et est
-              justo dolore.
+              Today’s approach to education focuses on the overall development
+              of the child and caters to the need of the child to excel in their
+              field of interest. We adults must adopt the new methods and
+              techniques to teach the kids as they want to be taught.
             </p>
             <a href="" className="btn btn-secondary mt-1 py-3 px-5">
               Learn More
@@ -98,6 +132,22 @@ const Home = () => {
           <div className="col-lg-6 text-center text-lg-right">
             <img className="img-fluid mt-5" src="img/header.png" alt="" />
           </div>
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            alignSelf: "end",
+            bottom: 40,
+          }}
+        >
+          <img
+            src="img/temple.png"
+            style={{
+              opacity: 0.5,
+              height: 200,
+            }}
+          />
         </div>
       </div>
       {/* <!-- Header End --> */}
