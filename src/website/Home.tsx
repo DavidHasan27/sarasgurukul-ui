@@ -1,5 +1,5 @@
 const Home = () => {
-  console.log("ABC");
+  console.log("ABC2");
   return (
     <>
       {/* Navbar Start  */}
