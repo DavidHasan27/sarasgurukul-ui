@@ -14,7 +14,7 @@ const Home = () => {
                 textAlign: "left",
               }}
             >
-              <img src="img/logo.png" style={{ height: 60 }}></img>
+              <img src="img/Saras-300.png" style={{ height: 80 }}></img>
 
               <div
                 style={{
