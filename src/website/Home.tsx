@@ -94,6 +94,24 @@ const Home = () => {
               <a href="contact.html" className="nav-item nav-link">
                 Contact
               </a>
+
+              <div className="nav-item dropdown">
+                <a
+                  href="#"
+                  className="nav-link dropdown-toggle"
+                  data-toggle="dropdown"
+                >
+                  Branch
+                </a>
+                <div className="dropdown-menu rounded-0 m-0">
+                  <a href="blog.html" className="dropdown-item">
+                    Kalewadi
+                  </a>
+                  <a href="single.html" className="dropdown-item">
+                    Hinjewadi
+                  </a>
+                </div>
+              </div>
             </div>
             <a href="" className="btn btn-primary px-4">
               Login
