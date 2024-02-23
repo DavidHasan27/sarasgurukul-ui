@@ -1,8 +1,10 @@
 import React from "react";
 import logo from "./logo.svg";
 // import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Home from "./website/Home";
+import Dashboard from "./website/Dashboard";
 
 function App() {
   return (
@@ -21,7 +23,9 @@ function App() {
           Learn React
         </a>
       </header> */}
-      <Home />
+      <BrowserRouter>
+        <Dashboard />
+      </BrowserRouter>
     </div>
   );
 }
