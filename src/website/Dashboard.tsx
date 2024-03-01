@@ -22,9 +22,10 @@ const Dashboard = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/teachers" element={<Teachers />} />
-            <Route path="/app" element={<Navigate to="login" replace />}>
+            <Route path="*" element={<div>Page Not Found</div>} />
+            {/* <Route path="/app" element={<Navigate to="login" replace />}>
               <Route path="login" element={<LoginScreen />} />
-            </Route>
+            </Route> */}
           </Routes>
         </>
         <Footer />
