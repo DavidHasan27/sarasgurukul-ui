@@ -148,8 +148,8 @@ const Home = () => {
               Learn More
             </a>
           </div>
-          <div className="col-lg-6 text-center text-lg-right">
-            <img className="img-fluid mt-5" src="img/header.png" alt="" />
+          <div className="col-lg-6 text-center text-lg-right  flex justify-center">
+            <img className="img-fluid mt-4 " src="img/header.png" alt="" />
           </div>
         </div>
         <div

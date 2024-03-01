@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Home from "./website/Home";
 import Dashboard from "./website/Dashboard";
+import MainPage from "./main";
 
 function App() {
   return (

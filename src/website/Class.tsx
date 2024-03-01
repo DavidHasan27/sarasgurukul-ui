@@ -2,7 +2,7 @@ const Class = () => {
   return (
     <>
       {/* <!-- Header Start --> */}
-      <div className="container-fluid bg-primary mb-5">
+      <div className="container-fluid bg-sub-head-image mb-5">
         <div
           className="d-flex flex-column align-items-center justify-content-center"
           style={{ minHeight: 400 }}
