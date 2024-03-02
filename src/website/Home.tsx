@@ -1,3 +1,14 @@
+import badge from "../view/assets/badge.png";
+import classroom from "../view/assets/classroom.png";
+import group from "../view/assets/group.png";
+import degree from "../view/assets/bachelor.png";
+import handshake from "../view/assets/hand-shake.png";
+import intrgrity from "../view/assets/integration.png";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from "react-responsive-carousel";
+// import { Carousel } from "@material-tailwind/react";
+// import Carousel from "react-bootstrap/Carousel";
+
 const Home = () => {
   console.log("ABC2");
   return (
@@ -129,7 +140,7 @@ const Home = () => {
       >
         <div className="row align-items-center px-3">
           <div className="col-lg-6 text-center text-lg-left">
-            <h4 className="text-white mb-4 mt-5 mt-lg-0">
+            <h4 className="text-white mb-4 mt-5 mt-lg-0 font-semibold">
               Sara's Gurukul Center
             </h4>
             <h1
@@ -138,35 +149,52 @@ const Home = () => {
             >
               New Approach to Kids Education
             </h1>
-            <p className="text-white mb-4">
-              Today’s approach to education focuses on the overall development
-              of the child and caters to the need of the child to excel in their
-              field of interest. We adults must adopt the new methods and
-              techniques to teach the kids as they want to be taught.
-            </p>
+            <h4 className="text-white mb-4 font-semibold tracking-wide">
+              SARA's Gurukul is a high quality preschool program designed to
+              provide a strong foundation for children's learning & development.
+            </h4>
             <a href="" className="btn btn-secondary mt-1 py-3 px-5">
               Learn More
             </a>
           </div>
           <div className="col-lg-6 text-center text-lg-right  flex justify-center">
-            <img className="img-fluid mt-4 " src="img/header.png" alt="" />
+            <Carousel
+              className="rounded-xl w-full"
+              infiniteLoop={false}
+              interval={5000}
+              centerMode={false}
+              showThumbs={false}
+              transitionTime={1000}
+              showArrows={false}
+              swipeable={true}
+              showStatus={false}
+              autoPlay={true}
+            >
+              <div className="w-full  flex items-center justify-center ">
+                <img
+                  className="img-fluid mt-4  w-auto"
+                  src="img/header.png"
+                  alt=""
+                />
+              </div>
+
+              <div className="w-full flex items-center justify-center ">
+                <img
+                  className="img-fluid mt-4  w-auto "
+                  src="img/header-33.png"
+                  alt=""
+                />
+              </div>
+
+              <div className="w-full  flex items-center justify-center">
+                <img
+                  className="img-fluid mt-4  w-auto"
+                  src="img/header-44.png"
+                  alt=""
+                />
+              </div>
+            </Carousel>
           </div>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            alignSelf: "end",
-            bottom: 40,
-          }}
-        >
-          <img
-            src="img/temple.png"
-            style={{
-              opacity: 0.5,
-              height: 200,
-            }}
-          />
         </div>
       </div>
       {/* <!-- Header End --> */}
@@ -175,94 +203,141 @@ const Home = () => {
       <div className="container-fluid pt-5">
         <div className="container pb-3">
           <div className="row">
-            <div className="col-lg-4 col-md-6 pb-1">
+            <div className="col-lg-4 col-md-6 pb-1 ">
               <div
-                className="d-flex bg-light shadow-sm border-top rounded mb-4"
-                style={{ padding: 30 }}
+                className="d-flex shadow-sm  rounded mb-4  h-[200px] bg-[#ffe7d5] border-[#e9390d]"
+                style={{ padding: 30, borderBottomWidth: 7 }}
               >
-                <i className="flaticon-050-fence h1 font-weight-normal text-primary mb-3"></i>
                 <div className="pl-4">
-                  <h4>Play Ground</h4>
-                  <p className="m-0">
-                    Kasd labore kasd et dolor est rebum dolor ut, clita dolor
-                    vero lorem amet elitr vero...
+                  <h4 className="font-extrabold text-[#430c07] text-left text-xl">
+                    QUALITY
+                  </h4>
+                  <p className="m-0 text-[#7c1e12] text-left mt-1">
+                    We Believe every child deserves excellence in early programs
+                    and service to make a difference in their lives and our
+                    community.
                   </p>
                 </div>
+                {/* <i className="flaticon-050-fence h1 font-weight-normal text-primary mb-3"></i> */}
+
+                <img src={badge} className="h-[60px]" alt="" />
               </div>
             </div>
             <div className="col-lg-4 col-md-6 pb-1">
               <div
-                className="d-flex bg-light shadow-sm border-top rounded mb-4"
-                style={{ padding: 30 }}
+                className="d-flex shadow-sm rounded mb-4 h-[200px]  bg-[#ffe7d5] border-[#e9390d]"
+                style={{ padding: 30, borderBottomWidth: 7 }}
               >
-                <i className="flaticon-022-drum h1 font-weight-normal text-primary mb-3"></i>
+                {/* <i className="flaticon-022-drum h1 font-weight-normal text-primary mb-3"></i> */}
                 <div className="pl-4">
-                  <h4>Music and Dance</h4>
-                  <p className="m-0">
-                    Kasd labore kasd et dolor est rebum dolor ut, clita dolor
-                    vero lorem amet elitr vero...
+                  <h4 className="font-extrabold text-[#430c07] text-left text-xl">
+                    INTEGRITY
+                  </h4>
+                  <p className="m-0 text-[#7c1e12] text-left mt-1">
+                    We believe integrity is the bedrock of a trustworthy
+                    orgnization which promotes effective relationship & assures
+                    mindful stewadship of state resource.
                   </p>
                 </div>
+
+                <img
+                  src={intrgrity}
+                  height={64}
+                  width={64}
+                  className="h-[60px] text-[#fff]"
+                  alt=""
+                />
               </div>
             </div>
             <div className="col-lg-4 col-md-6 pb-1">
               <div
-                className="d-flex bg-light shadow-sm border-top rounded mb-4"
-                style={{ padding: 30 }}
+                className="d-flex shadow-sm rounded mb-4 h-[200px]  bg-[#ffe7d5] border-[#e9390d]"
+                style={{ padding: 30, borderBottomWidth: 7 }}
               >
-                <i className="flaticon-030-crayons h1 font-weight-normal text-primary mb-3"></i>
                 <div className="pl-4">
-                  <h4>Arts and Crafts</h4>
-                  <p className="m-0">
-                    Kasd labore kasd et dolor est rebum dolor ut, clita dolor
-                    vero lorem amet elitr vero...
+                  <h4 className="font-extrabold text-[#430c07] text-left text-xl">
+                    SERVICE
+                  </h4>
+                  <p className="m-0 text-[#7c1e12] text-left mt-1">
+                    We believe families and providers are unique and we strive
+                    to understand, appreciate & serve their needs
                   </p>
                 </div>
+                <img src={classroom} className="h-[60px] text-[#fff]" alt="" />
               </div>
             </div>
             <div className="col-lg-4 col-md-6 pb-1">
               <div
-                className="d-flex bg-light shadow-sm border-top rounded mb-4"
-                style={{ padding: 30 }}
+                className="d-flex  shadow-sm  rounded mb-4 h-[200px]  bg-[#ffe7d5] border-[#e9390d]"
+                style={{ padding: 30, borderBottomWidth: 7 }}
               >
-                <i className="flaticon-017-toy-car h1 font-weight-normal text-primary mb-3"></i>
+                {/* <i className="flaticon-017-toy-car h1 font-weight-normal text-primary mb-3"></i> */}
                 <div className="pl-4">
-                  <h4>Safe Transportation</h4>
-                  <p className="m-0">
-                    Kasd labore kasd et dolor est rebum dolor ut, clita dolor
-                    vero lorem amet elitr vero...
+                  <h4 className="font-extrabold text-[#430c07] text-left text-xl">
+                    TEAMWORK
+                  </h4>
+                  <p className="m-0 text-[#7c1e12] text-left mt-1">
+                    We believe working together results in a stronger
+                    organization and community.
                   </p>
                 </div>
+                <img
+                  src={group}
+                  height={64}
+                  width={64}
+                  className="h-[60px] text-[#fff]"
+                  alt=""
+                />
               </div>
             </div>
             <div className="col-lg-4 col-md-6 pb-1">
               <div
-                className="d-flex bg-light shadow-sm border-top rounded mb-4"
-                style={{ padding: 30 }}
+                className="d-flex shadow-sm rounded mb-4 h-[200px]  bg-[#ffe7d5] border-[#e9390d]"
+                style={{ padding: 30, borderBottomWidth: 7 }}
               >
-                <i className="flaticon-025-sandwich h1 font-weight-normal text-primary mb-3"></i>
+                {/* <i className="flaticon-025-sandwich h1 font-weight-normal text-primary mb-3"></i> */}
                 <div className="pl-4">
-                  <h4>Healthy food</h4>
-                  <p className="m-0">
-                    Kasd labore kasd et dolor est rebum dolor ut, clita dolor
-                    vero lorem amet elitr vero...
+                  <h4 className="font-extrabold text-[#430c07] text-left text-xl">
+                    RESPECT
+                  </h4>
+                  <p className="m-0 text-[#7c1e12] text-left mt-1">
+                    We Believe respect is essential to building the
+                    relationships that are critical to success and optimizing
+                    the talents & diversity of our families
                   </p>
                 </div>
+                <img
+                  src={handshake}
+                  height={64}
+                  width={64}
+                  className="h-[60px] text-[#fff]"
+                  alt=""
+                />
               </div>
             </div>
             <div className="col-lg-4 col-md-6 pb-1">
               <div
-                className="d-flex bg-light shadow-sm border-top rounded mb-4"
-                style={{ padding: 30 }}
+                className="d-flex shadow-sm rounded mb-4 h-[200px]  bg-[#ffe7d5] border-[#e9390d]"
+                style={{ padding: 30, borderBottomWidth: 7 }}
               >
-                <i className="flaticon-047-backpack h1 font-weight-normal text-primary mb-3"></i>
+                {/* <i className="flaticon-047-backpack h1 font-weight-normal text-primary mb-3"></i> */}
                 <div className="pl-4">
-                  <h4>Educational Tour</h4>
-                  <p className="m-0">
-                    Kasd labore kasd et dolor est rebum dolor ut, clita dolor
-                    vero lorem amet elitr vero...
+                  <h4 className="font-extrabold text-[#430c07] text-left text-xl">
+                    EDUCATION
+                  </h4>
+                  <p className="m-0 text-[#7c1e12] text-left mt-1">
+                    We believe ongoing education & advocacy promotes positive
+                    early learning experiences, providing all children the
+                    opportunity to succeed.
                   </p>
                 </div>
+                <img
+                  src={degree}
+                  height={64}
+                  width={64}
+                  className="h-[60px] text-[#fff]"
+                  alt=""
+                />
               </div>
             </div>
           </div>
@@ -281,16 +356,17 @@ const Home = () => {
                 alt=""
               />
             </div>
-            <div className="col-lg-7">
+            <div className="col-lg-7 text-left">
               <p className="section-title pr-5">
-                <span className="pr-2">Learn About Us</span>
+                <span className="pr-2 text-left">Learn About Us</span>
               </p>
-              <h1 className="mb-4">Best School For Your Kids</h1>
-              <p>
-                Invidunt lorem justo sanctus clita. Erat lorem labore ea, justo
-                dolor lorem ipsum ut sed eos, ipsum et dolor kasd sit ea justo.
-                Erat justo sed sed diam. Ea et erat ut sed diam sea ipsum est
-                dolor
+              <h1 className="mb-4 mt-2 text-4xl text-[#430c07]">
+                Best School For Your Kids
+              </h1>
+              <p className="text-[#7c1e12]">
+                We at SARA’s Gurukul Are Preschool, the Foundation of Your
+                little One's Life. Your little one will bloom in an environment
+                of love and affection.
               </p>
               <div className="row pt-2 pb-4">
                 <div className="col-6 col-md-4">
@@ -301,23 +377,23 @@ const Home = () => {
                   />
                 </div>
                 <div className="col-6 col-md-8">
-                  <ul className="list-inline m-0">
+                  <ul className="list-inline m-0 text-[#7c1e12]">
                     <li className="py-2 border-top border-bottom">
-                      <i className="fa fa-check text-primary mr-3"></i>Labore
-                      eos amet dolor amet diam
+                      <i className="fa fa-check text-[#e9390d] mr-3"></i>
+                      Why Sara's Gurukul ?
                     </li>
                     <li className="py-2 border-bottom">
-                      <i className="fa fa-check text-primary mr-3"></i>Etsea et
-                      sit dolor amet ipsum
+                      <i className="fa fa-check text-[#e9390d] mr-3"></i>
+                      Child Care
                     </li>
                     <li className="py-2 border-bottom">
-                      <i className="fa fa-check text-primary mr-3"></i>Diam
-                      dolor diam elitripsum vero.
+                      <i className="fa fa-check text-[#e9390d] mr-3"></i>
+                      Extra Activities
                     </li>
                   </ul>
                 </div>
               </div>
-              <a href="" className="btn btn-primary mt-2 py-2 px-4">
+              <a href="/about" className="btn btn-primary mt-2 py-2 px-4">
                 Learn More
               </a>
             </div>
@@ -480,7 +556,7 @@ const Home = () => {
       <div className="container-fluid py-5">
         <div className="container">
           <div className="row align-items-center">
-            <div className="col-lg-7 mb-5 mb-lg-0">
+            <div className="col-lg-7 mb-5 mb-lg-0 text-left">
               <p className="section-title pr-5">
                 <span className="pr-2">Book A Seat</span>
               </p>
@@ -565,11 +641,11 @@ const Home = () => {
         <div className="container">
           <div className="text-center pb-2">
             <p className="section-title px-5">
-              <span className="px-2">Our Teachers</span>
+              <span className="px-2">Our Team</span>
             </p>
-            <h1 className="mb-4">Meet Our Teachers</h1>
+            <h1 className="mb-4 text-4xl">Meet Our Teams</h1>
           </div>
-          <div className="row">
+          <div className="row justify-center">
             <div className="col-md-6 col-lg-3 text-center team mb-5">
               <div
                 className="position-relative overflow-hidden mb-4"
@@ -577,31 +653,31 @@ const Home = () => {
               >
                 <img className="img-fluid w-100" src="img/team-1.jpg" alt="" />
                 <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
-                  <a
+                  {/* <a
                     className="btn btn-outline-light text-center mr-2 px-0"
                     style={{ width: 38, height: 38 }}
                     href="#"
                   >
                     <i className="fab fa-twitter"></i>
-                  </a>
+                  </a> */}
                   <a
                     className="btn btn-outline-light text-center mr-2 px-0"
                     style={{ width: 38, height: 38 }}
-                    href="#"
+                    href="https://www.facebook.com/profile.php?id=100006003555225"
                   >
                     <i className="fab fa-facebook-f"></i>
                   </a>
-                  <a
+                  {/* <a
                     className="btn btn-outline-light text-center px-0"
                     style={{ width: 38, height: 38 }}
                     href="#"
                   >
                     <i className="fab fa-linkedin-in"></i>
-                  </a>
+                  </a> */}
                 </div>
               </div>
-              <h4>Julia Smith</h4>
-              <i>Music Teacher</i>
+              <h4>Sarika Ozarkar</h4>
+              <i>Founder & Creative Director</i>
             </div>
             <div className="col-md-6 col-lg-3 text-center team mb-5">
               <div
@@ -610,33 +686,33 @@ const Home = () => {
               >
                 <img className="img-fluid w-100" src="img/team-2.jpg" alt="" />
                 <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
-                  <a
+                  {/* <a
                     className="btn btn-outline-light text-center mr-2 px-0"
                     style={{ width: 38, height: 38 }}
                     href="#"
                   >
                     <i className="fab fa-twitter"></i>
-                  </a>
+                  </a> */}
                   <a
                     className="btn btn-outline-light text-center mr-2 px-0"
                     style={{ width: 38, height: 38 }}
-                    href="#"
+                    href="https://www.facebook.com/shashidhar.birajdar"
                   >
                     <i className="fab fa-facebook-f"></i>
                   </a>
                   <a
                     className="btn btn-outline-light text-center px-0"
                     style={{ width: 38, height: 38 }}
-                    href="#"
+                    href="https://www.linkedin.com/in/shashidhar-birajdar-a836b8189/"
                   >
                     <i className="fab fa-linkedin-in"></i>
                   </a>
                 </div>
               </div>
-              <h4>Jhon Doe</h4>
-              <i>Language Teacher</i>
+              <h4>Shashidhar Birajdar</h4>
+              <i>Founder</i>
             </div>
-            <div className="col-md-6 col-lg-3 text-center team mb-5">
+            {/* <div className="col-md-6 col-lg-3 text-center team mb-5">
               <div
                 className="position-relative overflow-hidden mb-4"
                 // style="border-radius: 100%"
@@ -647,7 +723,7 @@ const Home = () => {
                   <a
                     className="btn btn-outline-light text-center mr-2 px-0"
                     style={{ width: 38, height: 38 }}
-                    href="#"
+                    href="https://www.facebook.com/shashidhar.birajdar"
                   >
                     <i className="fab fa-twitter"></i>
                   </a>
@@ -661,7 +737,7 @@ const Home = () => {
                   <a
                     className="btn btn-outline-light text-center px-0"
                     style={{ width: 38, height: 38 }}
-                    href="#"
+                    href="https://www.facebook.com/shashidhar.birajdar"
                   >
                     <i className="fab fa-linkedin-in"></i>
                   </a>
@@ -703,14 +779,14 @@ const Home = () => {
               </div>
               <h4>Donald John</h4>
               <i>Art Teacher</i>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
       {/* <!-- Team End --> */}
 
       {/* <!-- Testimonial Start --> */}
-      <div className="container-fluid py-5">
+      {/* <div className="container-fluid py-5">
         <div className="container p-0">
           <div className="text-center pb-2">
             <p className="section-title px-5">
@@ -797,7 +873,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       {/* <!-- Testimonial End --> */}
 
       {/* <!-- Blog Start --> */}
