@@ -10,6 +10,7 @@ import Teachers from "./Teachers";
 import LoginScreen from "../view/login";
 import HeaderFooterDisplay from "../component/HeaderFooterDisplay";
 import AppDashboard from "../view/dashboard";
+import BlogDetails from "./BlogDetails";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -25,6 +26,7 @@ const Dashboard = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/teachers" element={<Teachers />} />
+            <Route path="/blog-details" element={<BlogDetails />} />
             <Route path="/app/">
               <Route path="login" element={<LoginScreen />} />
               <Route path="dash" element={<AppDashboard />} />

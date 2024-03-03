@@ -10,9 +10,21 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 const SGWebNavbar = (props: any) => {
   const [activePath, setActivePath] = useState("/");
+  const [mobile, setMobile] = useState(window.innerWidth <= 500);
   const [openNav, setOpenNav] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleWindowSizeChange = () => {
+    setMobile(window.innerWidth <= 500);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowSizeChange);
+    return () => {
+      window.removeEventListener("resize", handleWindowSizeChange);
+    };
+  }, []);
 
   useEffect(() => {
     setActivePath(location.pathname);
@@ -122,13 +134,18 @@ const SGWebNavbar = (props: any) => {
     >
       <div className="flex items-center justify-between text-blue-gray-900 ">
         <div className="flex flex-row items-center">
-          <img src="img/Saras-300.png" style={{ height: 50 }} alt="logo" />
+          <img
+            src="img/Saras-300.png"
+            style={{ height: 50 }}
+            alt="logo"
+            className="cursor-pointer "
+          />
 
           <div>
             <Typography
               placeholder={""}
               as="a"
-              href="#"
+              href="/"
               className="mr-4 cursor-pointer ml-2  text-[#FA6D2E] font-bold text-4xl font-display leading-none tracking-tight"
             >
               SARA's Gurukul
@@ -146,16 +163,18 @@ const SGWebNavbar = (props: any) => {
 
         <div className="flex items-center gap-4">
           <div className="mr-4 hidden lg:block">{navList}</div>
-          <div className="flex items-center gap-x-1">
-            <Button
-              placeholder={""}
-              size="sm"
-              className="sgButton"
-              onClick={() => navigate("/app/login")}
-            >
-              <span>Log In</span>
-            </Button>
-          </div>
+          {!mobile && (
+            <div className="flex items-center gap-x-1">
+              <Button
+                placeholder={""}
+                size="sm"
+                className="sgButton"
+                onClick={() => navigate("/app/login")}
+              >
+                <span>Log In</span>
+              </Button>
+            </div>
+          )}
           <IconButton
             variant="text"
             placeholder={""}
@@ -200,22 +219,12 @@ const SGWebNavbar = (props: any) => {
         {navList}
         <div className="flex items-center gap-x-1">
           <Button
-            fullWidth
-            variant="text"
+            placeholder={"Sara's Gurukul Login"}
             size="sm"
-            className=""
-            placeholder={""}
+            className="sgButton w-full"
+            onClick={() => navigate("/app/login")}
           >
             <span>Log In</span>
-          </Button>
-          <Button
-            fullWidth
-            variant="gradient"
-            size="sm"
-            className=""
-            placeholder={""}
-          >
-            <span>Sign in</span>
           </Button>
         </div>
       </MobileNav>

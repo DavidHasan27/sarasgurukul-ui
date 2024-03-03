@@ -28,7 +28,9 @@ const Contact = () => {
             <p className="section-title px-5">
               <span className="px-2">Get In Touch</span>
             </p>
-            <h1 className="mb-4">Contact Us For Any Query</h1>
+            <h1 className="mb-4 text-4xl text-[#430c07]">
+              Contact Us For Any Query
+            </h1>
           </div>
           <div className="row">
             <div className="col-lg-7 mb-5">
@@ -49,9 +51,9 @@ const Contact = () => {
                   <div className="control-group">
                     <input
                       type="email"
-                      className="form-control"
+                      className="form-control mt-3"
                       id="email"
-                      placeholder="Your Email"
+                      placeholder="enquiry@sarasgurukul.com"
                       required
                       data-validation-required-message="Please enter your email"
                     />
@@ -60,7 +62,7 @@ const Contact = () => {
                   <div className="control-group">
                     <input
                       type="text"
-                      className="form-control"
+                      className="form-control mt-3"
                       id="subject"
                       placeholder="Subject"
                       required
@@ -70,7 +72,7 @@ const Contact = () => {
                   </div>
                   <div className="control-group">
                     <textarea
-                      className="form-control"
+                      className="form-control mt-3"
                       rows={6}
                       id="message"
                       placeholder="Message"
@@ -81,7 +83,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <button
-                      className="btn btn-primary py-2 px-4"
+                      className="btn py-2 px-4 mt-3 bg-[#e9390d] text-white"
                       type="submit"
                       id="sendMessageButton"
                     >
@@ -91,44 +93,50 @@ const Contact = () => {
                 </form>
               </div>
             </div>
-            <div className="col-lg-5 mb-5">
+            <div className="col-lg-5 mb-5 text-left">
               <p>
-                Labore sea amet kasd diam justo amet ut vero justo. Ipsum ut et
-                kasd duo sit, ipsum sea et erat est dolore, magna ipsum et magna
-                elitr. Accusam accusam lorem magna, eos et sed eirmod dolor est
-                eirmod eirmod amet.
+                Let's get this conversation started. Tell us a bit about
+                yourself, and we will get in touch as soon as we can.
               </p>
-              <div className="d-flex">
+              <div className="flex flex-row mt-2 ">
                 <i
                   className="fa fa-map-marker-alt d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
                   style={{ width: 45, height: 45 }}
                 ></i>
-                <div className="pl-3">
+                <div className="flex flex-col ml-3">
                   <h5>Address</h5>
-                  <p>123 Street, New York, USA</p>
+                  <p className="w-[300px]">
+                    Sr.No. 7/2/1, Jay Malhar Nagar, Lane No.3, Near Maharashtra
+                    Bakery, Rahatani Phata, Thergaon, Pune - 411033
+                  </p>
+                  {/* <h5>Address</h5>
+                  <p>
+                    Sr.No. 7/2/1, Jay Malhar Nagar, Lane No.3, Near Maharashtra
+                    Bakery, Rahatani Phata, Thergaon, Pune - 411033
+                  </p> */}
                 </div>
               </div>
-              <div className="d-flex">
+              <div className="d-flex mt-2">
                 <i
                   className="fa fa-envelope d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
                   style={{ width: 45, height: 45 }}
                 ></i>
                 <div className="pl-3">
                   <h5>Email</h5>
-                  <p>info@example.com</p>
+                  <p>enquiry@sarasgurukul.com</p>
                 </div>
               </div>
-              <div className="d-flex">
+              <div className="d-flex mt-2">
                 <i
                   className="fa fa-phone-alt d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
                   style={{ width: 45, height: 45 }}
                 ></i>
                 <div className="pl-3">
                   <h5>Phone</h5>
-                  <p>+012 345 67890</p>
+                  <p>7249721117/8149768356</p>
                 </div>
               </div>
-              <div className="d-flex">
+              <div className="d-flex mt-2">
                 <i
                   className="far fa-clock d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
                   style={{ width: 45, height: 45 }}
