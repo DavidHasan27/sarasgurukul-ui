@@ -2,6 +2,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from "react-responsive-carousel";
 import Facilities from "../component/web-component/Facilities";
 import ClassView from "../component/web-component/Class";
+import ReactGA from "react-ga";
+import { Typography } from "@material-tailwind/react";
 // import { Carousel } from "@material-tailwind/react";
 // import Carousel from "react-bootstrap/Carousel";
 
@@ -172,7 +174,7 @@ const Home = () => {
                 <img
                   className="img-fluid mt-4  w-auto"
                   src="img/header.png"
-                  alt=""
+                  alt="Saras Gurukul"
                 />
               </div>
 
@@ -180,7 +182,7 @@ const Home = () => {
                 <img
                   className="img-fluid mt-4  w-auto "
                   src="img/header-33.png"
-                  alt=""
+                  alt="Saras Gurukul Vision"
                 />
               </div>
 
@@ -188,7 +190,7 @@ const Home = () => {
                 <img
                   className="img-fluid mt-4  w-auto"
                   src="img/header-44.png"
-                  alt=""
+                  alt="Saras Gurukul Mission"
                 />
               </div>
             </Carousel>
@@ -209,7 +211,7 @@ const Home = () => {
               <img
                 className="img-fluid rounded mb-5 mb-lg-0"
                 src="img/about-1.jpg"
-                alt=""
+                alt="About Us"
               />
             </div>
             <div className="col-lg-7 text-left">
@@ -229,7 +231,7 @@ const Home = () => {
                   <img
                     className="img-fluid rounded"
                     src="img/about-2.jpg"
-                    alt=""
+                    alt="About us"
                   />
                 </div>
                 <div className="col-6 col-md-8">
@@ -517,10 +519,14 @@ const Home = () => {
                 <img
                   className="card-img-top mb-2"
                   src="img/blog-1.jpg"
-                  alt=""
+                  alt="Saras Gurukul Blog"
                 />
+
                 <div className="card-body bg-[#ffe7d5] text-center p-4 h-[230px]">
-                  <h4 className="text-[#7c1e12] font-extrabold">
+                  <h4
+                    className="text-[#7c1e12] font-extrabold"
+                    aria-label="Saras gurukul Founder Messsage"
+                  >
                     FOUNDER'S MESSAGE
                   </h4>
                   <div className="d-flex justify-content-center mb-3">
@@ -553,10 +559,13 @@ const Home = () => {
                 <img
                   className="card-img-top mb-2"
                   src="img/blog-2.jpg"
-                  alt=""
+                  alt="Saras Gurukul Blog"
                 />
                 <div className="card-body bg-[#ffe7d5]  text-center p-4 h-[230px]">
-                  <h4 className="text-[#7c1e12] font-extrabold">
+                  <h4
+                    className="text-[#7c1e12] font-extrabold"
+                    aria-label="KIDS JOURNEY"
+                  >
                     KIDS JOURNEY
                   </h4>
                   <div className="d-flex justify-content-center mb-3">

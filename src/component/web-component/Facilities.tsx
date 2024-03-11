@@ -88,7 +88,11 @@ const Facilities = () => {
                   understand, appreciate & serve their needs
                 </p>
               </div>
-              <img src={classroom} className="h-[60px] text-[#fff]" alt="" />
+              <img
+                src={classroom}
+                className="h-[60px] text-[#fff] ml-3"
+                alt=""
+              />
             </div>
           </div>
           <div className="col-lg-4 col-md-6 pb-1">

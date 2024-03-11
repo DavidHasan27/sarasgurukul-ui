@@ -137,7 +137,7 @@ const SGWebNavbar = (props: any) => {
           <img
             src="img/Saras-300.png"
             style={{ height: 50 }}
-            alt="logo"
+            alt="Saras Gurukul"
             className="cursor-pointer "
           />
 

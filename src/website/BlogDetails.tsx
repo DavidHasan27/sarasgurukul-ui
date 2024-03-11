@@ -8,10 +8,10 @@ const BlogDetails = () => {
       id: 1,
       header: "FOUNDER MESSAGE",
       subheader: "Founders feelins and emotions for kids",
-      p1: `I extend a very hearty welcome to you as a parent who has shown interest in Sara's Gurukul. The major driving force behind taking up of this school project has been the mixed experiences of a variety of parents with regard to schools in the country and this gave me an opportunity to closely examine various features of our existing school system.`,
-      p2: `What I observed is that the most of the schools, unfortunately are still following a western pattern of instruction in learning, extra curricular activities and living. I strongly feel the need for a customization in our school system, reorienting it to Indian culture and traditions. Keeping this in view, we have experimented in a small way and initiated a few changes, which will definitely start bearing fruits.`,
+      p1: `We extend a very hearty welcome to you as a parent who has shown interest in Sara's Gurukul. The major driving force behind taking up of this school project has been the mixed experiences of a variety of parents with regard to schools in the country and this gave me an opportunity to closely examine various features of our existing school system.`,
+      p2: `What We observed is that the most of the schools, unfortunately are still following a western pattern of instruction in learning, extra curricular activities and living. We strongly feel the need for a customization in our school system, reorienting it to Indian culture and traditions. Keeping this in view, we have experimented in a small way and initiated a few changes, which will definitely start bearing fruits.`,
       p3: `At Sara's Gurukul, we help children to tap into their hidden potential by exposing them to diverse opportunities.
-      The broad based, liberal education also helps them to rise above parochial mindsets and acquire a truly international outlook. In addition to this, children are trained to learn more by doing things themselves and trying out new ideas, taking failure and success in their stride, with all their energies focused on honest and purposeful effort. I have every hope and belief that Sara's Gurukul is going to become a premier institution of its kind in this part of the world, amply fulfilling the educational aspirations of the parents who bring their children to its portals.`,
+      The broad based, liberal education also helps them to rise above parochial mindsets and acquire a truly international outlook. In addition to this, children are trained to learn more by doing things themselves and trying out new ideas, taking failure and success in their stride, with all their energies focused on honest and purposeful effort. We have every hope and belief that Sara's Gurukul is going to become a premier institution of its kind in this part of the world, amply fulfilling the educational aspirations of the parents who bring their children to its portals.`,
       p4: "",
     },
 
@@ -298,6 +298,17 @@ const BlogDetails = () => {
                   />
                   <h3 className="text-secondary mb-3">Sarika Ozarkar</h3>
                   <p className="text-white m-0">Founder & Creative Director</p>
+                </div>
+
+                <div className="d-flex flex-column text-center bg-primary rounded mb-5 py-5 px-4">
+                  <img
+                    src="img/team-2.jpg"
+                    className="img-fluid rounded-circle mx-auto mb-3"
+                    style={{ width: 100 }}
+                    alt="Shashidhar Birajdar"
+                  />
+                  <h3 className="text-secondary mb-3">Shashidhar Birajdar</h3>
+                  <p className="text-white m-0">Founder</p>
                 </div>
 
                 {/* <!-- Search Form --> */}
