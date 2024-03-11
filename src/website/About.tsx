@@ -522,29 +522,6 @@ const About = () => {
                 style={{ borderRadius: "100%" }}
               >
                 <img className="img-fluid w-100" src="img/team-1.jpg" alt="" />
-                <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
-                  {/* <a
-                    className="btn btn-outline-light text-center mr-2 px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="#"
-                  >
-                    <i className="fab fa-twitter"></i>
-                  </a> */}
-                  <a
-                    className="btn btn-outline-light text-center mr-2 px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="https://www.facebook.com/profile.php?id=100006003555225"
-                  >
-                    <i className="fab fa-facebook-f"></i>
-                  </a>
-                  {/* <a
-                    className="btn btn-outline-light text-center px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="#"
-                  >
-                    <i className="fab fa-linkedin-in"></i>
-                  </a> */}
-                </div>
               </div>
               <h4>Sarika Ozarkar</h4>
               <i>Founder & Creative Director</i>
@@ -555,29 +532,6 @@ const About = () => {
                 style={{ borderRadius: "100%" }}
               >
                 <img className="img-fluid w-100" src="img/team-2.jpg" alt="" />
-                <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
-                  {/* <a
-                    className="btn btn-outline-light text-center mr-2 px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="#"
-                  >
-                    <i className="fab fa-twitter"></i>
-                  </a> */}
-                  <a
-                    className="btn btn-outline-light text-center mr-2 px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="https://www.facebook.com/shashidhar.birajdar"
-                  >
-                    <i className="fab fa-facebook-f"></i>
-                  </a>
-                  <a
-                    className="btn btn-outline-light text-center px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="https://www.linkedin.com/in/shashidhar-birajdar-a836b8189/"
-                  >
-                    <i className="fab fa-linkedin-in"></i>
-                  </a>
-                </div>
               </div>
               <h4>Shashidhar Birajdar</h4>
               <i>Founder</i>

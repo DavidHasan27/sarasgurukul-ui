@@ -136,7 +136,7 @@ const SGWebNavbar = (props: any) => {
         <div className="flex flex-row items-center">
           <img
             src="img/Saras-300.png"
-            style={{ height: 50 }}
+            style={{ height: 60 }}
             alt="Saras Gurukul"
             className="cursor-pointer "
           />
@@ -146,7 +146,7 @@ const SGWebNavbar = (props: any) => {
               placeholder={""}
               as="a"
               href="/"
-              className="mr-4 cursor-pointer ml-2  text-[#FA6D2E] font-bold text-4xl font-display leading-none tracking-tight"
+              className="mr-4 cursor-pointer ml-2  text-[#F74E35] font-extrabold text-5xl font-display leading-none tracking-tight"
             >
               SARA's Gurukul
             </Typography>
@@ -154,7 +154,7 @@ const SGWebNavbar = (props: any) => {
               placeholder={""}
               // as="a"
               // href="#"
-              className="mr-4 ml-2  text-[#FA6D2E] font-semibold text-sm font-display leading-none tracking-tight text-left"
+              className="mr-4 ml-2  text-[#FA6D2E] font-bold text-sm font-display leading-none tracking-tight text-left"
             >
               Pre-Primary School
             </Typography>

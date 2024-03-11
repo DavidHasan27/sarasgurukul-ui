@@ -140,8 +140,12 @@ const Home = () => {
       >
         <div className="row align-items-center px-3">
           <div className="col-lg-6 text-center text-lg-left">
+            <h3 className="text-white mb-4 mt-5 mt-lg-0 font-semibold"></h3>
             <h4 className="text-white mb-4 mt-5 mt-lg-0 font-semibold">
-              Sara's Gurukul Center
+              Sara's Gurukul Center Operated by{" "}
+              <strong className="font-bold text-xl text-[#FFF9F0]">
+                DINKAR DHAM TRUST'S
+              </strong>
             </h4>
             <h1
               className="display-3 font-weight-bold"
@@ -278,29 +282,6 @@ const Home = () => {
                 style={{ borderRadius: "100%" }}
               >
                 <img className="img-fluid w-100" src="img/team-1.jpg" alt="" />
-                <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
-                  {/* <a
-                    className="btn btn-outline-light text-center mr-2 px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="#"
-                  >
-                    <i className="fab fa-twitter"></i>
-                  </a> */}
-                  <a
-                    className="btn btn-outline-light text-center mr-2 px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="https://www.facebook.com/profile.php?id=100006003555225"
-                  >
-                    <i className="fab fa-facebook-f"></i>
-                  </a>
-                  {/* <a
-                    className="btn btn-outline-light text-center px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="#"
-                  >
-                    <i className="fab fa-linkedin-in"></i>
-                  </a> */}
-                </div>
               </div>
               <h4>Sarika Ozarkar</h4>
               <i>Founder & Creative Director</i>
@@ -311,14 +292,7 @@ const Home = () => {
                 style={{ borderRadius: "100%" }}
               >
                 <img className="img-fluid w-100" src="img/team-2.jpg" alt="" />
-                <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
-                  {/* <a
-                    className="btn btn-outline-light text-center mr-2 px-0"
-                    style={{ width: 38, height: 38 }}
-                    href="#"
-                  >
-                    <i className="fab fa-twitter"></i>
-                  </a> */}
+                {/* <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
                   <a
                     className="btn btn-outline-light text-center mr-2 px-0"
                     style={{ width: 38, height: 38 }}
@@ -333,7 +307,7 @@ const Home = () => {
                   >
                     <i className="fab fa-linkedin-in"></i>
                   </a>
-                </div>
+                </div> */}
               </div>
               <h4>Shashidhar Birajdar</h4>
               <i>Founder</i>
