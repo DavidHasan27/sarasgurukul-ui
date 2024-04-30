@@ -169,7 +169,7 @@ const SGWebNavbar = (props: any) => {
                 placeholder={""}
                 size="sm"
                 className="sgButton"
-                onClick={() => navigate("/app/login")}
+                onClick={() => navigate("/login")}
               >
                 <span>Log In</span>
               </Button>

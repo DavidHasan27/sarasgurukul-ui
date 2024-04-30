@@ -1,4 +1,69 @@
+import { useState } from "react";
+import { event } from "react-ga";
+import { isEmailValid, isMobileValid } from "../utils";
+import { addContactedInfo } from "../redux/contactsus/contactUsSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+
 const Contact = () => {
+  const [name, setName] = useState<string>();
+  const [nameError, setNameError] = useState(false);
+  const [email, setEmail] = useState<string>();
+  const [emailError, setEmailError] = useState<string>();
+  const [subject, setSubject] = useState<string>();
+  const [subjectError, setSubjectError] = useState(false);
+  const [message, setMessage] = useState<string>();
+  const [messageError, setMessageError] = useState(false);
+  const [phone, setPhone] = useState<string>();
+  const [phoneError, setPhoneError] = useState<string>();
+  const dispatch = useAppDispatch();
+
+  const addContactUs = () => {
+    let isErrorFound = false;
+    if (!name || !name.trim()) {
+      setNameError(true);
+      isErrorFound = true;
+    }
+
+    if (!email || !email.trim()) {
+      setEmailError("Please enter email id");
+      isErrorFound = true;
+    } else if (!isEmailValid(email)) {
+      setEmailError("Please enter valid email id");
+      isErrorFound = true;
+    }
+
+    if (!phone || !phone.trim()) {
+      setPhoneError("Please enter your mobile number");
+      isErrorFound = true;
+    } else if (!isMobileValid(phone)) {
+      setPhoneError("Please enter valid mobile number");
+      isErrorFound = true;
+    }
+
+    if (!message || !message.trim()) {
+      setMessageError(true);
+      isErrorFound = true;
+    }
+
+    if (!subject || !subject.trim()) {
+      setSubjectError(true);
+      isErrorFound = true;
+    }
+
+    if (isErrorFound) {
+      return;
+    }
+
+    const contactBody: any = {
+      name: name,
+      subject: subject,
+      message: message,
+      email: email,
+      mobile1: phone,
+    };
+    dispatch(addContactedInfo(contactBody));
+  };
+
   return (
     <>
       {/* <!-- Header Start --> */}
@@ -36,61 +101,118 @@ const Contact = () => {
             <div className="col-lg-7 mb-5">
               <div className="contact-form">
                 <div id="success"></div>
-                <form name="sentMessage" id="contactForm">
-                  <div className="control-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="name"
-                      placeholder="Your Name"
-                      required
-                      data-validation-required-message="Please enter your name"
-                    />
-                    <p className="help-block text-danger"></p>
-                  </div>
-                  <div className="control-group">
-                    <input
-                      type="email"
-                      className="form-control mt-3"
-                      id="email"
-                      placeholder="enquiry@sarasgurukul.com"
-                      required
-                      data-validation-required-message="Please enter your email"
-                    />
-                    <p className="help-block text-danger"></p>
-                  </div>
-                  <div className="control-group">
-                    <input
-                      type="text"
-                      className="form-control mt-3"
-                      id="subject"
-                      placeholder="Subject"
-                      required
-                      data-validation-required-message="Please enter a subject"
-                    />
-                    <p className="help-block text-danger"></p>
-                  </div>
-                  <div className="control-group">
-                    <textarea
-                      className="form-control mt-3"
-                      rows={6}
-                      id="message"
-                      placeholder="Message"
-                      required
-                      data-validation-required-message="Please enter your message"
-                    ></textarea>
-                    <p className="help-block text-danger"></p>
-                  </div>
-                  <div>
-                    <button
-                      className="btn py-2 px-4 mt-3 bg-[#e9390d] text-white"
-                      type="submit"
-                      id="sendMessageButton"
-                    >
-                      Send Message
-                    </button>
-                  </div>
-                </form>
+                {/* <form name="sentMessage" id="contactForm"> */}
+                <div className="control-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    placeholder="Your Name"
+                    required
+                    // data-validation-required-message="Please enter your name"
+                    onChange={(event: any) => {
+                      setName(event.target.value);
+                      setNameError(false);
+                    }}
+                    value={name}
+                  />
+                  {nameError && (
+                    <p className="help-block text-danger text-left text-xs ml-2">
+                      Please enter your name
+                    </p>
+                  )}
+                </div>
+                <div className="control-group">
+                  <input
+                    type="phone"
+                    className="form-control mt-3"
+                    id="phone"
+                    placeholder="Your mobile number"
+                    required
+                    // data-validation-required-message="Please enter your phone"
+                    onChange={(event: any) => {
+                      setPhone(event.target.value);
+                      setPhoneError("");
+                    }}
+                    value={phone}
+                  />
+                  {phoneError && (
+                    <p className="help-block text-danger text-left text-xs ml-2">
+                      {phoneError}
+                    </p>
+                  )}
+                </div>
+                <div className="control-group">
+                  <input
+                    type="email"
+                    className="form-control mt-3"
+                    id="email"
+                    placeholder="Your email Id"
+                    required
+                    // data-validation-required-message="Please enter your email"
+                    onChange={(event: any) => {
+                      setEmail(event.target.value);
+                      setEmailError("");
+                    }}
+                    value={email}
+                  />
+                  {emailError && (
+                    <p className="help-block text-danger text-left text-xs ml-2">
+                      {emailError}
+                    </p>
+                  )}
+                </div>
+                <div className="control-group">
+                  <input
+                    type="text"
+                    className="form-control mt-3"
+                    id="subject"
+                    placeholder="Subject"
+                    required
+                    // data-validation-required-message="Please enter a subject"
+                    onChange={(event: any) => {
+                      setSubject(event.target.value);
+                      setSubjectError(false);
+                    }}
+                    value={subject}
+                  />
+                  {subjectError && (
+                    <p className="help-block text-danger text-left text-xs ml-2">
+                      Please enter subject
+                    </p>
+                  )}
+                </div>
+                <div className="control-group">
+                  <textarea
+                    className="form-control mt-3"
+                    rows={6}
+                    id="message"
+                    placeholder="Message"
+                    required
+                    // data-validation-required-message="Please enter your message"
+                    onChange={(event: any) => {
+                      setMessage(event.target.value);
+                      setMessageError(false);
+                    }}
+                    value={message}
+                  ></textarea>
+                  {messageError && (
+                    <p className="help-block text-danger text-left text-xs ml-2">
+                      Please enter message
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <button
+                    className="btn py-2 px-4 mt-3 bg-[#e9390d] text-white"
+                    type="submit"
+                    id="sendMessageButton"
+                    onClick={() => addContactUs()}
+                  >
+                    Send Message
+                  </button>
+                </div>
+                {/* </form> */}
               </div>
             </div>
             <div className="col-lg-5 mb-5 text-left">
