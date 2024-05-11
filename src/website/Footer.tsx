@@ -1,4 +1,8 @@
+import { useAppSelector } from "../redux/store";
+import { RAHATANI_BRANCH } from "../utils/constants";
+
 const Footer = () => {
+  const branch = useAppSelector((state: any) => state.website.branch);
   return (
     <div className="container-fluid bg-secondary text-white ">
       <div
@@ -76,8 +80,11 @@ const Footer = () => {
                 Address
               </h5>
               <p style={{ textAlign: "left" }}>
-                Sr.No. 7/2/1, Jay Malhar Nagar, Lane No.3, Near Maharashtra
-                Bakery, Rahatani Phata, Thergaon, Pune - 411033
+                {`${
+                  branch === RAHATANI_BRANCH
+                    ? "Sr.No. 7/2/1, Jay Malhar Nagar, Lane No.3, Near Maharashtra Bakery, Rahatani Phata, Thergaon, Pune - 411033"
+                    : "Sr.No. 319, Sutart Wasti, At Maan Village, Tal. Mulashi, Dist. Pune 411057"
+                }`}
               </p>
             </div>
           </div>

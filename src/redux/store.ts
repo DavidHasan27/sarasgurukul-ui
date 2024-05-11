@@ -1,10 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import contactReducer from "./contactsus/contactUsSlice";
 import authReducer from "./user_auth/authSlice";
+import webReducer from "./website/webSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
-  reducer: { contactus: contactReducer, auth: authReducer },
+  reducer: {
+    contactus: contactReducer,
+    auth: authReducer,
+    website: webReducer,
+  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,

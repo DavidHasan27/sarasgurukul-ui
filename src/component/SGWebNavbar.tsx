@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
   Card,
@@ -8,12 +10,16 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { setBranch } from "../redux/website/webSlice";
 const SGWebNavbar = (props: any) => {
   const [activePath, setActivePath] = useState("/");
   const [mobile, setMobile] = useState(window.innerWidth <= 500);
   const [openNav, setOpenNav] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const branch = useAppSelector((state: any) => state.website.branch);
+  const dispatch = useAppDispatch();
 
   const handleWindowSizeChange = () => {
     setMobile(window.innerWidth <= 500);
@@ -124,6 +130,46 @@ const SGWebNavbar = (props: any) => {
           Contact
         </a>
       </Typography>
+
+      <div className="nav-item">
+        <a
+          href="#"
+          className={`flex items-center gap-x-2 p-1 font-semibold text-[16px]  font-sans ${
+            activePath === "/pages"
+              ? "text-white bg-[#FA6D2E] px-3 rounded-xl shadow-[inset_0_-1px_1px_rgba(0,0,0,0.5)] border-[1px] border-[#9a2112] h-[30px]"
+              : "text-[#7c1e12]"
+          }`}
+          data-toggle="dropdown"
+        >
+          Select Branch
+          <FontAwesomeIcon icon={faSortDown} className="mb-2" />
+        </a>
+
+        <div className="dropdown-menu rounded-0 m-0">
+          <a
+            href="#"
+            className={`dropdown-item hover:bg-blue-gray-100  ${
+              branch === "Rahatani Phata, Kalewadi"
+                ? "bg-[#E59830]"
+                : "bg-[#FFFFFF]"
+            } `}
+            onClick={() => dispatch(setBranch("Rahatani Phata, Kalewadi"))}
+          >
+            <FontAwesomeIcon icon={faCheck} color="white" className="mr-2" />
+            Rahatani Phata, Kalewadi
+          </a>
+          <a
+            href="#"
+            className={`dropdown-item hover:bg-blue-gray-100  ${
+              branch === "Maan, Hinjewadi" ? "bg-[#E59830]" : "bg-[#FFFFFF]"
+            } `}
+            onClick={() => dispatch(setBranch("Maan, Hinjewadi"))}
+          >
+            <FontAwesomeIcon icon={faCheck} color="white" className="mr-2" />
+            Maan, Hinjewadi
+          </a>
+        </div>
+      </div>
     </ul>
   );
 
@@ -156,7 +202,7 @@ const SGWebNavbar = (props: any) => {
               // href="#"
               className="mr-4 ml-2  text-[#FA6D2E] font-bold text-sm font-display leading-none tracking-tight text-left"
             >
-              Pre-Primary School
+              {`Pre-Primary School - ${branch}`}
             </Typography>
           </div>
         </div>

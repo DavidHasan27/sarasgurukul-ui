@@ -74,3 +74,6 @@ export const MENU_LIST: any = {
   [ROLE_ASSISTANCE]: PARENT_MENU_LIST,
   default: [],
 };
+
+export const RAHATANI_BRANCH = "Rahatani Phata, Kalewadi";
+export const HINJEWADI_BRANCH = "Maan, Hinjewadi";

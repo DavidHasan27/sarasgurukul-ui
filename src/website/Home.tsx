@@ -4,11 +4,15 @@ import Facilities from "../component/web-component/Facilities";
 import ClassView from "../component/web-component/Class";
 import ReactGA from "react-ga";
 import { Typography } from "@material-tailwind/react";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { RAHATANI_BRANCH } from "../utils/constants";
 // import { Carousel } from "@material-tailwind/react";
 // import Carousel from "react-bootstrap/Carousel";
 
 const Home = () => {
   console.log("ABC2");
+  const branch = useAppSelector((state: any) => state.website.branch);
+  const dispatch = useAppDispatch();
   return (
     <>
       {/* Navbar Start  */}
@@ -275,24 +279,34 @@ const Home = () => {
             </p>
             <h1 className="mb-4 text-4xl text-[#430c07]">Meet Our Teams</h1>
           </div>
-          <div className="row justify-center">
-            <div className="col-md-6 col-lg-3 text-center team mb-5">
-              <div
-                className="position-relative overflow-hidden mb-4"
-                style={{ borderRadius: "100%" }}
-              >
-                <img className="img-fluid w-100" src="img/team-1.jpg" alt="" />
+
+          {branch === RAHATANI_BRANCH ? (
+            <div className="row justify-center">
+              <div className="col-md-6 col-lg-3 text-center team mb-5">
+                <div
+                  className="position-relative overflow-hidden mb-4"
+                  style={{ borderRadius: "100%" }}
+                >
+                  <img
+                    className="img-fluid w-100"
+                    src="img/team-1.jpg"
+                    alt=""
+                  />
+                </div>
+                <h4>Sarika Ozarkar</h4>
+                <i>Founder & Creative Director</i>
               </div>
-              <h4>Sarika Ozarkar</h4>
-              <i>Founder & Creative Director</i>
-            </div>
-            <div className="col-md-6 col-lg-3 text-center team mb-5">
-              <div
-                className="position-relative overflow-hidden mb-4"
-                style={{ borderRadius: "100%" }}
-              >
-                <img className="img-fluid w-100" src="img/team-2.jpg" alt="" />
-                {/* <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
+              <div className="col-md-6 col-lg-3 text-center team mb-5">
+                <div
+                  className="position-relative overflow-hidden mb-4"
+                  style={{ borderRadius: "100%" }}
+                >
+                  <img
+                    className="img-fluid w-100"
+                    src="img/team-2.jpg"
+                    alt=""
+                  />
+                  {/* <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
                   <a
                     className="btn btn-outline-light text-center mr-2 px-0"
                     style={{ width: 38, height: 38 }}
@@ -308,11 +322,11 @@ const Home = () => {
                     <i className="fab fa-linkedin-in"></i>
                   </a>
                 </div> */}
+                </div>
+                <h4>Shashidhar Birajdar</h4>
+                <i>Founder</i>
               </div>
-              <h4>Shashidhar Birajdar</h4>
-              <i>Founder</i>
-            </div>
-            {/* <div className="col-md-6 col-lg-3 text-center team mb-5">
+              {/* <div className="col-md-6 col-lg-3 text-center team mb-5">
               <div
                 className="position-relative overflow-hidden mb-4"
                 // style="border-radius: 100%"
@@ -380,7 +394,124 @@ const Home = () => {
               <h4>Donald John</h4>
               <i>Art Teacher</i>
             </div> */}
-          </div>
+            </div>
+          ) : (
+            <div className="row justify-center">
+              <div className="col-md-6 col-lg-3 text-center team mb-5">
+                <div
+                  className="position-relative overflow-hidden mb-4"
+                  style={{ borderRadius: "100%" }}
+                >
+                  <img
+                    className="img-fluid w-100"
+                    src="img/team-2.jpg"
+                    alt=""
+                  />
+                  {/* <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
+                  <a
+                    className="btn btn-outline-light text-center mr-2 px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="https://www.facebook.com/shashidhar.birajdar"
+                  >
+                    <i className="fab fa-facebook-f"></i>
+                  </a>
+                  <a
+                    className="btn btn-outline-light text-center px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="https://www.linkedin.com/in/shashidhar-birajdar-a836b8189/"
+                  >
+                    <i className="fab fa-linkedin-in"></i>
+                  </a>
+                </div> */}
+                </div>
+                <h4>Shashidhar Birajdar</h4>
+                <i>Founder & Creative Director</i>
+              </div>
+              <div className="col-md-6 col-lg-3 text-center team mb-5">
+                <div
+                  className="position-relative overflow-hidden mb-4"
+                  style={{ borderRadius: "100%" }}
+                >
+                  <img
+                    className="img-fluid w-100"
+                    src="img/team-5.jpg"
+                    alt=""
+                  />
+                </div>
+                <h4>Vanita Raghawant</h4>
+                <i>Partner</i>
+              </div>
+
+              {/* <div className="col-md-6 col-lg-3 text-center team mb-5">
+              <div
+                className="position-relative overflow-hidden mb-4"
+                // style="border-radius: 100%"
+                style={{ borderRadius: "100%" }}
+              >
+                <img className="img-fluid w-100" src="img/team-3.jpg" alt="" />
+                <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
+                  <a
+                    className="btn btn-outline-light text-center mr-2 px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="https://www.facebook.com/shashidhar.birajdar"
+                  >
+                    <i className="fab fa-twitter"></i>
+                  </a>
+                  <a
+                    className="btn btn-outline-light text-center mr-2 px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="#"
+                  >
+                    <i className="fab fa-facebook-f"></i>
+                  </a>
+                  <a
+                    className="btn btn-outline-light text-center px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="https://www.facebook.com/shashidhar.birajdar"
+                  >
+                    <i className="fab fa-linkedin-in"></i>
+                  </a>
+                </div>
+              </div>
+              <h4>Mollie Ross</h4>
+              <i>Dance Teacher</i>
+            </div>
+            <div className="col-md-6 col-lg-3 text-center team mb-5">
+              <div
+                className="position-relative overflow-hidden mb-4"
+                // style="border-radius: 100%"
+                style={{ borderRadius: "100%" }}
+              >
+                <img className="img-fluid w-100" src="img/team-4.jpg" alt="" />
+                <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute">
+                  <a
+                    className="btn btn-outline-light text-center mr-2 px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="#"
+                  >
+                    <i className="fab fa-twitter"></i>
+                  </a>
+                  <a
+                    className="btn btn-outline-light text-center mr-2 px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="#"
+                  >
+                    <i className="fab fa-facebook-f"></i>
+                  </a>
+                  <a
+                    className="btn btn-outline-light text-center px-0"
+                    style={{ width: 38, height: 38 }}
+                    href="#"
+                  >
+                    <i className="fab fa-linkedin-in"></i>
+                  </a>
+                </div>
+              </div>
+              <h4>Donald John</h4>
+              <i>Art Teacher</i>
+            </div> */}
+            </div>
+          )}
         </div>
       </div>
       {/* <!-- Team End --> */}
