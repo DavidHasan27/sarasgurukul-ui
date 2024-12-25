@@ -50,3 +50,8 @@ export const isMobileValid = (mobile: string) => {
   }
   return true;
 };
+
+export const getAuthToken = () => {
+  const token = sessionStorage.getItem("token");
+  return token ? "Bearer " + token : "";
+};

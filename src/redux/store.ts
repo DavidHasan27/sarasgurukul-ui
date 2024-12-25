@@ -1,7 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import contactReducer from "./contactsus/contactUsSlice";
 import authReducer from "./user_auth/authSlice";
+import schoolReducer from "./schools/schoolSlice";
 import webReducer from "./website/webSlice";
+import userReducer from "./user/userSlice";
+import classReducer from "./class/classSlice";
+import studentReducer from "./students/studentSlice";
+import adminReducer from "./admin/adminSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -9,6 +14,11 @@ export const store = configureStore({
     contactus: contactReducer,
     auth: authReducer,
     website: webReducer,
+    school: schoolReducer,
+    user: userReducer,
+    class: classReducer,
+    student: studentReducer,
+    admin: adminReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

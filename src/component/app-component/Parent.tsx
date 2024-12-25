@@ -5,18 +5,39 @@ import ErrorIcon from "./ErrorIcon";
 import { getToken } from "../../utils";
 import { useLocation } from "react-router-dom";
 import SessionExpiredDialog from "./SessionExpireDialog";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 
-const ParentLayout = ({ children, loading, error, onCloseAlert }: any) => {
+const ParentLayout = ({
+  children,
+  loading,
+  error,
+  success,
+  onCloseAlert,
+  onCloseSuccessAlert,
+}: any) => {
   const { decodedToken, isExpired } = useJwt(getToken());
   const [sessionExpired, setSessionExpired] = useState(false);
   const location = useLocation();
-  console.log("decodedToken", decodedToken, isExpired, location.pathname);
+  // console.log("decodedToken", decodedToken, isExpired, location.pathname);
 
   useEffect(() => {
     if (isExpired) {
       setSessionExpired(true);
     }
   }, [isExpired]);
+
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => closeSuccess(), 3000);
+    }
+  }, [success]);
+
+  const closeSuccess = () => {
+    if (success) {
+      onCloseSuccessAlert();
+    }
+  };
 
   return (
     <Fragment>
@@ -34,6 +55,24 @@ const ParentLayout = ({ children, loading, error, onCloseAlert }: any) => {
             onClose={() => onCloseAlert()}
           >
             {error}
+          </Alert>
+        </div>
+      )}
+
+      {success && (
+        <div className="flex  justify-center absolute w-[100%]">
+          <Alert
+            icon={<FontAwesomeIcon icon={faCircleCheck} />}
+            open={true}
+            color="green"
+            className="sm:w-[100%] lg:w-[50%]"
+            animate={{
+              mount: { y: 10 },
+              unmount: { y: 100 },
+            }}
+            onClose={() => onCloseSuccessAlert()}
+          >
+            {success}
           </Alert>
         </div>
       )}

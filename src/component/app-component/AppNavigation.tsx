@@ -1,12 +1,14 @@
 import { Typography } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { clearSession } from "../../utils";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { resetUserDetails } from "../../redux/user_auth/authSlice";
 import { MENU_LIST } from "../../utils/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHandsHoldingChild } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import "../../view/main-view/mainview.css";
+import logoImage from "../../view/assets/sidebar_image.png";
 
 const AppNavigation = ({ children, currentPath }: any) => {
   const [dropdown, setDropdown] = useState(false);
@@ -16,6 +18,10 @@ const AppNavigation = ({ children, currentPath }: any) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user: any = useAppSelector((state) => state.auth.user);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const toggleIsExpanded = useCallback(() => {
+    setIsExpanded((isExpanded) => !isExpanded);
+  }, []);
 
   useEffect(() => {
     if (user && user.role) {
@@ -29,30 +35,81 @@ const AppNavigation = ({ children, currentPath }: any) => {
 
   return (
     <div className="bg-gray-100 font-family-karla flex">
-      <aside className="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl">
+      <aside className="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl bg-blue-gray-800">
         <div className="p-6">
-          <a
-            href="/home"
+          <img src={logoImage} />
+          {/* <a
+            href="/dash"
             className="text-white text-3xl font-semibold uppercase hover:text-gray-300"
           >
             Admin
           </a>
           <button className="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
             <i className="fas fa-plus mr-3"></i> New Report
-          </button>
+          </button> */}
         </div>
-        <nav className="text-white text-base font-semibold pt-3">
-          {menuList.map((item: any) => (
-            <a
-              href="index.html"
-              className={`flex items-center ${
-                item.path === location.pathname ? "active-nav-link" : ""
-              } text-white py-4 pl-6 nav-item`}
-            >
-              <FontAwesomeIcon icon={item.icon} className="mr-3" />
-              {item.name}
-            </a>
-          ))}
+        <nav className="text-white text-base font-semibold pt-3 ">
+          {menuList.map((item: any) => {
+            if (!item.child) {
+              return (
+                <Link
+                  to={item.path}
+                  className={`flex items-center ${
+                    item.path === location.pathname ? "active-nav-link" : ""
+                  } text-white py-3 pl-3 nav-item`}
+                >
+                  <FontAwesomeIcon icon={item.icon} className="mr-3" />
+                  {item.name}
+                </Link>
+              );
+            } else {
+              return (
+                <>
+                  <button
+                    className={`flex items-center ${
+                      item.path === location.pathname ? "active-nav-link" : ""
+                    } text-white py-4 pl-3 nav-item`}
+                    onClick={toggleIsExpanded}
+                  >
+                    <FontAwesomeIcon icon={item.icon} className="mr-3" />
+                    {item.name}
+                    <FontAwesomeIcon
+                      icon={isExpanded ? faAngleDown : faAngleRight}
+                      className="ml-16"
+                    />
+                  </button>
+
+                  <div
+                    className="transition-height duration-300 overflow-hidden bg-sidebar"
+                    style={{ height: isExpanded ? "300px" : "0px" }}
+                  >
+                    {item.child.map((subItem: any) => (
+                      <Link
+                        to={subItem.path}
+                        className={`flex items-center ${
+                          subItem.path === location.pathname
+                            ? "active-nav-link"
+                            : ""
+                        } text-white py-1 pl-8 nav-item`}
+                      >
+                        <FontAwesomeIcon icon={subItem.icon} className="mr-3" />
+                        {subItem.name}
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              );
+              // <Link
+              //   to={item.path}
+              //   className={`flex items-center ${
+              //     item.path === location.pathname ? "active-nav-link" : ""
+              //   } text-white py-4 pl-6 nav-item`}
+              // >
+              //   <FontAwesomeIcon icon={item.icon} className="mr-3" />
+              //   {item.name}
+              // </Link>;
+            }
+          })}
           {/* <a
             href="index.html"
             className="flex items-center active-nav-link text-white py-4 pl-6 nav-item"
@@ -233,11 +290,13 @@ const AppNavigation = ({ children, currentPath }: any) => {
         </header>
 
         <div className="w-full overflow-x-hidden border-t flex flex-col">
-          <main className="w-full flex-grow p-6">
+          {/* <main className="w-full flex-grow p-6">
             <h1 className="text-3xl text-black pb-6">Dashboard</h1>
-          </main>
+          </main> */}
 
-          {children}
+          <Outlet />
+
+          {/* {children} */}
         </div>
       </div>
     </div>

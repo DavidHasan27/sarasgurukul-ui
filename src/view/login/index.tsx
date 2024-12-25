@@ -46,7 +46,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/dash", { replace: true });
+      navigate("/app/dash", { replace: true });
     }
   }, [user]);
 

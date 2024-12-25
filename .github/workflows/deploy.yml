@@ -36,16 +36,16 @@ jobs:
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecs-render-task-defination@V1
         with:
           task-definition: arn:aws:ecs:ap-south-1:058264278444:task-definition/WebApp:1
           container-name: webAppContainer
           image: 058264278444.dkr.ecr.ap-south-1.amazonaws.com/saras-gurukul:latest
 
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecs-render-task-defination@V1
         with:
           task-definition: arn:aws:ecs:ap-south-1:058264278444:task-definition/WebApp:1
-          service: arn:aws:ecs:ap-south-1:058264278444:service/sarasgurukul/webAppService
-          cluster: arn:aws:ecs:ap-south-1:058264278444:cluster/sarasgurukul
+          service: webAppService
+          cluster: sarasgurukul
           wait-for-service-stability: true

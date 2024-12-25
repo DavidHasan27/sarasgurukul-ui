@@ -1,6 +1,6 @@
 import ParentLayout from "../../component/app-component/Parent";
 
-const Dashboard = () => {
+const AppDashbord = () => {
   return (
     <ParentLayout>
       <div className="flex h-[100%] w-[100%] bg-blue-gray-400">
@@ -10,4 +10,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AppDashbord;

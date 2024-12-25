@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AppNavigation from "../../component/app-component/AppNavigation";
 import Dashboard from "../dashobaord";
 import "./mainview.css";
+import AddSchool from "../school-branch/Schools";
 
 const AppDashboard = () => {
   console.log("AppDashboard :::: ");
@@ -10,6 +11,7 @@ const AppDashboard = () => {
       <>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/addSchool" element={<AddSchool />} />
         </Routes>
       </>
     </AppNavigation>
