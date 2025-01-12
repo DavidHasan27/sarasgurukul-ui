@@ -55,3 +55,7 @@ export const getAuthToken = () => {
   const token = sessionStorage.getItem("token");
   return token ? "Bearer " + token : "";
 };
+
+export const getFormattedfee = (amount: any) => {
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};

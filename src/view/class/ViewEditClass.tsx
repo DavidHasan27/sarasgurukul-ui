@@ -8,12 +8,16 @@ import Select1 from "react-select";
 import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { getUserForDropdown, getUserRoles } from "../../redux/user/userSlice";
+import { getAllFees } from "../../redux/fees/feesSlice";
 import {
   resetNewClassDetails,
   updateClass,
 } from "../../redux/class/classSlice";
 import { useLocation } from "react-router-dom";
 import OutsideClickHandler from "react-outside-click-handler";
+import DatePickerComponent from "../../component/app-component/DatePicker";
+import { clone } from "lodash";
+import { Modal } from "react-bootstrap";
 
 const ViewEditClass = () => {
   const location = useLocation();
@@ -32,8 +36,14 @@ const ViewEditClass = () => {
     currentObj.classTeacher ? currentObj.classTeacher : null
   );
 
+  const [installmentDetails, setInstallment] = useState<any>([]);
+  const [feeMenu, setFeeMenu] = useState<any>();
+  const [fees, setFees] = useState<any>();
+  const [errorModel, setErrorModel] = useState<any>("");
+
   const dispatch = useAppDispatch();
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
+  const { feesList } = useAppSelector((state: any) => state.fees);
   const { success, error, loading } = useAppSelector(
     (state: any) => state.class
   );
@@ -93,15 +103,67 @@ const ViewEditClass = () => {
   );
 
   useEffect(() => {
-    if (success) {
-      // navigate("/app/dash", { replace: true });
-      //   resetAllData();
+    if (
+      currentObj &&
+      currentObj.classFeeDetailses &&
+      currentObj.classFeeDetailses.length > 0 &&
+      feesList
+    ) {
+      const activeObj = currentObj.classFeeDetailses.find(
+        (obj: any) => obj.active
+      );
+      const prepareClassDetails = [];
+      if (activeObj) {
+        if (activeObj.installment_1) {
+          prepareClassDetails.push({
+            installmentAmount: activeObj.installment_1,
+            installmentDate: activeObj.installment1Date,
+          });
+        }
+        if (activeObj.installment_2) {
+          prepareClassDetails.push({
+            installmentAmount: activeObj.installment_2,
+            installmentDate: activeObj.installment2Date,
+          });
+        }
+        if (activeObj.installment_3) {
+          prepareClassDetails.push({
+            installmentAmount: activeObj.installment_3,
+            installmentDate: activeObj.installment3Date,
+          });
+        }
+        if (activeObj.installment_4) {
+          prepareClassDetails.push({
+            installmentAmount: activeObj.installment_4,
+            installmentDate: activeObj.installment4Date,
+          });
+        }
+        if (activeObj.installment_5) {
+          prepareClassDetails.push({
+            installmentAmount: activeObj.installment_5,
+            installmentDate: activeObj.installment5Date,
+          });
+        }
+
+        const feesType = feesList.content.find(
+          (obj: any) => obj.id === activeObj.schoolFeeTypes
+        );
+        setFees(feesType);
+        setInstallment(prepareClassDetails);
+      }
     }
-  }, [success]);
+  }, [currentObj, feesList]);
 
   useEffect(() => {
     dispatch(getSchoolsForSelection());
     dispatch(getUserRoles());
+    dispatch(
+      getAllFees({
+        page: 0,
+        size: 1000,
+        active: true,
+      })
+    );
   }, []);
 
   const resetAllData = () => {
@@ -118,6 +180,12 @@ const ViewEditClass = () => {
 
   const onSubmitSchool = () => {
     let isError = false;
+
+    let ampuntMessage = fees ? verifyInstallationAmount() : "";
+    setErrorModel(ampuntMessage);
+    if (ampuntMessage) {
+      return;
+    }
 
     if (!school) {
       setschoolError("Please select school");
@@ -142,12 +210,52 @@ const ViewEditClass = () => {
     if (isError) {
       return;
     }
+
+    let fess: any = undefined;
+    const activeObj = currentObj.classFeeDetailses.find(
+      (obj: any) => obj.active
+    );
+    if (fees) {
+      fess = {
+        schoolFeeTypes: fees.id,
+        id: activeObj ? activeObj.id : null,
+        discount: 0,
+        installment_1: installmentDetails[0].installmentAmount,
+        installment_2: installmentDetails[1]
+          ? installmentDetails[1].installmentAmount
+          : null,
+        installment_3: installmentDetails[2]
+          ? installmentDetails[2].installmentAmount
+          : null,
+        installment_4: installmentDetails[3]
+          ? installmentDetails[3].installmentAmount
+          : null,
+        installment_5: installmentDetails[4]
+          ? installmentDetails[4].installmentAmount
+          : null,
+        installment1Date: installmentDetails[0].installmentDate,
+        installment2Date: installmentDetails[1]
+          ? installmentDetails[1].installmentDate
+          : null,
+        installment3Date: installmentDetails[2]
+          ? installmentDetails[2].installmentDate
+          : null,
+        installment4Date: installmentDetails[3]
+          ? installmentDetails[3].installmentDate
+          : null,
+        installment5Date: installmentDetails[4]
+          ? installmentDetails[4].installmentDate
+          : null,
+      };
+    }
+
     const body: any = {
       className: className,
       classIdentity: classIdentity,
       classDesc: aboutClass,
       schools: school.id,
       id: currentObj.id,
+      classFees: fess,
     };
     if (selectedUser) {
       body["classTeacher"] = selectedUser.id;
@@ -185,6 +293,177 @@ const ViewEditClass = () => {
         </div>
       </div>
     );
+  };
+
+  const formateFeesOption = ({ value, label }: any) => {
+    let totalFee = 0;
+    for (let i = 0; i < value.schoolFeesDetail.length; i++) {
+      totalFee = totalFee + parseFloat(value.schoolFeesDetail[i].feeAmount);
+    }
+
+    return (
+      <div
+        className="flex flex-col text-left px-3 border-b-[1px] border-gray-400 "
+        onClick={() => {
+          setFees(value);
+          setFeeMenu(false);
+        }}
+      >
+        <div className="text-blue-gray-900 text-[16px]"> {label}</div>
+        <div className="text-gray-500 text-[12px] -mt-[14px]">
+          Amount: ₹{totalFee.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </div>
+      </div>
+    );
+  };
+
+  const onInstallmentDetailsChanged = (key: any, index: any, value: any) => {
+    const details = clone(installmentDetails);
+    if (key === "installmentDate") {
+      value.setHours(0, 0, 0, 0);
+    }
+    details[index][key] = value;
+    setInstallment(details);
+  };
+
+  const onInstallmentRemove = (index: any) => {
+    const details = clone(installmentDetails);
+    details.splice(index, 1);
+    setInstallment(details);
+  };
+
+  const AddNewinstallment = () => {
+    const details = clone(installmentDetails);
+    const instObj = {
+      installmentAmount: "",
+      installmentDate: "",
+      error: "",
+    };
+    details.push(instObj);
+    setInstallment(details);
+  };
+
+  const getInstallmentString = (index: number) => {
+    switch (index) {
+      case 1: {
+        return "1st Installment";
+      }
+      case 2: {
+        return "2nd Installment";
+      }
+
+      case 3: {
+        return "3rd Installment";
+      }
+
+      case 4: {
+        return "4th Installment";
+      }
+
+      case 5: {
+        return "5th Installment";
+      }
+    }
+  };
+
+  const verifyInstallationAmount = () => {
+    // { installmentAmount: "", installmentDate: "", index: 0, error: "" },
+    //Check all mandatory fields
+    let installMentDateerror = "";
+    for (let i = 0; i < installmentDetails.length; i++) {
+      if (
+        !installmentDetails[i].installmentAmount ||
+        !installmentDetails[i].installmentDate
+      ) {
+        installMentDateerror = "All field are mandatory in fees installment";
+      }
+      if (!installMentDateerror) {
+        break;
+      }
+    }
+    if (installMentDateerror) {
+      return installMentDateerror;
+    }
+
+    //Check duplicate dates
+    const duplicateItems = isDuplicates(installmentDetails);
+    console.log("Duplicate ", duplicateItems);
+    if (duplicateItems && duplicateItems.length > 0) {
+      return "Few dates are duplicate, Please cross check you installment dates";
+    }
+
+    // check date sequence
+    const tempDetails = clone(installmentDetails);
+    for (let j = 0; j < tempDetails.length; j++) {
+      tempDetails[j]["index"] = j + 1;
+    }
+    tempDetails.sort((a: any, b: any) => a.installmentDate - b.installmentDate);
+    for (let j = 0; j < tempDetails.length; j++) {
+      if (tempDetails[j].index !== j + 1) {
+        installMentDateerror =
+          "Installment sequence and date sequence mismatch";
+        break;
+      }
+    }
+
+    if (installMentDateerror) {
+      return installMentDateerror;
+    }
+
+    // check all fees are same compare to total fees
+
+    let totalFee = 0;
+    for (let i = 0; i < fees.schoolFeesDetail.length; i++) {
+      totalFee = totalFee + parseFloat(fees.schoolFeesDetail[i].feeAmount);
+    }
+
+    let totalFeePrepared = 0;
+    for (let i = 0; i < installmentDetails.length; i++) {
+      totalFeePrepared =
+        totalFeePrepared + parseFloat(installmentDetails[i].installmentAmount);
+    }
+
+    if (totalFeePrepared == totalFee) {
+      return "";
+    }
+
+    if (totalFee < totalFeePrepared) {
+      return `Total Installment amount ₹ ${totalFeePrepared
+        .toString()
+        .replace(
+          /\B(?=(\d{3})+(?!\d))/g,
+          ","
+        )} is more than the assigned fee ₹ ${totalFee
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    }
+
+    if (totalFee > totalFeePrepared) {
+      return `Total Installment amount ₹ ${totalFeePrepared
+        .toString()
+        .replace(
+          /\B(?=(\d{3})+(?!\d))/g,
+          ","
+        )} is less than the assigned fee ₹ ${totalFee
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    }
+  };
+
+  const isDuplicates = (arr: any) => {
+    const seen = new Set();
+    const duplicates: any = [];
+
+    arr.forEach((item: any) => {
+      const identifier = `${item.installmentDate}`;
+      if (seen.has(identifier)) {
+        duplicates.push(item);
+      } else {
+        seen.add(identifier);
+      }
+    });
+
+    return duplicates;
   };
 
   return (
@@ -391,169 +670,151 @@ const ViewEditClass = () => {
                     />
                   </div>
 
-                  {/* <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Class Identity
+                  <div className="mt-3">
+                    <label className="block text-sm text-gray-600 text-left mb-0">
+                      Fees
                     </label>
-                    <input
-                      className="w-full px-2  py-1 text-gray-700 bg-[#e5e7eb] rounded "
-                      id="email"
-                      name="email"
-                      type="text"
-                      required
-                      placeholder="Your Email"
-                      aria-label="Email"
-                      value={email}
-                      onChange={(event) => {
-                        setEmail(event.target.value);
-                        setEmailError("");
+                    <OutsideClickHandler
+                      onOutsideClick={() => {
+                        setFeeMenu(false);
                       }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {emailError && emailError}
-                    </label>
-                  </div>
-                  <div className="mt-1">
-                    <label className=" block text-sm text-gray-600 text-left">
-                      Address
-                    </label>
-                    <input
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="address1"
-                      name="address1"
-                      type="text"
-                      required
-                      placeholder="Address Line 1"
-                      aria-label="Address1"
-                      value={addressLine1}
-                      onChange={(event) => {
-                        setAddressLine1(event.target.value);
-                        setAddressError("");
-                      }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {addressError && addressError}
-                    </label>
-                  </div>
-                  <div className="mt-2">
-                    <label className="hidden block text-sm text-gray-600 text-left">
-                      Address
-                    </label>
-                    <input
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="address2"
-                      name="address2"
-                      type="text"
-                      required
-                      placeholder="Address Line 2"
-                      aria-label="Address2"
-                      value={addressLine2}
-                      onChange={(event) => {
-                        setAddressLine2(event.target.value);
-                      }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {""}
-                    </label>
-                  </div>
-                  <div className="inline-block mt-2 w-1/2 pr-1">
-                    <label className="hidden text-sm block text-gray-600">
-                      Branch
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="branch"
-                        name="branch"
-                        type="text"
-                        required
-                        placeholder="Branch"
-                        aria-label="Branch"
-                        value={branch}
-                        onChange={(event) => {
-                          setBranch(event.target.value);
-                          setBranchError("");
+                    >
+                      <Select1
+                        name="role"
+                        placeholder="Select Fees"
+                        options={feesList?.content ? feesList.content : []}
+                        getOptionLabel={(option: any) => option.name}
+                        getOptionValue={(option) => option}
+                        styles={{
+                          control: (baseStyles, state) => ({
+                            ...baseStyles,
+                            backgroundColor: "#e5e7eb",
+                            borderColor: state.isFocused
+                              ? "#0f58bf"
+                              : "#e1e4e8",
+                            textAlign: "left",
+                          }),
+                          option: (baseStyles, state) => ({
+                            ...baseStyles,
+                            textAlign: "left",
+                          }),
                         }}
+                        classNamePrefix="Select School"
+                        // onChange={(event) => {
+                        //   console.log("Schoo Group >>>>>", event);
+                        //   setSchools(event);
+                        // }}
+                        value={fees}
+                        components={{ Option: formateFeesOption }}
+                        menuIsOpen={feeMenu}
+                        onMenuOpen={() => setFeeMenu(true)}
+                        closeMenuOnScroll={true}
                       />
-                      <label className="block text-sm text-left text-red-600 h-4">
-                        {branchError && branchError}
-                      </label>
-                    </div>
+                    </OutsideClickHandler>
                   </div>
-                  <div className="inline-block mt-2 w-1/2 pr-1">
-                    <label className="hidden text-sm block text-gray-600">
-                      City
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="city"
-                        name="city"
-                        type="text"
-                        required
-                        placeholder="City"
-                        aria-label="City"
-                        value={city}
-                        onChange={(event) => {
-                          setCity(event.target.value);
-                          setCityError("");
-                        }}
-                      />
-                      <label className="block text-sm text-left text-red-600 h-4">
-                        {cityError && cityError}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="inline-block mt-2 w-1/2 pr-1">
-                    <label className="hidden block text-sm text-gray-600">
-                      Country
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="country"
-                        name="country"
-                        type="text"
-                        required
-                        placeholder="Country"
-                        aria-label="Country"
-                        value={country}
-                        readOnly
-                        onChange={(event) => {
-                          setCountry(event.target.value);
-                          setCountryError("");
-                        }}
-                      />
-                      <label className="block text-sm text-left text-red-600 h-4">
-                        {countryError && countryError}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="inline-block mt-2 -mx-1 pl-1 w-1/2">
-                    <label className="hidden block text-sm text-gray-600">
-                      Zip
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="zip"
-                        name="zip"
-                        type="number"
-                        required
-                        placeholder="Zip"
-                        aria-label="Zip"
-                        maxLength={6}
-                        value={pincode}
-                        onChange={(event) => {
-                          setPincode(event.target.value);
-                          setPincodeError("");
-                        }}
-                      />
-                      <label className="block text-sm text-left text-red-600 h-4">
-                        {pincodeError && pincodeError}
-                      </label>
-                    </div>
-                  </div> */}
+
+                  {fees && (
+                    <>
+                      {installmentDetails.map((obj: any, index: number) => {
+                        return (
+                          <div className="flex flex-row">
+                            <div className="w-[44%]">
+                              <label className="block text-sm text-gray-600 text-left mb-0">
+                                {getInstallmentString(index + 1)} Amount
+                              </label>
+                              <input
+                                className="w-full px-2 py-1 text-gray-700 bg-[#e5e7eb] rounded"
+                                id="name"
+                                name="name"
+                                type="text"
+                                required
+                                placeholder="Amount"
+                                aria-label="Name"
+                                value={obj.installmentAmount}
+                                onChange={(event: any) => {
+                                  // setClassName(event.target.value);
+                                  // setClassNameError("");
+                                  console.log(
+                                    "event.target.value",
+                                    event.target.value,
+                                    isNaN(event.target.value),
+                                    event.target.value.length
+                                  );
+                                  if (
+                                    !isNaN(event.target.value) &&
+                                    event.target.value.length < 8
+                                  ) {
+                                    onInstallmentDetailsChanged(
+                                      "installmentAmount",
+                                      index,
+                                      event.target.value
+                                    );
+                                  }
+                                }}
+                              />
+                              <label className="block text-sm text-left text-red-600 h-4">
+                                {classNameError
+                                  ? "Please Enter Class Name"
+                                  : ""}
+                              </label>
+                            </div>
+                            <div className=" ml-2 text-left ">
+                              <label className="block text-sm text-gray-600 text-left mb-0">
+                                {getInstallmentString(index + 1)} Due Date
+                              </label>
+                              <DatePickerComponent
+                                startDate={
+                                  obj.installmentDate
+                                    ? new Date(obj.installmentDate)
+                                    : ""
+                                }
+                                // maxDate={new Date("2012-01-01")}
+                                minDate={new Date()}
+                                onDateChange={(date: any) =>
+                                  onInstallmentDetailsChanged(
+                                    "installmentDate",
+                                    index,
+                                    date
+                                  )
+                                }
+                                className={
+                                  "bg-[#e5e7eb] h-[40px] w-[100%] pl-2 rounded-sm"
+                                }
+                                placeholder={"Select  Date"}
+                              />
+                              {/* <label className="block text-sm text-left text-red-600 h-4">
+                            {classNameError ? "Please Enter Class Name" : ""}
+                          </label> */}
+                            </div>
+                            <div className="w-[12%] ml-2 mt-[20px]">
+                              <Button
+                                color="blue"
+                                placeholder={undefined}
+                                className="h-[40px] p-0 w-full"
+                                onClick={() => onInstallmentRemove(index)}
+                                disabled={installmentDetails.length === 1}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {installmentDetails.length < 5 && (
+                        <div className="w-full ml-2 text-right">
+                          <Button
+                            color="blue"
+                            placeholder={undefined}
+                            className="h-[30px] p-0 w-full w-[200px]"
+                            onClick={() => AddNewinstallment()}
+                          >
+                            Add installment
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </form>
               </div>
             </div>
@@ -571,6 +832,22 @@ const ViewEditClass = () => {
           </div>
         </main>
       </div>
+      <Modal show={errorModel} onHide={() => setErrorModel("")}>
+        <Modal.Header closeButton>
+          <Modal.Title className="text-lg">Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errorModel}</Modal.Body>
+        <Modal.Footer>
+          <Button
+            color="red"
+            className="h-[40px] w-[80px] p-0"
+            onClick={() => setErrorModel("")}
+            placeholder={undefined}
+          >
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </ParentLayout>
   );
 };

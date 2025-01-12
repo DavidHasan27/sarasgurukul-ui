@@ -27,6 +27,14 @@ import ViewEditStaff from "../view/staff/ViewEditStaff";
 import Students from "../view/students/students";
 import AddStudents from "../view/students/AddStudents";
 import Year from "../view/admin/Years";
+import ViewEditStudent from "../view/students/ViewEditStudent";
+import StudentReport from "../view/students/StudentReports";
+import NewReport from "../view/students/NewReport";
+import FeesType from "../view/admin/Fees";
+import AddFees from "../view/admin/AddNewFees";
+import StudentFeeDetails from "../view/students/StudentFee";
+import SchoolHolidays from "../view/school-branch/SchoolHolidays";
+import AddHoliday from "../view/school-branch/AddNewHoliday";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -50,6 +58,8 @@ const Dashboard = () => {
               <Route path="dash" element={<AppDashbord />} />
               <Route path="addSchool" element={<AddSchool />} />
               <Route path="schools" element={<Schools />} />
+              <Route path="schoolHolidays" element={<SchoolHolidays />} />
+              <Route path="addHoliday" element={<AddHoliday />} />
               <Route path="view-edit-school" element={<ViewEditSchool />} />
               <Route path="class" element={<ClassView />} />
               <Route path="addclass" element={<AddClass />} />
@@ -59,7 +69,13 @@ const Dashboard = () => {
               <Route path="view-edit-staff" element={<ViewEditStaff />} />
               <Route path="students" element={<Students />} />
               <Route path="addStudent" element={<AddStudents />} />
+              <Route path="view-edit-student" element={<ViewEditStudent />} />
+              <Route path="studentReport" element={<StudentReport />} />
+              <Route path="studentFee" element={<StudentFeeDetails />} />
+              <Route path="newReport" element={<NewReport />} />
               <Route path="year" element={<Year />} />
+              <Route path="fees" element={<FeesType />} />
+              <Route path="addfees" element={<AddFees />} />
             </Route>
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>

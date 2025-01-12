@@ -13,6 +13,11 @@ import {
   resetNewClassDetails,
 } from "../../redux/class/classSlice";
 import { CLASS_IDENTITY } from "../../utils/constants";
+import { getAllFees } from "../../redux/fees/feesSlice";
+import OutsideClickHandler from "react-outside-click-handler";
+import DatePickerComponent from "../../component/app-component/DatePicker";
+import Modal from "react-bootstrap/Modal";
+import { clone } from "lodash";
 
 const AddClass = () => {
   const [className, setClassName] = useState("");
@@ -22,12 +27,21 @@ const AddClass = () => {
   const [aboutClass, setAboutClass] = useState("");
   const [aboutClassError, setAboutClassError] = useState("");
   const [school, setSchools] = useState<any>();
+  const [fees, setFees] = useState<any>();
   const [schoolMenu, setSchoolMenu] = useState<any>();
+  const [feeMenu, setFeeMenu] = useState<any>();
   const [schoolError, setschoolError] = useState("");
   const [selectedUser, setSelectedUser] = useState<any>();
+  const [errorModel, setErrorModel] = useState<any>("");
+
+  const [installmentDetails, setInstallment] = useState<any>([
+    { installmentAmount: "", installmentDate: "", index: 0, error: "" },
+  ]);
 
   const dispatch = useAppDispatch();
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
+  const { feesList } = useAppSelector((state: any) => state.fees);
+
   const { success, error, loading } = useAppSelector(
     (state: any) => state.class
   );
@@ -96,6 +110,13 @@ const AddClass = () => {
   useEffect(() => {
     dispatch(getSchoolsForSelection());
     dispatch(getUserRoles());
+    dispatch(
+      getAllFees({
+        page: 0,
+        size: 1000,
+        active: true,
+      })
+    );
   }, []);
 
   const resetAllData = () => {
@@ -108,10 +129,24 @@ const AddClass = () => {
     setSchools(null);
     setschoolError("");
     setSelectedUser(null);
+    setFees("");
+    setInstallment([
+      {
+        installmentAmount: "",
+        installmentDate: "",
+        index: 0,
+        error: "",
+      },
+    ]);
   };
 
   const onSubmitSchool = () => {
     let isError = false;
+    let ampuntMessage = fees ? verifyInstallationAmount() : "";
+    setErrorModel(ampuntMessage);
+    if (ampuntMessage) {
+      return;
+    }
 
     if (!school) {
       setschoolError("Please select school");
@@ -136,11 +171,47 @@ const AddClass = () => {
     if (isError) {
       return;
     }
+
+    let fess: any = undefined;
+    if (fees) {
+      fess = {
+        schoolFeeTypes: fees.id,
+        discount: 0,
+        installment_1: installmentDetails[0].installmentAmount,
+        installment_2: installmentDetails[1]
+          ? installmentDetails[1].installmentAmount
+          : null,
+        installment_3: installmentDetails[2]
+          ? installmentDetails[2].installmentAmount
+          : null,
+        installment_4: installmentDetails[3]
+          ? installmentDetails[3].installmentAmount
+          : null,
+        installment_5: installmentDetails[4]
+          ? installmentDetails[4].installmentAmount
+          : null,
+        installment1Date: installmentDetails[0].installmentDate,
+        installment2Date: installmentDetails[1]
+          ? installmentDetails[1].installmentDate
+          : null,
+        installment3Date: installmentDetails[2]
+          ? installmentDetails[2].installmentDate
+          : null,
+        installment4Date: installmentDetails[3]
+          ? installmentDetails[3].installmentDate
+          : null,
+        installment5Date: installmentDetails[4]
+          ? installmentDetails[4].installmentDate
+          : null,
+      };
+    }
+
     const body: any = {
       className: className,
       classIdentity: classIdentity.value,
       classDesc: aboutClass,
       schools: school.id,
+      classFee: fess,
     };
     if (selectedUser) {
       body["classTeacher"] = selectedUser.id;
@@ -180,6 +251,177 @@ const AddClass = () => {
     );
   };
 
+  const formateFeesOption = ({ value, label }: any) => {
+    let totalFee = 0;
+    for (let i = 0; i < value.schoolFeesDetail.length; i++) {
+      totalFee = totalFee + parseFloat(value.schoolFeesDetail[i].feeAmount);
+    }
+
+    return (
+      <div
+        className="flex flex-col text-left px-3 border-b-[1px] border-gray-400 "
+        onClick={() => {
+          setFees(value);
+          setFeeMenu(false);
+        }}
+      >
+        <div className="text-blue-gray-900 text-[16px]"> {label}</div>
+        <div className="text-gray-500 text-[12px] -mt-[14px]">
+          Amount: ₹{totalFee.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </div>
+      </div>
+    );
+  };
+
+  const onInstallmentDetailsChanged = (key: any, index: any, value: any) => {
+    const details = clone(installmentDetails);
+    if (key === "installmentDate") {
+      value.setHours(0, 0, 0, 0);
+    }
+    details[index][key] = value;
+    setInstallment(details);
+  };
+
+  const onInstallmentRemove = (index: any) => {
+    const details = clone(installmentDetails);
+    details.splice(index, 1);
+    setInstallment(details);
+  };
+
+  const AddNewinstallment = () => {
+    const details = clone(installmentDetails);
+    const instObj = {
+      installmentAmount: "",
+      installmentDate: "",
+      error: "",
+    };
+    details.push(instObj);
+    setInstallment(details);
+  };
+
+  const getInstallmentString = (index: number) => {
+    switch (index) {
+      case 1: {
+        return "1st Installment";
+      }
+      case 2: {
+        return "2nd Installment";
+      }
+
+      case 3: {
+        return "3rd Installment";
+      }
+
+      case 4: {
+        return "4th Installment";
+      }
+
+      case 5: {
+        return "5th Installment";
+      }
+    }
+  };
+
+  const verifyInstallationAmount = () => {
+    // { installmentAmount: "", installmentDate: "", index: 0, error: "" },
+    //Check all mandatory fields
+    let installMentDateerror = "";
+    for (let i = 0; i < installmentDetails.length; i++) {
+      if (
+        !installmentDetails[i].installmentAmount ||
+        !installmentDetails[i].installmentDate
+      ) {
+        installMentDateerror = "All field are mandatory in fees installment";
+      }
+      if (!installMentDateerror) {
+        break;
+      }
+    }
+    if (installMentDateerror) {
+      return installMentDateerror;
+    }
+
+    //Check duplicate dates
+    const duplicateItems = isDuplicates(installmentDetails);
+    console.log("Duplicate ", duplicateItems);
+    if (duplicateItems && duplicateItems.length > 0) {
+      return "Few dates are duplicate, Please cross check you installment dates";
+    }
+
+    // check date sequence
+    const tempDetails = clone(installmentDetails);
+    for (let j = 0; j < tempDetails.length; j++) {
+      tempDetails[j]["index"] = j + 1;
+    }
+    tempDetails.sort((a: any, b: any) => a.installmentDate - b.installmentDate);
+    for (let j = 0; j < tempDetails.length; j++) {
+      if (tempDetails[j].index !== j + 1) {
+        installMentDateerror =
+          "Installment sequence and date sequence mismatch";
+        break;
+      }
+    }
+
+    if (installMentDateerror) {
+      return installMentDateerror;
+    }
+
+    // check all fees are same compare to total fees
+
+    let totalFee = 0;
+    for (let i = 0; i < fees.schoolFeesDetail.length; i++) {
+      totalFee = totalFee + parseFloat(fees.schoolFeesDetail[i].feeAmount);
+    }
+
+    let totalFeePrepared = 0;
+    for (let i = 0; i < installmentDetails.length; i++) {
+      totalFeePrepared =
+        totalFeePrepared + parseFloat(installmentDetails[i].installmentAmount);
+    }
+
+    if (totalFeePrepared == totalFee) {
+      return "";
+    }
+
+    if (totalFee < totalFeePrepared) {
+      return `Total Installment amount ₹ ${totalFeePrepared
+        .toString()
+        .replace(
+          /\B(?=(\d{3})+(?!\d))/g,
+          ","
+        )} is more than the assigned fee ₹ ${totalFee
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    }
+
+    if (totalFee > totalFeePrepared) {
+      return `Total Installment amount ₹ ${totalFeePrepared
+        .toString()
+        .replace(
+          /\B(?=(\d{3})+(?!\d))/g,
+          ","
+        )} is less than the assigned fee ₹ ${totalFee
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    }
+  };
+
+  const isDuplicates = (arr: any) => {
+    const seen = new Set();
+    const duplicates: any = [];
+
+    arr.forEach((item: any) => {
+      const identifier = `${item.installmentDate}`;
+      if (seen.has(identifier)) {
+        duplicates.push(item);
+      } else {
+        seen.add(identifier);
+      }
+    });
+
+    return duplicates;
+  };
+
   return (
     <ParentLayout
       loading={loading}
@@ -205,36 +447,43 @@ const AddClass = () => {
                     <label className="block text-sm text-gray-600 text-left mb-0">
                       School
                     </label>
-
-                    <Select1
-                      name="role"
-                      placeholder="Select School"
-                      options={optionSchoolList}
-                      getOptionLabel={(option: any) => option.schoolName}
-                      getOptionValue={(option) => option}
-                      styles={{
-                        control: (baseStyles, state) => ({
-                          ...baseStyles,
-                          backgroundColor: "#e5e7eb",
-                          borderColor: state.isFocused ? "#0f58bf" : "#e1e4e8",
-                          textAlign: "left",
-                        }),
-                        option: (baseStyles, state) => ({
-                          ...baseStyles,
-                          textAlign: "left",
-                        }),
+                    <OutsideClickHandler
+                      onOutsideClick={() => {
+                        setSchoolMenu(false);
                       }}
-                      classNamePrefix="Select School"
-                      // onChange={(event) => {
-                      //   console.log("Schoo Group >>>>>", event);
-                      //   setSchools(event);
-                      // }}
-                      value={school}
-                      components={{ Option: formatOptionLabel }}
-                      menuIsOpen={schoolMenu}
-                      onMenuOpen={() => setSchoolMenu(true)}
-                      closeMenuOnScroll={true}
-                    />
+                    >
+                      <Select1
+                        name="role"
+                        placeholder="Select School"
+                        options={optionSchoolList}
+                        getOptionLabel={(option: any) => option.schoolName}
+                        getOptionValue={(option) => option}
+                        styles={{
+                          control: (baseStyles, state) => ({
+                            ...baseStyles,
+                            backgroundColor: "#e5e7eb",
+                            borderColor: state.isFocused
+                              ? "#0f58bf"
+                              : "#e1e4e8",
+                            textAlign: "left",
+                          }),
+                          option: (baseStyles, state) => ({
+                            ...baseStyles,
+                            textAlign: "left",
+                          }),
+                        }}
+                        classNamePrefix="Select School"
+                        // onChange={(event) => {
+                        //   console.log("Schoo Group >>>>>", event);
+                        //   setSchools(event);
+                        // }}
+                        value={school}
+                        components={{ Option: formatOptionLabel }}
+                        menuIsOpen={schoolMenu}
+                        onMenuOpen={() => setSchoolMenu(true)}
+                        closeMenuOnScroll={true}
+                      />
+                    </OutsideClickHandler>
 
                     <div className="block text-sm text-left text-red-600 h-4">
                       {schoolError && schoolError}
@@ -403,6 +652,146 @@ const AddClass = () => {
                       isDisabled={!school}
                     />
                   </div>
+
+                  <div className="mt-3">
+                    <label className="block text-sm text-gray-600 text-left mb-0">
+                      Fees
+                    </label>
+                    <OutsideClickHandler
+                      onOutsideClick={() => {
+                        setFeeMenu(false);
+                      }}
+                    >
+                      <Select1
+                        name="role"
+                        placeholder="Select Fees"
+                        options={feesList?.content ? feesList.content : []}
+                        getOptionLabel={(option: any) => option.name}
+                        getOptionValue={(option) => option}
+                        styles={{
+                          control: (baseStyles, state) => ({
+                            ...baseStyles,
+                            backgroundColor: "#e5e7eb",
+                            borderColor: state.isFocused
+                              ? "#0f58bf"
+                              : "#e1e4e8",
+                            textAlign: "left",
+                          }),
+                          option: (baseStyles, state) => ({
+                            ...baseStyles,
+                            textAlign: "left",
+                          }),
+                        }}
+                        classNamePrefix="Select Fees"
+                        value={fees}
+                        components={{ Option: formateFeesOption }}
+                        menuIsOpen={feeMenu}
+                        onMenuOpen={() => setFeeMenu(true)}
+                        closeMenuOnScroll={true}
+                      />
+                    </OutsideClickHandler>
+                  </div>
+                  {fees && (
+                    <>
+                      {installmentDetails.map((obj: any, index: number) => {
+                        return (
+                          <div className="flex flex-row">
+                            <div className="w-[44%]">
+                              <label className="block text-sm text-gray-600 text-left mb-0">
+                                {getInstallmentString(index + 1)} Amount
+                              </label>
+                              <input
+                                className="w-full px-2 py-1 text-gray-700 bg-[#e5e7eb] rounded"
+                                id="name"
+                                name="name"
+                                type="text"
+                                required
+                                placeholder="Amount"
+                                aria-label="Name"
+                                value={obj.installmentAmount}
+                                onChange={(event: any) => {
+                                  // setClassName(event.target.value);
+                                  // setClassNameError("");
+                                  console.log(
+                                    "event.target.value",
+                                    event.target.value,
+                                    isNaN(event.target.value),
+                                    event.target.value.length
+                                  );
+                                  if (
+                                    !isNaN(event.target.value) &&
+                                    event.target.value.length < 8
+                                  ) {
+                                    onInstallmentDetailsChanged(
+                                      "installmentAmount",
+                                      index,
+                                      event.target.value
+                                    );
+                                  }
+                                }}
+                              />
+                              <label className="block text-sm text-left text-red-600 h-4">
+                                {classNameError
+                                  ? "Please Enter Class Name"
+                                  : ""}
+                              </label>
+                            </div>
+                            <div className=" ml-2 text-left ">
+                              <label className="block text-sm text-gray-600 text-left mb-0">
+                                {getInstallmentString(index + 1)} Due Date
+                              </label>
+                              <DatePickerComponent
+                                startDate={
+                                  obj.installmentDate
+                                    ? new Date(obj.installmentDate)
+                                    : new Date()
+                                }
+                                // maxDate={new Date("2012-01-01")}
+                                // minDate={new Date()}
+                                onDateChange={(date: any) =>
+                                  onInstallmentDetailsChanged(
+                                    "installmentDate",
+                                    index,
+                                    date
+                                  )
+                                }
+                                className={
+                                  "bg-[#e5e7eb] h-[40px] w-[100%] pl-2 rounded-sm"
+                                }
+                              />
+                              {/* <label className="block text-sm text-left text-red-600 h-4">
+                            {classNameError ? "Please Enter Class Name" : ""}
+                          </label> */}
+                            </div>
+                            <div className="w-[12%] ml-2 mt-[20px]">
+                              <Button
+                                color="blue"
+                                placeholder={undefined}
+                                className="h-[40px] p-0 w-full"
+                                onClick={() => onInstallmentRemove(index)}
+                                disabled={installmentDetails.length === 1}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {installmentDetails.length < 5 && (
+                        <div className="w-full ml-2 text-right">
+                          <Button
+                            color="blue"
+                            placeholder={undefined}
+                            className="h-[30px] p-0 w-full w-[200px]"
+                            onClick={() => AddNewinstallment()}
+                          >
+                            Add installment
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
 
                   {/* <div className="mt-1">
                     <label className="block text-sm text-gray-600 text-left">
@@ -584,6 +973,22 @@ const AddClass = () => {
           </div>
         </main>
       </div>
+      <Modal show={errorModel} onHide={() => setErrorModel("")}>
+        <Modal.Header closeButton>
+          <Modal.Title className="text-lg">Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errorModel}</Modal.Body>
+        <Modal.Footer>
+          <Button
+            color="red"
+            className="h-[40px] w-[80px] p-0"
+            onClick={() => setErrorModel("")}
+            placeholder={undefined}
+          >
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </ParentLayout>
   );
 };

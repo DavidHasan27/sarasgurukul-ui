@@ -1,6 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ParentLayout from "../../component/app-component/Parent";
-import { faEye, faTrash, faSchool } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faTrash,
+  faSchool,
+  faPencil,
+  faSquarePollVertical,
+  faCommentDollar,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
   IconButton,
@@ -16,14 +23,13 @@ import Toggle from "react-toggle";
 import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import Pagination from "../../component/app-component/Pagination";
 import WarningDialog from "../../component/app-component/WarningDialog";
-import {
-  activeDeactiveUser,
-  //   getUserRoles,
-  getUsersList,
-  resetUpdatedUserDetails,
-} from "../../redux/user/userSlice";
+
 import { getClassList } from "../../redux/class/classSlice";
-import { getStudentList } from "../../redux/students/studentSlice";
+import {
+  activeDeactiveStudent,
+  getStudentList,
+  resetActivatetudent,
+} from "../../redux/students/studentSlice";
 
 const Students = () => {
   const navigate = useNavigate();
@@ -39,7 +45,7 @@ const Students = () => {
   const [active, setActive] = useState<boolean>(true);
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
 
-  const { loading, error, studentList } = useAppSelector(
+  const { loading, error, studentList, message } = useAppSelector(
     (state: any) => state.student
   );
 
@@ -81,13 +87,13 @@ const Students = () => {
     dispatch(getStudentList(body));
   };
 
-  const onActivateDeactivateSchool = () => {
+  const onActivateDeactivateStudent = () => {
     setWarningDialog(false);
     const body = {
       id: selectedItem.id,
       active: !selectedItem.active,
     };
-    dispatch(activeDeactiveUser(body));
+    dispatch(activeDeactiveStudent(body));
   };
   const formatOptionLabel = ({ value, label }: any) => {
     return (
@@ -137,8 +143,8 @@ const Students = () => {
     <ParentLayout
       loading={loading}
       error={error}
-      success={success}
-      onCloseSuccessAlert={() => dispatch(resetUpdatedUserDetails())}
+      success={message}
+      onCloseSuccessAlert={() => dispatch(resetActivatetudent())}
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
@@ -303,7 +309,7 @@ const Students = () => {
                       id="search"
                       name="search"
                       type="search"
-                      placeholder="Search by  Name, Email, Phone "
+                      placeholder="Search by  first name or last name "
                       aria-label="Phone2"
                       value={searchString}
                       onChange={(event) => {
@@ -416,46 +422,27 @@ const Students = () => {
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className={`hover:text-blue-500 ${
-                                !item.active ? "opacity-35" : "opacity-100"
-                              }`}
-                              href="tel:622322662"
-                            >
-                              {item.schools ? item.schools.schoolName : "-"}
-                            </a>
+                            {item.schools ? item.schools.schoolName : "-"}
                           </td>
                           <td
                             className={`w-1/8 text-left py-3 px-4 ${
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className={`hover:text-blue-500 ${
-                                !item.active ? "opacity-35" : "opacity-100"
-                              }`}
-                              href="tel:622322662"
-                            >
-                              {item.roleNo ? getRollNo(item.roleNo) : "-"}
-                            </a>
+                            {item.roleNo ? getRollNo(item.roleNo) : "-"}
                           </td>
                           <td
                             className={`w-1/3 text-left py-3 px-4 ${
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className="hover:text-blue-500"
-                              href="mailto:jonsmith@mail.com"
-                            >
-                              {item.parents
-                                ? item.parents.studentRelation +
-                                  ":" +
-                                  item.parents.firstName +
-                                  " " +
-                                  item.parents.lastName
-                                : "-"}
-                            </a>
+                            {item.parents
+                              ? item.parents.studentRelation +
+                                ":" +
+                                item.parents.firstName +
+                                " " +
+                                item.parents.lastName
+                              : "-"}
                           </td>
                           <td className="w-1/7 text-left py-3 px-4">
                             <Tooltip content="View/Edit Details">
@@ -463,7 +450,7 @@ const Students = () => {
                                 placeholder={"View"}
                                 className="h-[30px] w-[30px] bg-blue-800 ml-2"
                                 onClick={() =>
-                                  navigate("/app/view-edit-staff", {
+                                  navigate("/app/view-edit-student", {
                                     state: item,
                                   })
                                 }
@@ -484,14 +471,33 @@ const Students = () => {
                                 <FontAwesomeIcon icon={faTrash} />
                               </IconButton>
                             </Tooltip>
-                            {/* <Tooltip content="Edit Details">
+                            <Tooltip content="View/Add Reports">
                               <IconButton
                                 placeholder={"View"}
                                 className="h-[30px] w-[30px] bg-blue-800 ml-2"
+                                onClick={() => {
+                                  navigate("/app/studentReport", {
+                                    state: item,
+                                  });
+                                }}
                               >
-                                <FontAwesomeIcon icon={faPencil} />
+                                <FontAwesomeIcon icon={faSquarePollVertical} />
                               </IconButton>
-                            </Tooltip> */}
+                            </Tooltip>
+                            <Tooltip content="Student Fees">
+                              <IconButton
+                                placeholder={"View"}
+                                className="h-[30px] w-[30px] bg-blue-800 ml-2"
+                                onClick={() =>
+                                  navigate("/app/studentFee", {
+                                    state: item,
+                                  })
+                                }
+                                disabled={!item.active}
+                              >
+                                <FontAwesomeIcon icon={faCommentDollar} />
+                              </IconButton>
+                            </Tooltip>
                           </td>
                         </tr>
                       ))}
@@ -518,20 +524,20 @@ const Students = () => {
       {selectedItem && selectedItem.firstName && (
         <WarningDialog
           open={warningDialog}
-          onOkClick={() => onActivateDeactivateSchool()}
+          onOkClick={() => onActivateDeactivateStudent()}
           onCloseDialog={() => setWarningDialog(false)}
           header={"Warning !"}
           message={
             selectedItem.active
               ? `Are you sure? you want to de-activate."
-            ${selectedItem?.firstName + " " + selectedItem?.lastName}" User`
+            ${selectedItem?.firstName + " " + selectedItem?.lastName}" Student`
               : `Are you sure? you want to activate."
-            ${selectedItem?.firstName + " " + selectedItem?.lastName}" User`
+            ${selectedItem?.firstName + " " + selectedItem?.lastName}" Student`
           }
           subMessage={
             selectedItem.active
-              ? "Once you deactivate this user,  he wont access this school application data or he can not access any other functinality related to this school."
-              : "Once you activate the user , user will be available for all your activities"
+              ? "Once you deactivate this student,  We will not allow you or other members to any do operation for this student"
+              : "Once you activate the user , student will be available for all your activities"
           }
         />
       )}

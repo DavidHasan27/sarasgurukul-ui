@@ -431,42 +431,23 @@ const Staff = () => {
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className={`hover:text-blue-500 ${
-                                !item.active ? "opacity-35" : "opacity-100"
-                              }`}
-                              href="tel:622322662"
-                            >
-                              {item.phone}
-                            </a>
+                            {item.phone}
                           </td>
                           <td
                             className={`w-1/8 text-left py-3 px-4 ${
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className={`hover:text-blue-500 ${
-                                !item.active ? "opacity-35" : "opacity-100"
-                              }`}
-                              href="tel:622322662"
-                            >
-                              {item.roles ? item.roles.roleName : "-"}
-                            </a>
+                            {item.roles ? item.roles.roleName : "-"}
                           </td>
                           <td
                             className={`w-1/3 text-left py-3 px-4 ${
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className="hover:text-blue-500"
-                              href="mailto:jonsmith@mail.com"
-                            >
-                              {item.schoolses && item.schoolses.length > 0
-                                ? getSchoolString(item.schoolses)
-                                : "-"}
-                            </a>
+                            {item.schoolses && item.schoolses.length > 0
+                              ? getSchoolString(item.schoolses)
+                              : "-"}
                           </td>
                           <td className="w-1/7 text-left py-3 px-4">
                             <Tooltip content="View/Edit Details">

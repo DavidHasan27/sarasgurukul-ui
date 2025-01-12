@@ -31,8 +31,6 @@ const AppNavigation = ({ children, currentPath }: any) => {
     }
   }, [user]);
 
-  console.log("Menu List ::", menuList, user);
-
   return (
     <div className="bg-gray-100 font-family-karla flex">
       <aside className="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl bg-blue-gray-800">

@@ -308,32 +308,18 @@ const ClassView = () => {
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className={`hover:text-blue-500 ${
-                                !item.active ? "opacity-35" : "opacity-100"
-                              }`}
-                              href="tel:622322662"
-                            >
-                              {item.schools.schoolName},{item.schools.branch}
-                            </a>
+                            {item.schools.schoolName},{item.schools.branch}
                           </td>
                           <td
                             className={`w-1/8 text-left py-3 px-4 ${
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            <a
-                              className={`hover:text-blue-500 ${
-                                !item.active ? "opacity-35" : "opacity-100"
-                              }`}
-                              href="tel:622322662"
-                            >
-                              {item.classTeacher
-                                ? item.classTeacher.firstName +
-                                  " " +
-                                  item.classTeacher.lastName
-                                : "-"}
-                            </a>
+                            {item.classTeacher
+                              ? item.classTeacher.firstName +
+                                " " +
+                                item.classTeacher.lastName
+                              : "-"}
                           </td>
 
                           <td className="w-1/7 text-left py-3 px-4">

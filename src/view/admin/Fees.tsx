@@ -3,8 +3,7 @@ import ParentLayout from "../../component/app-component/Parent";
 import {
   faEye,
   faTrash,
-  faPencil,
-  faSchool,
+  faCommentDollar,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
@@ -15,71 +14,127 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useEffect, useState } from "react";
-import {
-  getSchoolList,
-  activeDeactiveSchool,
-  resetActivateDeactivateSchool,
-} from "../../redux/schools/schoolSlice";
+import Toggle from "react-toggle";
+import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import Pagination from "../../component/app-component/Pagination";
 import WarningDialog from "../../component/app-component/WarningDialog";
 
-const Schools = () => {
+import {
+  getAllFees,
+  activeDeactiveFees,
+  resetFeeDetails,
+} from "../../redux/fees/feesSlice";
+
+const FeesType = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { loading, error, schoolList, success } = useAppSelector(
-    (state: any) => state.school
-  );
   const [pageIndex, setPageIndex] = useState(1);
   const [warningDialog, setWarningDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [searchString, setSearchString] = useState<any>("");
 
-  console.log("School List ::", schoolList);
+  const [active, setActive] = useState<boolean>(true);
+
+  const { loading, error, feesList, message } = useAppSelector(
+    (state: any) => state.fees
+  );
 
   useEffect(() => {
-    dispatch(
-      getSchoolList({
-        pageIndex: pageIndex,
-        count: 7,
-        searchString: searchString.trim(),
-      })
-    );
+    dispatch(getSchoolsForSelection());
+    getFeeData();
+  }, []);
+
+  useEffect(() => {
+    getFeeData(searchString, active, pageIndex - 1);
   }, [pageIndex]);
 
-  const onActivateDeactivateSchool = () => {
+  const getFeeData = (
+    searchString: any = undefined,
+    active: any = true,
+    page: any = 0
+  ) => {
+    const body: any = {
+      page: page,
+      size: 10,
+      active: active,
+    };
+
+    if (searchString) {
+      body["search"] = searchString;
+    }
+    dispatch(getAllFees(body));
+  };
+
+  const onActivateDeactivateFees = () => {
     setWarningDialog(false);
     const body = {
       id: selectedItem.id,
       active: !selectedItem.active,
     };
-    dispatch(activeDeactiveSchool(body));
+    dispatch(activeDeactiveFees(body));
+  };
+
+  const getTotalFees = (item: any) => {
+    let totalFee = 0;
+    for (let i = 0; i < item.schoolFeesDetail.length; i++) {
+      totalFee = totalFee + parseFloat(item.schoolFeesDetail[i].feeAmount);
+    }
+    return "₹ " + totalFee.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const getFeesParams = (item: any) => {
+    let totalFee = "";
+    for (let i = 0; i < item.schoolFeesDetail.length; i++) {
+      if (totalFee) {
+        totalFee = totalFee + ", " + item.schoolFeesDetail[i].feeName;
+      } else {
+        totalFee = item.schoolFeesDetail[i].feeName;
+      }
+    }
+    return totalFee;
   };
 
   return (
     <ParentLayout
       loading={loading}
       error={error}
-      success={success}
-      onCloseSuccessAlert={() => dispatch(resetActivateDeactivateSchool())}
+      success={message}
+      onCloseSuccessAlert={() => dispatch(resetFeeDetails())}
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
-          <h1 className="text-3xl text-black pb-6">Schools</h1>
+          <h1 className="text-3xl text-black pb-6">Fees</h1>
 
           <div className="w-full mt-6">
-            <div className="w-full flex flex-row justify-between items-center">
-              <p className="text-xl pb-3 flex items-center">
-                <i className="fas fa-list mr-3"></i> School List
-              </p>
+            <div className="w-full flex flex-row  justify-end items-end ">
+              {/* <p className="text-xl pb-3 flex items-center">
+                <i className="fas fa-list mr-3"></i> Staff List
+              </p> */}
               <div className="flex flex-row  mb-2 ">
-                <div className="relative flex w-full mr-2">
-                  <div className="relative h-10 w-full min-w-[370px]">
+                <div className="relative flex w-full mr-2 ">
+                  <div className="w-[80px] flex-row flex mr-12 text-center mt-2">
+                    <Toggle
+                      id="cheese-status"
+                      defaultChecked={active}
+                      onChange={() => {
+                        setActive(!active);
+                        getFeeData(searchString, !active, 0);
+                        setPageIndex(1);
+                      }}
+                      icons={false}
+                    />
+                    <span className="ml-2">
+                      {active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+
+                  <div className="relative h-10 w-full min-w-[200px]">
                     <input
                       className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
                       id="search"
                       name="search"
                       type="search"
-                      placeholder="Search by School Name, Branch, Email, Phone "
+                      placeholder="Search by name "
                       aria-label="Phone2"
                       value={searchString}
                       onChange={(event) => {
@@ -87,62 +142,44 @@ const Schools = () => {
                         setSearchString(value);
                         if (!value || !value.trim()) {
                           setPageIndex(1);
-                          dispatch(
-                            getSchoolList({
-                              pageIndex: 1,
-                              count: 7,
-                              searchString: "",
-                            })
-                          );
+                          getFeeData(undefined, active, 0);
                         }
                       }}
                     />
-                    {/* <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                      Seach by name, branch, phone email
-                    </label> */}
                   </div>
                 </div>
                 <Button
-                  className="flex items-center justify-center gap-3 mr-2"
+                  className="flex items-center justify-center mr-2"
                   placeholder={"Search"}
                   color="blue"
                   size="sm"
                   onClick={() => {
-                    if (pageIndex !== 1) {
-                      setPageIndex(1);
-                    } else {
-                      dispatch(
-                        getSchoolList({
-                          pageIndex: pageIndex,
-                          count: 7,
-                          searchString: searchString.trim(),
-                        })
-                      );
-                    }
+                    setPageIndex(1);
+                    getFeeData(searchString, active, 0);
                   }}
                 >
                   Search
                 </Button>
 
                 <Button
-                  className="flex items-center justify-center gap-3 min-w-[170px]"
-                  placeholder={"Add New School"}
+                  className="flex items-center justify-center  min-w-[150px]"
+                  placeholder={"Add Fees"}
                   color="blue"
                   size="sm"
-                  onClick={() => navigate("/app/addschool")}
+                  onClick={() => navigate("/app/addfees")}
                 >
-                  <FontAwesomeIcon icon={faSchool} />
-                  Add New School
+                  <FontAwesomeIcon icon={faCommentDollar} className="mr-2" />
+                  Add Fees
                 </Button>
               </div>
             </div>
-            {(!schoolList ||
-              !schoolList.content ||
-              schoolList.content.length === 0) &&
+            {(!feesList ||
+              !feesList.content ||
+              feesList.content.length === 0) &&
             !loading ? (
               <div>
                 <FontAwesomeIcon
-                  icon={faSchool}
+                  icon={faCommentDollar}
                   size="6x"
                   className="text-gray-400 mt-[10%]"
                 />
@@ -152,7 +189,7 @@ const Schools = () => {
                   className="text-gray-400 mt-10"
                   placeholder={""}
                 >
-                  No Schools Found
+                  No Students Found
                 </Typography>
               </div>
             ) : (
@@ -160,29 +197,24 @@ const Schools = () => {
                 <table className="min-w-full bg-white">
                   <thead className="bg-gray-800 text-white">
                     <tr>
-                      <th className="w-1/5 text-left py-3 px-4 uppercase font-semibold text-sm">
+                      <th className="w-1/7 text-left py-3 px-4 uppercase font-semibold text-sm">
                         Name
                       </th>
-                      <th className="w-1/7 text-left py-3 px-4 uppercase font-semibold text-sm">
-                        Branch
-                      </th>
-                      <th className="w-1/8 text-left py-3 px-4 uppercase font-semibold text-sm">
-                        Phone
-                      </th>
-                      <th className="w-1/8 text-left py-3 px-4 uppercase font-semibold text-sm">
-                        Email
-                      </th>
-                      <th className="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">
-                        Addreess
+                      <th className="w-1/2 text-left py-3 px-4 uppercase font-semibold text-sm">
+                        Fees Parameter
                       </th>
                       <th className="w-1/7 text-left py-3 px-4 uppercase font-semibold text-sm">
-                        Actions
+                        Total Fees
+                      </th>
+
+                      <th className="w-1/7 text-left py-3 px-4 uppercase font-semibold text-sm">
+                        Action
                       </th>
                     </tr>
                   </thead>
                   <tbody className="text-gray-700">
-                    {schoolList &&
-                      schoolList.content.map((item: any, index: number) => (
+                    {feesList &&
+                      feesList.content.map((item: any, index: number) => (
                         <tr
                           className={`${index % 2 != 0 ? "bg-gray-200" : ""}`}
                         >
@@ -191,51 +223,40 @@ const Schools = () => {
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            {item.schoolName}
+                            {item.name}
+                          </td>
+
+                          <td
+                            className={`w-1/5 text-left py-3 px-4 ${
+                              !item.active ? "opacity-35" : "opacity-100"
+                            }`}
+                          >
+                            {getFeesParams(item)}
                           </td>
                           <td
                             className={`w-1/7 text-left py-3 px-4 ${
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            {item.branch}
+                            {getTotalFees(item)}
                           </td>
-                          <td
-                            className={`w-1/8 text-left py-3 px-4 ${
-                              !item.active ? "opacity-35" : "opacity-100"
-                            }`}
-                          >
-                            {item.phone1}
-                          </td>
-                          <td
-                            className={`w-1/8 text-left py-3 px-4 ${
-                              !item.active ? "opacity-35" : "opacity-100"
-                            }`}
-                          >
-                            {item.schoolEmail}
-                          </td>
-                          <td
-                            className={`w-1/3 text-left py-3 px-4 ${
-                              !item.active ? "opacity-35" : "opacity-100"
-                            }`}
-                          >
-                            {item.addressLine1}
-                          </td>
+
                           <td className="w-1/7 text-left py-3 px-4">
                             <Tooltip content="View/Edit Details">
                               <IconButton
                                 placeholder={"View"}
                                 className="h-[30px] w-[30px] bg-blue-800 ml-2"
                                 onClick={() =>
-                                  navigate("/app/view-edit-school", {
+                                  navigate("/app/addfees", {
                                     state: item,
                                   })
                                 }
+                                disabled={!item.active}
                               >
                                 <FontAwesomeIcon icon={faEye} />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip content="Active/Deactive School">
+                            <Tooltip content="Active/Deactive User">
                               <IconButton
                                 placeholder={"View"}
                                 className="h-[30px] w-[30px] bg-blue-800 ml-2"
@@ -247,12 +268,17 @@ const Schools = () => {
                                 <FontAwesomeIcon icon={faTrash} />
                               </IconButton>
                             </Tooltip>
-                            {/* <Tooltip content="Edit Details">
+                            {/* <Tooltip content="View/Add Reports">
                               <IconButton
                                 placeholder={"View"}
                                 className="h-[30px] w-[30px] bg-blue-800 ml-2"
+                                onClick={() => {
+                                  navigate("/app/studentReport", {
+                                    state: item,
+                                  });
+                                }}
                               >
-                                <FontAwesomeIcon icon={faPencil} />
+                                <FontAwesomeIcon icon={faSquarePollVertical} />
                               </IconButton>
                             </Tooltip> */}
                           </td>
@@ -262,14 +288,12 @@ const Schools = () => {
                 </table>
               </div>
             )}
-            {!schoolList ||
-            !schoolList.content ||
-            schoolList.content.length == 0 ? (
+            {!feesList || !feesList.content || feesList.content.length == 0 ? (
               <></>
             ) : (
               <div className="mt-2 flex flex-row justify-end">
                 <Pagination
-                  count={schoolList.totalPages}
+                  count={feesList.totalPages}
                   onPageChange={(pageIndex: number) => setPageIndex(pageIndex)}
                   pageIndex={pageIndex}
                 />
@@ -278,27 +302,27 @@ const Schools = () => {
           </div>
         </main>
       </div>
-      {selectedItem && selectedItem.schoolName && (
+      {selectedItem && selectedItem.name && (
         <WarningDialog
           open={warningDialog}
-          onOkClick={() => onActivateDeactivateSchool()}
+          onOkClick={() => onActivateDeactivateFees()}
           onCloseDialog={() => setWarningDialog(false)}
           header={"Warning !"}
           message={
             selectedItem.active
               ? `Are you sure? you want to de-activate."
-            ${selectedItem?.schoolName}" School`
+            ${selectedItem?.name}" fee`
               : `Are you sure? you want to activate."
-            ${selectedItem?.schoolName}" School`
+            ${selectedItem?.name}" fee`
           }
           subMessage={
             selectedItem.active
-              ? "Once you deactivate this school,  You wont access this school related data or you can not access any other functinality related to this school."
-              : "Once you activate the school , school will be available for all your activities"
+              ? "Once you deactivate this fee,  it wont be available for new class, but it wont affect on current classes. "
+              : "Once you activate the user , It will be available for class"
           }
         />
       )}
     </ParentLayout>
   );
 };
-export default Schools;
+export default FeesType;

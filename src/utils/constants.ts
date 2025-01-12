@@ -13,6 +13,7 @@ import {
   faClipboard,
   faFileImport,
   faBriefcase,
+  faFaceGrinHearts,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const APP_URL = [
@@ -29,7 +30,15 @@ export const APP_URL = [
   "/app/addstaff",
   "/app/students",
   "/app/addStudent",
+  "/app/view-edit-student",
+  "/app/studentFee",
   "/app/year",
+  "/app/studentReport",
+  "/app/newReport",
+  "/app/fees",
+  "/app/addfees",
+  "/app/schoolHolidays",
+  "/app/addHoliday",
 ];
 
 export const BLOODGROUP = [
@@ -43,12 +52,24 @@ export const BLOODGROUP = [
   { option: "AB-", value: "AB-" },
 ];
 
+export const LATE_FEE = 100;
+
+export const CASH_PAID_BY = [
+  { option: "UPA", value: "UPA" },
+  { option: "Net Banking", value: "Net Banking" },
+  { option: "Cash", value: "Cash" },
+];
+
 export const RELATIONSHIP = [
   { option: "Mother", value: "Mother" },
   { option: "Father", value: "Father" },
   { option: "Guardian", value: "Guardian" },
 ];
 
+export const TERMS = [
+  { option: "TERM-I", value: "TERM-I" },
+  { option: "TERM-II", value: "TERM-II" },
+];
 export const CLASS_IDENTITY = [
   { option: "Junior KG", value: "JR_KG" },
   { option: "Senior KG", value: "SR_KG" },
@@ -69,7 +90,12 @@ export const ROLE_PRINCIPAL = "PRINCIPAL";
 
 export const ADMIN_MENU = [
   { name: "School Years", path: "/app/year", icon: faCalendarDay },
-  { name: "Fees", path: "/app/schools", icon: faCommentDollar },
+  { name: "Fees", path: "/app/fees", icon: faCommentDollar },
+  {
+    name: "School Holidays",
+    path: "/app/schoolHolidays",
+    icon: faFaceGrinHearts,
+  },
   { name: "Emails", path: "/app/students", icon: faEnvelope },
   { name: "Exam Time Table", path: "/app/staff", icon: faClipboard },
   { name: "Planner", path: "/app/class", icon: faCalendarDay },
@@ -140,3 +166,55 @@ export const MENU_LIST: any = {
 
 export const RAHATANI_BRANCH = "Rahatani Phata, Kalewadi";
 export const HINJEWADI_BRANCH = "Maan, Hinjewadi";
+
+const sampleBody = {
+  id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  title: "string",
+  remark: "string",
+  otherInfo: "string",
+  teacherComments: "string",
+  terms: "string",
+  promoted: "string",
+  studentYears: {
+    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  },
+  reportQueAnswerKgs: [
+    {
+      answer: "string",
+      answerNumber: 0,
+      reportCard: "string",
+      reportQuestions: {
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      },
+    },
+  ],
+  reportQueAnswerPlay: [
+    {
+      needImprovement: "string",
+      satisfactory: "string",
+      good: "string",
+      excellent: "string",
+      grade: "string",
+      reportQuestions: {
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      },
+    },
+  ],
+  reportQueAnswerFirst: [
+    {
+      reportCard: "string",
+      augMarkScheduled: "string",
+      augTeacherComments: "string",
+      halfMarkScheduled: "string",
+      halfTeacherComments: "string",
+      decTeacherComments: "string",
+      decMarkScheduled: "string",
+      finalTeacherComments: "string",
+      finalMarkScheduled: "string",
+      reportQuestions: {
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      },
+    },
+  ],
+  published: true,
+};

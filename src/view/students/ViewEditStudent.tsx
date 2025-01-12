@@ -21,118 +21,143 @@ import DatePicker from "../../component/app-component/DatePicker";
 import { getClassList } from "../../redux/class/classSlice";
 import OutsideClickHandler from "react-outside-click-handler";
 import {
-  createNewStudent,
   resetNewStudent,
+  updateStudentDetails,
 } from "../../redux/students/studentSlice";
 import { getSchoolYear } from "../../redux/admin/adminSlice";
 import { find } from "lodash";
+import { useLocation } from "react-router-dom";
 
-const AddStudent = () => {
+const ViewEditStudent = () => {
+  const location = useLocation();
+  const currentObj = location.state;
+  console.log("Current Object ::::", currentObj);
   const firstScreen = useRef<any>();
   const secondScreen = useRef<any>();
-  const [sFirstName, setSFirstName] = useState("");
+
+  const [sFirstName, setSFirstName] = useState(currentObj.firstName);
   const [sFirstNameError, setSFirstNameError] = useState("");
 
-  const [sLastName, setSLastName] = useState("");
+  const [sLastName, setSLastName] = useState(currentObj.lastName);
   const [slastNameError, setSLastNameError] = useState("");
 
-  const [smiddleName, setSMiddleName] = useState("");
+  const [smiddleName, setSMiddleName] = useState(currentObj.middleName);
   const [smiddleNameError, setSMiddleNameError] = useState("");
 
-  const [school, setSchool] = useState<any>();
+  const [school, setSchool] = useState<any>(currentObj.schools);
   const [schoolError, setSchoolError] = useState<any>("");
 
-  const [classs, setClasss] = useState<any>();
+  const [classs, setClasss] = useState<any>(currentObj.schoolClass);
   const [classsError, setclasssError] = useState("");
 
-  const [motherName, setMotherName] = useState("");
+  const [motherName, setMotherName] = useState(currentObj.motherName);
   const [motherNameError, setMotherNameError] = useState("");
 
   const [fatherName, setFatherName] = useState("");
   const [fatherNameError, setFatherNameError] = useState("");
 
-  const [guardianName, setGuardianName] = useState("");
+  const [guardianName, setGuardianName] = useState(currentObj.guardianName);
   const [guardianNameError, setGuardianNameError] = useState("");
 
-  const [sbloodGroup, setSBloodGroup] = useState<any>("");
+  const [sbloodGroup, setSBloodGroup] = useState<any>({
+    option: currentObj.bloodGroup,
+    value: currentObj.bloodGroup,
+  });
   const [sbloodGroupError, setSbloodGroupError] = useState("");
 
-  const [sbirthDate, setSBirthDate] = useState<any>();
+  const [sbirthDate, setSBirthDate] = useState<any>(
+    new Date(currentObj.birthDate)
+  );
   const [sbirthDateError, setSBirthDateError] = useState("");
 
   const [sjoiningDate, setSJoiningDate] = useState<any>(new Date());
   const [sjoiningDateError, setSJoiningDateError] = useState<any>("");
 
-  const [hobbies, setHobbies] = useState("");
+  const [hobbies, setHobbies] = useState(currentObj.hobbies);
   const [hobbiesError, setHobbiesError] = useState("");
 
-  const [precautions, setPrecautions] = useState("");
+  const [precautions, setPrecautions] = useState(currentObj.precaution);
   const [precautionsError, setPrecautionsError] = useState("");
 
-  const [medicalHistory, setMedicalHistory] = useState("");
+  const [medicalHistory, setMedicalHistory] = useState(
+    currentObj.medicalHistory
+  );
   const [medicalHistoryError, setMedicalHistoryError] = useState("");
 
   // Parent State
+  const parentObj = currentObj.parents;
 
-  const [firstName, setFirstName] = useState("");
+  const [firstName, setFirstName] = useState(parentObj.firstName);
   const [firstNameError, setFirstNameError] = useState("");
 
-  const [lastName, setLastName] = useState("");
+  const [lastName, setLastName] = useState(parentObj.lastName);
   const [lastNameError, setLastNameError] = useState("");
 
-  const [middleName, setMiddleName] = useState("");
+  const [middleName, setMiddleName] = useState(parentObj.middleName);
   const [middleNameError, setMiddleNameError] = useState("");
 
-  const [aboutStaff, setAboutStaff] = useState("");
+  const [aboutStaff, setAboutStaff] = useState(
+    parentObj.userDetails.description
+  );
   const [aboutStaffError, setAboutStaffError] = useState("");
 
   const [schoolImage, setSchoolImage] = useState("");
   const [schoolImageError, setSchoolImageError] = useState("");
 
-  const [phone1, setPhone1] = useState("");
+  const [phone1, setPhone1] = useState(parentObj.phone);
   const [phone1Error, setPhone1Error] = useState("");
-  const [phone2, setPhone2] = useState("");
+  const [phone2, setPhone2] = useState(parentObj.userDetails.phone2);
   const [phone2Error, setPhone2Error] = useState("");
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(parentObj.email);
   const [emailError, setEmailError] = useState("");
 
-  const [bloodGroup, setBloodGroup] = useState<any>("");
-  const [birthDate, setBirthDate] = useState<any>();
-  const [birthDateError, setBirthDateError] = useState("");
+  const [bloodGroup, setBloodGroup] = useState<any>({
+    option: parentObj.userDetails.bloodGroup,
+    value: parentObj.userDetails.bloodGroup,
+  });
 
   const [joiningDateError, setJoiningDateError] = useState("");
 
-  const [addressLine1, setAddressLine1] = useState("");
-  const [addressLine2, setAddressLine2] = useState("");
+  const [addressLine1, setAddressLine1] = useState(
+    parentObj.userDetails.addressLine1
+  );
+  const [addressLine2, setAddressLine2] = useState(
+    parentObj.userDetails.addressLine2
+  );
 
-  const [state, setState] = useState("");
+  const [state, setState] = useState(parentObj.userDetails.state);
   const [stateError, setStateError] = useState("");
 
-  const [relativeName, setRelativeName] = useState("");
+  const [relativeName, setRelativeName] = useState(
+    parentObj.userDetails.relativeName
+  );
   const [relativeNameError, setRelativeNameError] = useState("");
 
-  const [relativeNo, setrelativeNo] = useState("");
+  const [relativeNo, setrelativeNo] = useState(
+    parentObj.userDetails.relativeNo
+  );
   const [relativeNoError, setrelativeNoError] = useState("");
 
-  const [branch, setBranch] = useState("");
+  const [branch, setBranch] = useState(parentObj.userDetails.area);
 
   const [country, setCountry] = useState("India");
   const [countryError, setCountryError] = useState("");
 
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(parentObj.userDetails.city);
   const [cityError, setCityError] = useState("");
 
-  const [role, setRole] = useState<any>("");
-  const [roleError, setRoleError] = useState("");
-
-  const [pincode, setPincode] = useState("");
+  const [pincode, setPincode] = useState(parentObj.userDetails.pinCode);
   const [pincodeError, setPincodeError] = useState("");
   const [addressError, setAddressError] = useState("");
-  const [joiningDate, setJoiningDate] = useState<any>(new Date());
+  const [joiningDate, setJoiningDate] = useState<any>(
+    new Date(parentObj.userDetails.joiningDate)
+  );
   const [requiredRoleList, setRequiredRoleList] = useState<any>([]);
 
-  const [studentRelation, setStudentRelation] = useState<any>();
+  const [studentRelation, setStudentRelation] = useState<any>(
+    RELATIONSHIP.find((obj) => obj.value === parentObj.studentRelation)
+  );
   const [studentRelationError, setStudentRelationError] = useState("");
 
   const [schoolMenu, setSchoolMenu] = useState<any>();
@@ -143,7 +168,7 @@ const AddStudent = () => {
   //   (state: any) => state.user
   // );
 
-  const { loading, error, success, roleList, newStudent } = useAppSelector(
+  const { loading, error, success, roleList, updateStudent } = useAppSelector(
     (state: any) => state.student
   );
 
@@ -169,7 +194,16 @@ const AddStudent = () => {
 
   useEffect(() => {
     if (yearList && yearList.length > 0) {
-      const year = find(yearList, (item: any) => item.active);
+      const studentyear = currentObj.students_Details.find(
+        (obj: any) => obj.active
+      );
+
+      let year;
+      if (studentyear) {
+        year = find(yearList, (item: any) => item.id === studentyear.yearId);
+      } else {
+        year = find(yearList, (item: any) => item.active);
+      }
       setSelectedYear(year);
     }
   }, [yearList]);
@@ -231,11 +265,11 @@ const AddStudent = () => {
   );
 
   useEffect(() => {
-    if (newStudent) {
+    if (updateStudent) {
       // navigate("/app/dash", { replace: true });
       resetAllData();
     }
-  }, [newStudent]);
+  }, [updateStudent]);
 
   const resetAllData = () => {
     setFirstName("");
@@ -260,8 +294,6 @@ const AddStudent = () => {
     setCityError("");
     setPincode("");
     setPincodeError("");
-    setBirthDate(null);
-    setBirthDateError("");
     setRelativeName("");
     setRelativeNameError("");
     setBloodGroup("");
@@ -272,8 +304,6 @@ const AddStudent = () => {
     setJoiningDate("");
     setJoiningDateError("");
     setSchoolError("");
-    setRole("");
-    setRoleError("");
     setBloodGroup(null);
     setSchool("");
     setClasss("");
@@ -435,11 +465,6 @@ const AddStudent = () => {
       isError = true;
     }
 
-    if (!studentRelation) {
-      setStudentRelationError("Please select relation with student");
-      isError = true;
-    }
-
     if (isError) {
       secondScreen.current.scrollIntoView({
         behavior: "smooth",
@@ -461,6 +486,7 @@ const AddStudent = () => {
     // const schoolListIemp = school.map((element: any) => element.id);
 
     const studentBody = {
+      id: currentObj.id,
       firstName: sFirstName,
       middleName: smiddleName,
       lastName: sLastName,
@@ -481,6 +507,7 @@ const AddStudent = () => {
       medicalHistory: medicalHistory ? medicalHistory : null,
       yearId: selectedYear.id,
       parents: {
+        id: parentObj.id,
         firstName: firstName,
         middleName: middleName,
         lastName: lastName,
@@ -535,7 +562,7 @@ const AddStudent = () => {
 
     // console.log("Create User Body", body);
 
-    dispatch(createNewStudent(studentBody));
+    dispatch(updateStudentDetails(studentBody));
   };
 
   const formatOptionLabel = ({ value, label }: any) => {
@@ -601,7 +628,7 @@ const AddStudent = () => {
     <ParentLayout
       loading={loading}
       error={error}
-      success={newStudent ? "New user created successfully" : ""}
+      success={updateStudent ? "Student updated successfully" : ""}
       onCloseSuccessAlert={() => dispatch(resetNewStudent())}
       onCloseAlert={() => dispatch(resetNewStudent())}
     >
@@ -669,6 +696,7 @@ const AddStudent = () => {
                           menuIsOpen={YearMenu}
                           onMenuOpen={() => setYearMenu(true)}
                           closeMenuOnScroll={true}
+                          isDisabled={true}
                         />
                       </OutsideClickHandler>
                       <label className="block text-sm text-left text-red-600 h-4">
@@ -2647,4 +2675,4 @@ const AddStudent = () => {
   );
 };
 
-export default AddStudent;
+export default ViewEditStudent;

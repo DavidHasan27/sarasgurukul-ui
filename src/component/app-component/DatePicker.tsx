@@ -11,6 +11,8 @@ const DatePickerComponent = ({
   maxDate,
   minDate,
   onDateChange,
+  className,
+  placeholder,
 }: any) => {
   //   const [startDate, setStartDate] = useState(new Date("1990-01-01"));
 
@@ -21,12 +23,15 @@ const DatePickerComponent = ({
     <DatePicker
       selected={startDate}
       onChange={(date: any) => onDateChange(date)}
-      className="bg-[#e5e7eb] h-[45px] w-[100%] pl-2 rounded-sm"
+      className={
+        className ? className : "bg-[#e5e7eb] h-[45px] w-[100%] pl-2 rounded-sm"
+      }
       dateFormat="dd/MM/YYYY"
       maxDate={maxDate}
       minDate={minDate}
       showMonthDropdown
       showYearDropdown
+      placeholderText={placeholder}
     />
   );
 };
