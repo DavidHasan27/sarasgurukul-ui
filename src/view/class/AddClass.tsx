@@ -770,6 +770,8 @@ const AddClass = () => {
                                 className="h-[40px] p-0 w-full"
                                 onClick={() => onInstallmentRemove(index)}
                                 disabled={installmentDetails.length === 1}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 Remove
                               </Button>
@@ -785,6 +787,8 @@ const AddClass = () => {
                             placeholder={undefined}
                             className="h-[30px] p-0 w-full w-[200px]"
                             onClick={() => AddNewinstallment()}
+                            onPointerEnterCapture={undefined}
+                            onPointerLeaveCapture={undefined}
                           >
                             Add installment
                           </Button>
@@ -965,6 +969,8 @@ const AddClass = () => {
                 color="blue"
                 placeholder={"Submit"}
                 onClick={() => onSubmitSchool()}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <FontAwesomeIcon icon={faSchool} className="mr-2 fa-1x p-0" />
                 Add Class
@@ -984,6 +990,8 @@ const AddClass = () => {
             className="h-[40px] w-[80px] p-0"
             onClick={() => setErrorModel("")}
             placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
             Ok
           </Button>

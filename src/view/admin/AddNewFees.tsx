@@ -193,6 +193,8 @@ const AddFees = () => {
                         onClick={() => onSubmit()}
                         className="h-[40px] p-0 w-[150px]"
                         disabled={currentObj}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
                         <FontAwesomeIcon
                           icon={faPlusCircle}
@@ -303,6 +305,8 @@ const AddFees = () => {
                               className="bg-[#e5e7eb]"
                               onClick={() => onRemoveClick(index)}
                               disabled={currentObj}
+                              onPointerEnterCapture={undefined}
+                              onPointerLeaveCapture={undefined}
                             >
                               <FontAwesomeIcon
                                 icon={faCircleXmark}
@@ -323,6 +327,8 @@ const AddFees = () => {
                           placeholder={"Submit"}
                           onClick={() => AddNewType()}
                           className="h-[40px] p-0 w-[80px]"
+                          onPointerEnterCapture={undefined}
+                          onPointerLeaveCapture={undefined}
                         >
                           <FontAwesomeIcon
                             icon={faPlusCircle}

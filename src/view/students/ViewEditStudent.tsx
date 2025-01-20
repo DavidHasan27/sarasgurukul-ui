@@ -2646,6 +2646,8 @@ const ViewEditStudent = () => {
                       color="blue"
                       placeholder={"Submit"}
                       onClick={() => onSubmitSchool()}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       <FontAwesomeIcon
                         icon={faUserPlus}

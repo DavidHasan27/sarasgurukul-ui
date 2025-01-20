@@ -226,6 +226,8 @@ const ClassView = () => {
                     );
                     setPageIndex(1);
                   }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Search
                 </Button>
@@ -236,6 +238,8 @@ const ClassView = () => {
                   color="blue"
                   size="sm"
                   onClick={() => navigate("/app/addclass")}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   <FontAwesomeIcon icon={faSchool} />
                   Add New Class
@@ -257,6 +261,8 @@ const ClassView = () => {
                   variant="h5"
                   className="text-gray-400 mt-10"
                   placeholder={""}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   No Class Found
                 </Typography>
@@ -332,6 +338,8 @@ const ClassView = () => {
                                     state: item,
                                   })
                                 }
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faEye} />
                               </IconButton>
@@ -352,6 +360,8 @@ const ClassView = () => {
                                   setSelectedItem(item);
                                   setWarningDialog(true);
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faTrash} />
                               </IconButton>

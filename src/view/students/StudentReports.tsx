@@ -241,6 +241,8 @@ const StudentReport = () => {
                     state: { student: currentObj, years },
                   });
                 }}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 Add New Report
               </Button>
@@ -260,6 +262,8 @@ const StudentReport = () => {
                   variant="h5"
                   className="text-gray-400 mt-10"
                   placeholder={""}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   No Students Report Found
                 </Typography>
@@ -364,6 +368,8 @@ const StudentReport = () => {
 
                                     prepareReportList(DATATABLE, item, true);
                                   }}
+                                  onPointerEnterCapture={undefined}
+                                  onPointerLeaveCapture={undefined}
                                 >
                                   <FontAwesomeIcon icon={faEdit} />
                                 </IconButton>
@@ -379,6 +385,8 @@ const StudentReport = () => {
                                     setSelectedItem(item);
                                     setWarningDialog(true);
                                   }}
+                                  onPointerEnterCapture={undefined}
+                                  onPointerLeaveCapture={undefined}
                                 >
                                   <FontAwesomeIcon icon={faTrash} />
                                 </IconButton>
@@ -406,6 +414,8 @@ const StudentReport = () => {
                                   }
                                   prepareReportList(DATATABLE, item, false);
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faMagnifyingGlass} />
                               </IconButton>

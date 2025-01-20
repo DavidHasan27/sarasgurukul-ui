@@ -392,6 +392,8 @@ const StudentFeeDetails = () => {
                   // console.log("Print Component ::::");
                   printStudentFeeDetails();
                 }}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <FontAwesomeIcon icon={faPrint} />
               </Button>
@@ -859,6 +861,8 @@ const StudentFeeDetails = () => {
                       onClick={() => {
                         setDiscountDialog(true);
                       }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       <FontAwesomeIcon icon={faDroplet} className="mr-2" />
                       Add Discount
@@ -870,6 +874,8 @@ const StudentFeeDetails = () => {
                       // onClick={() => {
                       //   setDiscountDialog(true);
                       // }}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       <FontAwesomeIcon icon={faDroplet} className="mr-1" />
                       {discount + "% Discount"}
@@ -889,6 +895,8 @@ const StudentFeeDetails = () => {
                       console.log("Print Component ::::");
                       printStudentFeeDetails();
                     }}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
                   >
                     <FontAwesomeIcon icon={faPrint} />
                   </Button>
@@ -915,11 +923,15 @@ const StudentFeeDetails = () => {
                       />
                     }
                     placeholder={undefined}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
                   >
                     <AccordionHeader
                       onClick={() => onHeaderClick(index)}
                       placeholder={undefined}
                       className="p-0"
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       <div className="h-[50px] ">
                         <label className="block text-lg text-gray-900 text-left mb-0 font-bold ">
@@ -1044,6 +1056,8 @@ const StudentFeeDetails = () => {
                                     true
                                   )
                                 }
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon
                                   icon={faCircleCheck}
@@ -1063,6 +1077,8 @@ const StudentFeeDetails = () => {
                                     true
                                   )
                                 }
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon
                                   icon={faBell}
@@ -1083,6 +1099,8 @@ const StudentFeeDetails = () => {
                                   });
                                   // getInstallmentPrintComponent();
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faPrint} />
                               </Button>
@@ -1093,6 +1111,8 @@ const StudentFeeDetails = () => {
                                 placeholder={undefined}
                                 className="p-0 h-[35px] w-[200px] mt-4"
                                 color="green"
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon
                                   icon={faCircleCheck}
@@ -1112,6 +1132,8 @@ const StudentFeeDetails = () => {
                                     index: nextIndex,
                                   });
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faPrint} />
                               </Button>
@@ -1246,6 +1268,8 @@ const StudentFeeDetails = () => {
                                 placeholder={undefined}
                                 className="h-[40px] w-full p-0 mt-3"
                                 onClick={() => onSubmitInstallment(index, obj)}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 Submit
                               </Button>
@@ -2185,6 +2209,8 @@ const StudentFeeDetails = () => {
               indicatorProps={{
                 className: "bg-[#193474]",
               }}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               <Tab
                 key={"classFeeDetails"}
@@ -2193,6 +2219,8 @@ const StudentFeeDetails = () => {
                 className="font-bold"
                 activeClassName="text-white"
                 onClick={() => setSelectedTabs("class")}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 Class Fee Details
               </Tab>
@@ -2204,11 +2232,18 @@ const StudentFeeDetails = () => {
                 className="font-bold"
                 activeClassName="text-white"
                 onClick={() => setSelectedTabs("student")}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 Student Fee Details
               </Tab>
             </TabsHeader>
-            <TabsBody placeholder={undefined} className=" text-center">
+            <TabsBody
+              placeholder={undefined}
+              className=" text-center"
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            >
               <TabPanel key={"classFeeDetails"} value={"classFeeDetails"}>
                 <div>{getClassDetails()}</div>
               </TabPanel>
@@ -2231,6 +2266,8 @@ const StudentFeeDetails = () => {
             className="h-[40px] w-[80px] p-0"
             onClick={() => setErrorModel("")}
             placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
             Ok
           </Button>

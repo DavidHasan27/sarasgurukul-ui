@@ -6,12 +6,14 @@ import axios from "axios";
 import queryString from "query-string";
 import { getAuthToken } from "../../utils";
 import { cloneDeep, findIndex, remove } from "lodash";
+import { getSchoolsForSelection } from "../schools/schoolSlice";
 
 const initialState = {
   loading: false,
   success: "",
   error: "",
   classList: null,
+  optionClassList: [],
 };
 export const createNewClass = createAsyncThunk(
   `/class/create`,
@@ -60,6 +62,21 @@ export const getClassList = createAsyncThunk(
     let url = "/api/class/get-class?" + urlParams;
     try {
       const res = await axios.get(url, {
+        headers: { Authorization: getAuthToken() },
+      });
+
+      return res.data;
+    } catch (err: any) {
+      throw rejectWithValue("Something went wrong, Please try again later");
+    }
+  }
+);
+
+export const getClassListBySchoolForDropdown = createAsyncThunk(
+  `/class/get-class-by-school`,
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const res = await axios.post("/api/class/get-class-by-school", data, {
         headers: { Authorization: getAuthToken() },
       });
 
@@ -187,6 +204,27 @@ const classSlice = createSlice({
     builder.addCase(updateClass.pending, (state, action) => {
       state.loading = true;
     });
+    builder.addCase(
+      getClassListBySchoolForDropdown.fulfilled,
+      (state, action) => {
+        state.loading = false;
+        state.optionClassList = action.payload;
+      }
+    );
+    builder.addCase(
+      getClassListBySchoolForDropdown.rejected,
+      (state, action) => {
+        state.loading = false;
+        state.success = "";
+        state.optionClassList = [];
+      }
+    );
+    builder.addCase(
+      getClassListBySchoolForDropdown.pending,
+      (state, action) => {
+        state.loading = true;
+      }
+    );
   },
 });
 

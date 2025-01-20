@@ -346,6 +346,8 @@ const Staff = () => {
                     setPageIndex(1);
                     getUserData(school, classs, role, searchString, active, 0);
                   }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Search
                 </Button>
@@ -356,6 +358,8 @@ const Staff = () => {
                   color="blue"
                   size="sm"
                   onClick={() => navigate("/app/addstaff")}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   <FontAwesomeIcon icon={faSchool} className="mr-2" />
                   Add New Staff
@@ -377,6 +381,8 @@ const Staff = () => {
                   variant="h5"
                   className="text-gray-400 mt-10"
                   placeholder={""}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   No Staff Found
                 </Typography>
@@ -460,6 +466,8 @@ const Staff = () => {
                                   })
                                 }
                                 disabled={!item.active}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faEye} />
                               </IconButton>
@@ -472,6 +480,8 @@ const Staff = () => {
                                   setSelectedItem(item);
                                   setWarningDialog(true);
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faTrash} />
                               </IconButton>

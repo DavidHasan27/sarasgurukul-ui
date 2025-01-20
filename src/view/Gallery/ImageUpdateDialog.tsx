@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import {
   Button,
   Dialog,
@@ -8,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-const WarningDialog = ({
+const ImageUpdateDialog = ({
   open,
   onCloseDialog,
   onOkClick,
@@ -17,10 +18,21 @@ const WarningDialog = ({
   message,
   subMessage,
   img,
+  item,
 }: any) => {
   // const [open, setOpen] = useState(false);
-
+  console.log("item ::", item);
+  const [tags, setTags] = useState(item.imageTag);
+  const [tagsError, setTagError] = useState("");
   //   const handleOpen = () => setOpen(!open);
+
+  const onOk = () => {
+    if (!tags || !tags.trim()) {
+      setTagError("Please enter your tags");
+      return;
+    }
+    onOkClick(tags);
+  };
 
   return (
     <>
@@ -53,22 +65,8 @@ const WarningDialog = ({
           onPointerEnterCapture={undefined}
           onPointerLeaveCapture={undefined}
         >
-          {img ? (
-            <img src={img} className="max-h-[200px]" />
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="h-16 w-16 text-red-500"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          )}
+          <img src={img} className="max-h-[200px]" />
+
           <Typography
             color="red"
             variant="h4"
@@ -78,6 +76,7 @@ const WarningDialog = ({
           >
             {message}
           </Typography>
+
           <Typography
             className="text-center font-normal"
             placeholder={""}
@@ -86,6 +85,29 @@ const WarningDialog = ({
           >
             {subMessage}
           </Typography>
+          <div className="inline-block mt-2 w-full pr-1">
+            <label className="block text-sm text-gray-600 text-left font-semibold">
+              Image Tags
+            </label>
+            <div className="flex flex-col">
+              <input
+                className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded font-normal"
+                id="feesName"
+                name="feesName"
+                required
+                placeholder="Fees Name"
+                aria-label="feesName"
+                value={tags}
+                onChange={(event) => {
+                  setTags(event.target.value);
+                  setTagError("");
+                }}
+              />
+              <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                {tagsError && tagsError}
+              </div>
+            </div>
+          </div>
         </DialogBody>
         <DialogFooter
           className="space-x-2"
@@ -105,7 +127,7 @@ const WarningDialog = ({
           </Button>
           <Button
             variant="gradient"
-            onClick={onOkClick}
+            onClick={onOk}
             placeholder={""}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
@@ -118,4 +140,4 @@ const WarningDialog = ({
   );
 };
 
-export default WarningDialog;
+export default ImageUpdateDialog;

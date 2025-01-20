@@ -85,6 +85,8 @@ const LoginScreen = () => {
                 <Typography
                   className="text-xs text-left text-red-800 font-semibold ml-2"
                   placeholder={"Error"}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   {usernameError}
                 </Typography>
@@ -102,6 +104,8 @@ const LoginScreen = () => {
                 <Typography
                   className="text-xs text-left text-red-800 font-semibold ml-2"
                   placeholder={"Error"}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   {passwordError}
                 </Typography>

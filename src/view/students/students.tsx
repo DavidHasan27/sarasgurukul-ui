@@ -335,6 +335,8 @@ const Students = () => {
                     setPageIndex(1);
                     getStudentData(school, classs, searchString, active, 0);
                   }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Search
                 </Button>
@@ -345,6 +347,8 @@ const Students = () => {
                   color="blue"
                   size="sm"
                   onClick={() => navigate("/app/addStudent")}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   <FontAwesomeIcon icon={faSchool} className="mr-2" />
                   Add New Student
@@ -366,6 +370,8 @@ const Students = () => {
                   variant="h5"
                   className="text-gray-400 mt-10"
                   placeholder={""}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   No Students Found
                 </Typography>
@@ -455,6 +461,8 @@ const Students = () => {
                                   })
                                 }
                                 disabled={!item.active}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faEye} />
                               </IconButton>
@@ -467,6 +475,8 @@ const Students = () => {
                                   setSelectedItem(item);
                                   setWarningDialog(true);
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faTrash} />
                               </IconButton>
@@ -480,6 +490,8 @@ const Students = () => {
                                     state: item,
                                   });
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faSquarePollVertical} />
                               </IconButton>
@@ -494,6 +506,8 @@ const Students = () => {
                                   })
                                 }
                                 disabled={!item.active}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faCommentDollar} />
                               </IconButton>

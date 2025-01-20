@@ -1,4 +1,3 @@
-import Gallery from "./Gallery";
 import Home from "./Home";
 import Class from "./Class";
 import WebNavigation from "./WebNavigation";
@@ -35,6 +34,13 @@ import AddFees from "../view/admin/AddNewFees";
 import StudentFeeDetails from "../view/students/StudentFee";
 import SchoolHolidays from "../view/school-branch/SchoolHolidays";
 import AddHoliday from "../view/school-branch/AddNewHoliday";
+import AddNewWorksheets from "../view/worksheets/AddNewWorksheets";
+import Worksheets from "../view/worksheets/Stydysheets";
+import GalleryView from "../view/Gallery/Gallery";
+import Gallery from "./Gallery";
+import AddImages from "../view/Gallery/AddImages";
+import Planner from "../view/admin/Planner";
+import AddNewPlans from "../view/admin/AddNewPlans";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -76,6 +82,12 @@ const Dashboard = () => {
               <Route path="year" element={<Year />} />
               <Route path="fees" element={<FeesType />} />
               <Route path="addfees" element={<AddFees />} />
+              <Route path="worksheets" element={<Worksheets />} />
+              <Route path="addWorksheets" element={<AddNewWorksheets />} />
+              <Route path="galleryview" element={<GalleryView />} />
+              <Route path="addImages" element={<AddImages />} />
+              <Route path="planner" element={<Planner />} />
+              <Route path="addPlans" element={<AddNewPlans />} />
             </Route>
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>

@@ -27,19 +27,38 @@ const FeeDiscountDialog = ({
       handler={handleOpen}
       className="shadow-none"
       placeholder={undefined}
+      onPointerEnterCapture={undefined}
+      onPointerLeaveCapture={undefined}
     >
-      <Card className="mx-auto w-full max-w-[24rem]" placeholder={undefined}>
-        <CardBody className="flex flex-col gap-4" placeholder={undefined}>
+      <Card
+        className="mx-auto w-full max-w-[24rem]"
+        placeholder={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      >
+        <CardBody
+          className="flex flex-col gap-4"
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        >
           <div className="flex flex-row justify-between items-center ">
             <Typography
               variant="h4"
               color="blue-gray"
               placeholder={undefined}
               className="text-center p-0 mt-2"
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Add Discount
             </Typography>
-            <IconButton placeholder={undefined} className="p-0 bg-transparent">
+            <IconButton
+              placeholder={undefined}
+              className="p-0 bg-transparent"
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            >
               <FontAwesomeIcon
                 icon={faXmark}
                 // className="mr-2"
@@ -54,10 +73,18 @@ const FeeDiscountDialog = ({
             variant="paragraph"
             color="gray"
             placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
             Added discount will be available only for one student
           </Typography>
-          <Typography className="-mb-5" variant="h6" placeholder={undefined}>
+          <Typography
+            className="-mb-5"
+            variant="h6"
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          >
             Discount In Percentage
           </Typography>
           <input
@@ -79,12 +106,19 @@ const FeeDiscountDialog = ({
             }}
           />
         </CardBody>
-        <CardFooter className="pt-0" placeholder={undefined}>
+        <CardFooter
+          className="pt-0"
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        >
           <Button
             variant="gradient"
             onClick={() => onSubmit(discount ? discount : 0)}
             fullWidth
             placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
           >
             Add
           </Button>

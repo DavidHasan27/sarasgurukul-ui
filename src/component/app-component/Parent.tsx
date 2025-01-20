@@ -78,7 +78,7 @@ const ParentLayout = ({
       )}
       {loading && (
         <div
-          className="absolute h-[100vh] w-[100%] top-0 left-0 flex flex-col items-center justify-center"
+          className="absolute h-[100vh] w-[100%] top-0 left-0 flex flex-col items-center justify-center z-auto"
           style={{ backgroundColor: "rgb(0,0,0, 0.3)" }}
         >
           <Spinner className="h-10 w-10" color="blue" />

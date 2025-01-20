@@ -7,10 +7,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Button } from "@material-tailwind/react";
+import { Button, Chip } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faAngleLeft,
+  faBriefcase,
   faFaceGrinHearts,
   faSchool,
   faUserPlus,
@@ -24,7 +24,10 @@ import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { BLOODGROUP, RELATIONSHIP } from "../../utils/constants";
 import DatePicker from "../../component/app-component/DatePicker";
-import { getClassList } from "../../redux/class/classSlice";
+import {
+  getClassList,
+  getClassListBySchoolForDropdown,
+} from "../../redux/class/classSlice";
 import OutsideClickHandler from "react-outside-click-handler";
 import {
   createNewStudent,
@@ -32,35 +35,47 @@ import {
 } from "../../redux/students/studentSlice";
 import {
   createNewHoliday,
+  createNewWorksheet,
   getSchoolYear,
   resetNewHoliday,
 } from "../../redux/admin/adminSlice";
 import { clone, find } from "lodash";
 import moment from "moment";
 
-const AddHoliday = () => {
+const AddNewWorksheets = () => {
   const [school, setSchool] = useState<any>([]);
   const [schoolError, setSchoolError] = useState<any>("");
 
   const [title, setTitle] = useState<any>();
   const [titleError, setTitleError] = useState<any>("");
 
-  const [holidaysDate, setHolidaysDate] = useState<any>("");
-  const [holidaysDateError, setHolidaysDateError] = useState<any>("");
+  const [startDate, setStartDate] = useState<any>("");
+  const [startDateError, setStartDateError] = useState<any>("");
+
+  const [endDate, setEndDate] = useState<any>("");
+  const [endDateError, setEndDateError] = useState<any>("");
 
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState<any>();
+  const [file, setFile] = useState<any>([]);
+  const [fileError, setFileError] = useState<any>([]);
 
   const [schoolMenu, setSchoolMenu] = useState<any>();
   const [YearMenu, setYearMenu] = useState<any>();
   const [selectedYear, setSelectedYear] = useState<any>();
   const [yearError, setYearError] = useState<any>("");
+
+  const [classL, setClass] = useState<any>([]);
+  const [classError, setClassError] = useState<any>("");
+  const [classMenu, setClassMenu] = useState<any>();
   const dispatch = useAppDispatch();
 
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
-  const { yearList, newHoliday, loading, error } = useAppSelector(
+  const { yearList, loading, error, newWorksheet } = useAppSelector(
     (state: any) => state.admin
   );
+  const { optionClassList } = useAppSelector((state: any) => state.class);
+
+  console.log("optionClassList", optionClassList);
 
   useEffect(() => {
     if (yearList && yearList.length > 0) {
@@ -74,37 +89,57 @@ const AddHoliday = () => {
     dispatch(getSchoolYear());
   }, []);
 
-  const formatBytes = (bytes: any, decimals: any = 2) => {
-    if (!+bytes) return "0 Bytes";
+  useEffect(() => {
+    console.log("file >>>", file.length, file);
+  }, [file]);
 
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = [
-      "Bytes",
-      "KiB",
-      "MiB",
-      "GiB",
-      "TiB",
-      "PiB",
-      "EiB",
-      "ZiB",
-      "YiB",
-    ];
+  // const onDrop = useCallback((acceptedFiles: any) => {
+  //   console.log("File Length ::", file.length);
+  //   const tempFileList = clone(file);
+  //   for (let i = 0; i < acceptedFiles.length; i++) {
+  //     var totalSizeMB = acceptedFiles[i].size / Math.pow(1024, 2);
+  //     if (totalSizeMB > 1) {
+  //       alert(acceptedFiles[i].name + " file size is more than 1MB");
+  //       break;
+  //     } else {
+  //       const fileObj = tempFileList.find(
+  //         (obj: any) =>
+  //           obj.name === acceptedFiles[i].name &&
+  //           obj.size === acceptedFiles[i].name
+  //       );
+  //       if (!fileObj) {
+  //         tempFileList.push(acceptedFiles[i]);
+  //       }
+  //     }
+  //     setFile(tempFileList);
+  //   }
+  //   // Do something with the files
+  // }, []);
 
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const onDrop = (acceptedFiles: any) => {
+    console.log("File Length ::", file.length, acceptedFiles);
+    const tempFileList = clone(file);
 
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      var totalSizeMB = acceptedFiles[i].size / Math.pow(1024, 2);
+      if (totalSizeMB > 1) {
+        alert(acceptedFiles[i].name + " file size is more than 1MB");
+        break;
+      } else {
+        const fileObj = tempFileList.find(
+          (obj: any) =>
+            obj.name === acceptedFiles[i].name &&
+            obj.size === acceptedFiles[i].size
+        );
+        if (!fileObj) {
+          tempFileList.push(acceptedFiles[i]);
+        }
+      }
+    }
+    setFile(tempFileList);
+    setFileError("");
   };
 
-  const onDrop = useCallback((acceptedFiles: any) => {
-    // Do something with the files
-    var totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
-    if (totalSizeMB > 1) {
-      alert("Maximum size for file is 1MB");
-    } else {
-      setFile(acceptedFiles[0]);
-    }
-  }, []);
   const {
     getRootProps,
     getInputProps,
@@ -114,14 +149,9 @@ const AddHoliday = () => {
     isDragReject,
   } = useDropzone({
     onDrop,
-    accept: {
-      "image/jpeg": [],
-      "image/png": [],
-      "image/webp": [],
-      "image/heic": [],
-      "image/jfif": [],
-    },
-    multiple: false,
+    multiple: true,
+    maxFiles: 3,
+    disabled: file.length == 3,
   });
 
   const baseStyle = {
@@ -164,22 +194,34 @@ const AddHoliday = () => {
   );
 
   useEffect(() => {
-    if (newHoliday) {
+    if (newWorksheet) {
       // navigate("/app/dash", { replace: true });
       resetAllData();
     }
-  }, [newHoliday]);
+  }, [newWorksheet]);
 
   const resetAllData = () => {
     setSchoolError("");
     setSchool([]);
-    setHolidaysDate(null);
+    setStartDate(null);
     setDescription("");
     setTitle("");
-    setFile("");
+    setFile([]);
+    setClass([]);
+    setClassError("");
+    setEndDate(null);
+    setEndDateError("");
   };
 
-  const onSubmitSchool = () => {
+  const getClassList = (schooList: any) => {
+    const body = [];
+    for (let i = 0; i < schooList.length; i++) {
+      body.push(schooList[i].id);
+    }
+    dispatch(getClassListBySchoolForDropdown(body));
+  };
+
+  const onSubmitWorksheet = () => {
     let isError = false;
 
     if (!selectedYear) {
@@ -192,13 +234,28 @@ const AddHoliday = () => {
       isError = true;
     }
 
+    if (!classL || classL.length == 0) {
+      setClassError("Please select class");
+      isError = true;
+    }
+
     if (!title || !title.trim()) {
       setTitleError("Please enter title");
       isError = true;
     }
 
-    if (!holidaysDate) {
-      setHolidaysDateError("Please select date");
+    if (!startDate) {
+      setStartDateError("Please select start date");
+      isError = true;
+    }
+
+    if (!endDate) {
+      setEndDateError("Please select end date");
+      isError = true;
+    }
+
+    if (!file || file.length === 0) {
+      setFileError("Please select atleast one worksheet file");
       isError = true;
     }
 
@@ -206,36 +263,40 @@ const AddHoliday = () => {
       return;
     }
 
-    const schoolsList = [];
+    const classList = [];
 
-    for (let i = 0; i < school.length; i++) {
-      const schoolObj = {
-        id: school[i].id,
+    for (let i = 0; i < classL.length; i++) {
+      const classObj = {
+        id: classL[i].id,
       };
-      schoolsList.push(schoolObj);
+      classList.push(classObj);
+    }
+    const fileList = [];
+    for (let i = 0; i < file.length; i++) {
+      const fileObj = {
+        type: "worksheet",
+        bucket: "saras-worksheet",
+        subtype: title.replaceAll(/\s/g, ""),
+        file: file[i],
+      };
+      fileList.push(fileObj);
     }
 
-    const fileObj = {
-      type: "holiday",
-      bucket: "saras-holiday",
-      subtype: title.replaceAll(/\s/g, ""),
-      file: file,
-    };
-
     const body: any = {
-      year: {
-        id: selectedYear.id,
-      },
       title: title,
       description: description,
-      imageURL: "",
-      date: holidaysDate,
-      schoolsList: schoolsList,
-      active: true,
-      fileObj: file ? fileObj : null,
+      startDate: startDate,
+      endDate: endDate,
+      years: {
+        id: selectedYear.id,
+      },
+      schoolClasses: classList,
+      file: fileList,
     };
+
     console.log("Body >>>", body);
-    dispatch(createNewHoliday(body));
+
+    dispatch(createNewWorksheet(body));
   };
 
   const formatOptionLabel = ({ value, label }: any) => {
@@ -243,14 +304,14 @@ const AddHoliday = () => {
       <div
         className="flex flex-col text-left px-3 border-b-[1px] border-gray-400 "
         onClick={() => {
-          console.log("event :::2", value);
-
           const tempSchools = clone(school);
           const obj = find(tempSchools, (obj: any) => obj.id === value.id);
           if (!obj) {
             tempSchools.push(value);
+            getClassList(tempSchools);
             setSchool(tempSchools);
             setSchoolError("");
+            setClass([]);
           }
           setSchoolMenu(false);
         }}
@@ -258,6 +319,29 @@ const AddHoliday = () => {
         <div className="text-blue-gray-900 text-[16px]"> {label}</div>
         <div className="text-gray-500 text-[12px] -mt-[12px]">
           Branch: {value.branch}
+        </div>
+      </div>
+    );
+  };
+
+  const formatOptionLabelClass = ({ value, label }: any) => {
+    return (
+      <div
+        className="flex flex-col text-left px-3 border-b-[1px] border-gray-400 "
+        onClick={() => {
+          const tempClass = clone(classL);
+          const obj = find(tempClass, (obj: any) => obj.id === value.id);
+          if (!obj) {
+            tempClass.push(value);
+            setClass(tempClass);
+            setClassError("");
+          }
+          setClassMenu(false);
+        }}
+      >
+        <div className="text-blue-gray-900 text-[16px]"> {label}</div>
+        <div className="text-gray-500 text-[12px] -mt-[12px]">
+          School: {value.schools.schoolName + ", " + value.schools.branch}
         </div>
       </div>
     );
@@ -303,40 +387,21 @@ const AddHoliday = () => {
     <ParentLayout
       loading={loading}
       error={error}
-      success={newHoliday ? "New holiday created successfully" : ""}
+      success={newWorksheet ? "New Worksheet created successfully" : ""}
       onCloseSuccessAlert={() => dispatch(resetNewHoliday())}
       onCloseAlert={() => dispatch(resetNewHoliday())}
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
-          <div className="flex flex-row w-full justify-between">
-            <div className="flex flex-row w-36 ">
-              <a
-                className="text-gray-800 hover:text-blue-600 hover:font-semibold"
-                href="/app/schoolHolidays"
-              >
-                <FontAwesomeIcon
-                  icon={faAngleLeft}
-                  className="mr-2 fa-1x p-0"
-                />
-                School Holidays
-              </a>
-            </div>
-
-            <span>
-              <FontAwesomeIcon
-                icon={faFaceGrinHearts}
-                className="mr-2 fa-4x p-0"
-              />
-              <h1 className="w-full text-3xl text-black ">Add New Holiday</h1>
-            </span>
-            <div className="flex flex-row  w-36"></div>
-          </div>
+          <span>
+            <FontAwesomeIcon icon={faBriefcase} className="mr-2 fa-4x p-0" />
+            <h1 className="w-full text-3xl text-black ">Add New Worksheets</h1>
+          </span>
 
           <div className="flex justify-center items-center ">
             <div className="w-full lg:w-1/2 my-1 pr-0 lg:pr-2 mt-2 ">
               <p className="text-xl flex items-center">
-                <i className="fas fa-list mr-3"></i> Holidays Info
+                <i className="fas fa-list mr-3"></i> Worksheet Info
               </p>
               <div className="leading-loose">
                 <form className="p-10 bg-white rounded shadow-xl min-h-[470px]">
@@ -439,6 +504,7 @@ const AddHoliday = () => {
                           onChange={(event: any) => {
                             console.log("event :::1", event);
                             setSchool(event);
+                            setClass(event);
                             if (event.length !== 0) {
                               setSchoolError("");
                             }
@@ -456,7 +522,70 @@ const AddHoliday = () => {
                       </label>
                     </div>
 
-                    <div className="inline-block mt-2 w-1/2 pr-1">
+                    <div className="inline-block mt-2 w-full pr-1">
+                      <label className="block text-sm text-gray-600 text-left mb-0">
+                        Class
+                      </label>
+                      <OutsideClickHandler
+                        onOutsideClick={() => {
+                          setClassMenu(false);
+                        }}
+                      >
+                        <Select
+                          name="class"
+                          placeholder="Select Class"
+                          options={optionClassList}
+                          getOptionLabel={(option: any) =>
+                            option.className + "(" + option.classIdentity + ")"
+                          }
+                          getOptionValue={(option) => option}
+                          styles={{
+                            control: (baseStyles, state) => ({
+                              ...baseStyles,
+                              backgroundColor: "#e5e7eb",
+                              borderColor: state.isFocused
+                                ? "#0f58bf"
+                                : "#e1e4e8",
+                              textAlign: "left",
+                            }),
+                            option: (baseStyles, state) => ({
+                              ...baseStyles,
+                              textAlign: "left",
+                            }),
+                            multiValue: (styles, { data }) => {
+                              return {
+                                ...styles,
+                                backgroundColor: "white",
+                                borderWidth: "1px",
+                                borderColor: "black",
+                                borderStyle: "#c4cad2",
+                              };
+                            },
+                          }}
+                          classNamePrefix="Select Class"
+                          onChange={(event: any) => {
+                            console.log("event :::1", event);
+                            setClass(event);
+                            if (event.length !== 0) {
+                              setClassError("");
+                              setClass([]);
+                            }
+                          }}
+                          value={classL}
+                          components={{ Option: formatOptionLabelClass }}
+                          menuIsOpen={classMenu}
+                          onMenuOpen={() => setClassMenu(true)}
+                          closeMenuOnScroll={true}
+                          isMulti
+                          isDisabled={school.length == 0}
+                        />
+                      </OutsideClickHandler>
+                      <label className="block text-sm text-left text-red-600 h-4">
+                        {classError ? classError : ""}
+                      </label>
+                    </div>
+
+                    <div className="inline-block mt-2 w-full pr-1">
                       <label className="block text-sm text-gray-600 text-left">
                         Title
                       </label>
@@ -466,14 +595,18 @@ const AddHoliday = () => {
                           id="title"
                           name="title"
                           required
-                          placeholder="Holiday Title"
+                          placeholder="Worksheet Title"
                           aria-label="title"
                           value={title}
                           onChange={(event) => {
                             setTitle(event.target.value);
                             setTitleError("");
                           }}
-                          disabled={!school || !selectedYear}
+                          disabled={
+                            school.length == 0 ||
+                            !selectedYear ||
+                            classL.length == 0
+                          }
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {titleError && titleError}
@@ -483,20 +616,40 @@ const AddHoliday = () => {
 
                     <div className="inline-block  w-1/2 pr-1">
                       <label className="block text-sm text-gray-600 text-left">
-                        Holiday Date
+                        Start Date
                       </label>
                       <div className="flex flex-col">
                         <DatePicker
-                          startDate={holidaysDate}
+                          startDate={startDate}
                           minDate={new Date(moment().year() + "-01-01")}
                           onDateChange={(date: any) => {
-                            setHolidaysDate(date);
-                            setHolidaysDateError("");
+                            setStartDate(date);
+                            setStartDateError("");
                           }}
                           disabled={!school || !selectedYear}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {holidaysDateError && holidaysDateError}
+                          {startDateError && startDateError}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="inline-block  w-1/2 pr-1">
+                      <label className="block text-sm text-gray-600 text-left">
+                        End Date
+                      </label>
+                      <div className="flex flex-col">
+                        <DatePicker
+                          startDate={endDate}
+                          minDate={new Date(moment().year() + "-01-01")}
+                          onDateChange={(date: any) => {
+                            setEndDate(date);
+                            setEndDateError("");
+                          }}
+                          disabled={!school || !selectedYear}
+                        />
+                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {endDateError && endDateError}
                         </div>
                       </div>
                     </div>
@@ -522,41 +675,46 @@ const AddHoliday = () => {
                     </div>
                   </div>
 
-                  <div className="inline-block w-1/4 mt-4">
+                  <div className="inline-block w-full mt-4 ">
                     <label className="block text-sm text-gray-600 text-left">
-                      Holiday Photo
+                      Worksheet Files
                     </label>
                     <div
                       {...getRootProps(style)}
-                      className={`bg-[#e5e7eb] flex flex-col items-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f] ${
-                        file ? "" : "p-5"
-                      }`}
+                      className={`bg-[#e5e7eb] flex flex-col items-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f] p-3`}
                     >
                       <input {...getInputProps()} />
-                      {!file ? (
-                        <>
-                          {isDragActive ? (
-                            <p>Drop the files here ...</p>
-                          ) : (
-                            <p>Click to select files</p>
-                          )}
-                        </>
-                      ) : (
-                        <div className="relative p-2">
-                          <FontAwesomeIcon
-                            icon={faXmarkCircle}
-                            className="p-0 h-[20px] text-right absolute right-1 top-1"
-                            color="#fff"
-                            onClick={() => setFile(undefined)}
-                          />
-                          <img
-                            src={URL.createObjectURL(file)}
-                            //   height={200}
-                            width={200}
-                            alt="img"
-                          />
-                        </div>
-                      )}
+                      <>
+                        {isDragActive ? (
+                          <p>Drop the files here ...</p>
+                        ) : (
+                          <p>Drop the files here or Click to select files</p>
+                        )}
+                      </>
+                    </div>
+                    <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                      {fileError && fileError}
+                    </div>
+                    <div className="flex flex-wrap flex-row">
+                      {file.map((obj: any, index: any) => {
+                        return (
+                          <>
+                            <Chip
+                              open={true}
+                              value={obj.name}
+                              onClose={() => {
+                                const fileList = clone(file);
+                                fileList.splice(index, 1);
+                                setFile(fileList);
+                              }}
+                              className={`${
+                                index != 0 ? "ml-0" : ""
+                              } mt-2 mr-2`}
+                              color="teal"
+                            />
+                          </>
+                        );
+                      })}
                     </div>
                   </div>
                   <div className="flex flex-row-reverse items-end w-full mt-[10px]">
@@ -564,15 +722,15 @@ const AddHoliday = () => {
                       variant="gradient"
                       color="blue"
                       placeholder={"Submit"}
-                      onClick={() => onSubmitSchool()}
+                      onClick={() => onSubmitWorksheet()}
                       onPointerEnterCapture={undefined}
                       onPointerLeaveCapture={undefined}
                     >
                       <FontAwesomeIcon
-                        icon={faFaceGrinHearts}
+                        icon={faBriefcase}
                         className="mr-2 fa-1x p-0"
                       />
-                      Add New Holiday
+                      Add New Worksheet
                     </Button>
                   </div>
                 </form>
@@ -587,4 +745,4 @@ const AddHoliday = () => {
   );
 };
 
-export default AddHoliday;
+export default AddNewWorksheets;

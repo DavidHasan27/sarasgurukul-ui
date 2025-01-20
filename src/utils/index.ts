@@ -59,3 +59,15 @@ export const getAuthToken = () => {
 export const getFormattedfee = (amount: any) => {
   return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
+
+export const getOptionYearLabel = (option: any) => {
+  return (
+    option.startMonth +
+    " " +
+    option.startYear +
+    " - " +
+    option.endMonth +
+    " " +
+    option.endYear
+  );
+};

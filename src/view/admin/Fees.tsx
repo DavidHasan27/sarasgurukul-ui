@@ -157,6 +157,8 @@ const FeesType = () => {
                     setPageIndex(1);
                     getFeeData(searchString, active, 0);
                   }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Search
                 </Button>
@@ -167,6 +169,8 @@ const FeesType = () => {
                   color="blue"
                   size="sm"
                   onClick={() => navigate("/app/addfees")}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   <FontAwesomeIcon icon={faCommentDollar} className="mr-2" />
                   Add Fees
@@ -188,6 +192,8 @@ const FeesType = () => {
                   variant="h5"
                   className="text-gray-400 mt-10"
                   placeholder={""}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   No Students Found
                 </Typography>
@@ -252,6 +258,8 @@ const FeesType = () => {
                                   })
                                 }
                                 disabled={!item.active}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faEye} />
                               </IconButton>
@@ -264,6 +272,8 @@ const FeesType = () => {
                                   setSelectedItem(item);
                                   setWarningDialog(true);
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faTrash} />
                               </IconButton>

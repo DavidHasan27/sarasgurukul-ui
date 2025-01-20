@@ -251,6 +251,8 @@ const NewReport = () => {
               className="mr-5 w-[200px] h-[40px] p-0"
               onClick={() => getReportQuestinData()}
               disabled={!term || !years}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Get Report
             </Button>
@@ -268,6 +270,8 @@ const NewReport = () => {
                 variant="h5"
                 className="text-gray-400 mt-10"
                 placeholder={""}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 Please select terms and school years to generate reports
               </Typography>
@@ -280,6 +284,8 @@ const NewReport = () => {
               className="mr-5 w-[200px] mt-[10%]"
               onClick={() => getReportQuestinData()}
               disabled={!term || !years}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Get Report
             </Button>

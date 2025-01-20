@@ -79,6 +79,8 @@ const Year = () => {
                         color="blue"
                         size="sm"
                         onClick={() => onClickActivate(item.id)}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
                         Start
                       </Button>
@@ -88,6 +90,8 @@ const Year = () => {
                         placeholder={"Activate"}
                         color="green"
                         size="sm"
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
                         Active
                       </Button>

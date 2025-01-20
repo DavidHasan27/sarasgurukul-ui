@@ -120,6 +120,8 @@ const Schools = () => {
                       );
                     }
                   }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Search
                 </Button>
@@ -130,6 +132,8 @@ const Schools = () => {
                   color="blue"
                   size="sm"
                   onClick={() => navigate("/app/addschool")}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   <FontAwesomeIcon icon={faSchool} />
                   Add New School
@@ -151,6 +155,8 @@ const Schools = () => {
                   variant="h5"
                   className="text-gray-400 mt-10"
                   placeholder={""}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   No Schools Found
                 </Typography>
@@ -231,6 +237,8 @@ const Schools = () => {
                                     state: item,
                                   })
                                 }
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faEye} />
                               </IconButton>
@@ -243,6 +251,8 @@ const Schools = () => {
                                   setSelectedItem(item);
                                   setWarningDialog(true);
                                 }}
+                                onPointerEnterCapture={undefined}
+                                onPointerLeaveCapture={undefined}
                               >
                                 <FontAwesomeIcon icon={faTrash} />
                               </IconButton>

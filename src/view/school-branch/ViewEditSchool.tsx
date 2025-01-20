@@ -526,6 +526,8 @@ const ViewEditSchool = () => {
                 color="blue"
                 placeholder={"Submit"}
                 onClick={() => onSubmitSchool()}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 <FontAwesomeIcon icon={faSchool} className="mr-2 fa-1x p-0" />
                 Update School

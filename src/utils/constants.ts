@@ -14,6 +14,8 @@ import {
   faFileImport,
   faBriefcase,
   faFaceGrinHearts,
+  faImagePortrait,
+  faPhotoFilm,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const APP_URL = [
@@ -39,6 +41,12 @@ export const APP_URL = [
   "/app/addfees",
   "/app/schoolHolidays",
   "/app/addHoliday",
+  "/app/worksheets",
+  "/app/addWorksheets",
+  "/app/galleryview",
+  "/app/addImages",
+  "/app/planner",
+  "/app/addPlans",
 ];
 
 export const BLOODGROUP = [
@@ -64,6 +72,13 @@ export const RELATIONSHIP = [
   { option: "Mother", value: "Mother" },
   { option: "Father", value: "Father" },
   { option: "Guardian", value: "Guardian" },
+];
+
+export const IMAGE_TAG: any = [
+  { option: "All", value: "All" },
+  { option: "Playing", value: "Playing" },
+  { option: "Drawing", value: "Drawing" },
+  { option: "Reading", value: "Reading" },
 ];
 
 export const TERMS = [
@@ -98,9 +113,10 @@ export const ADMIN_MENU = [
   },
   { name: "Emails", path: "/app/students", icon: faEnvelope },
   { name: "Exam Time Table", path: "/app/staff", icon: faClipboard },
-  { name: "Planner", path: "/app/class", icon: faCalendarDay },
+  { name: "Planner", path: "/app/planner", icon: faCalendarDay },
   { name: "Syllabus", path: "/", icon: faFileImport },
-  { name: "Worksheet", path: "/", icon: faBriefcase },
+  { name: "Worksheet", path: "/app/worksheets", icon: faBriefcase },
+  { name: "Gallery", path: "/app/galleryview", icon: faPhotoFilm },
 ];
 
 export const SUPER_ADMIN_MENU_LIST = [

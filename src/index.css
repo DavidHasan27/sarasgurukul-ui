@@ -64,11 +64,29 @@ li {
   font-style: normal;
 }
 
+.print-component {
+  display: none;
+  @media print {
+    display: table;
+    .table-footer > tr > td{
+      text-align: center;
+      background-color: grey;
+      color: white;
+    }
+  }
+}
+
 @media print {
   .page-break {
-    margin-top: 1rem;
+    margin-top: 5rem;
     display: block;
-    page-break-before: auto;
+    page-break-before: always;
+  }
+  @page { 
+    @bottom-left {
+      content: counter(page) ' of ' counter(pages);
+    }
+   
   }
 }
 
