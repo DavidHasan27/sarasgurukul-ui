@@ -111,7 +111,7 @@ export const activeDeactiveWorksheet = createAsyncThunk(
   }
 );
 
-const uploadFiles = async (data: any) => {
+export const uploadFiles = async (data: any) => {
   let formData = new FormData();
   formData.append("file", data.file);
   formData.append(

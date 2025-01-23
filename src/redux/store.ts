@@ -9,6 +9,7 @@ import studentReducer from "./students/studentSlice";
 import reportReducer from "./students/reportSlice";
 import adminReducer from "./admin/adminSlice";
 import feesReducer from "./fees/feesSlice";
+import messageReducer from "./message/messageSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -23,6 +24,7 @@ export const store = configureStore({
     admin: adminReducer,
     report: reportReducer,
     fees: feesReducer,
+    message: messageReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

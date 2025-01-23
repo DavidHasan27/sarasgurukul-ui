@@ -17,6 +17,8 @@ const WarningDialog = ({
   message,
   subMessage,
   img,
+  type,
+  onOkAll,
 }: any) => {
   // const [open, setOpen] = useState(false);
 
@@ -103,15 +105,43 @@ const WarningDialog = ({
           >
             Cancel
           </Button>
-          <Button
-            variant="gradient"
-            onClick={onOkClick}
-            placeholder={""}
-            onPointerEnterCapture={undefined}
-            onPointerLeaveCapture={undefined}
-          >
-            Ok, Got it
-          </Button>
+          {type ? (
+            <>
+              <Button
+                variant="gradient"
+                onClick={onOkClick}
+                placeholder={""}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+                color="red"
+              >
+                {type === "sent" ? "Delete For Me" : "Delete"}
+              </Button>
+
+              {type === "sent" && (
+                <Button
+                  variant="gradient"
+                  onClick={onOkAll}
+                  placeholder={""}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                  color="red"
+                >
+                  Delete For All
+                </Button>
+              )}
+            </>
+          ) : (
+            <Button
+              variant="gradient"
+              onClick={onOkClick}
+              placeholder={""}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            >
+              Ok, Got it
+            </Button>
+          )}
         </DialogFooter>
       </Dialog>
     </>

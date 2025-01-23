@@ -14,6 +14,8 @@ const initialState = {
   dropdownUserList: [],
   userList: null,
   updatedUser: "",
+  receiverList: [],
+  receiverLoding: false,
 };
 
 export const getUserRoles = createAsyncThunk(
@@ -147,6 +149,36 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+export const getReceiverList = createAsyncThunk(
+  `/user/get-user-receiver`,
+  async (data: any, { rejectWithValue }: any) => {
+    try {
+      const urlParams = queryString.stringify(data);
+      const res = await axios.get("/api/user/get-user-receiver?" + urlParams, {
+        headers: { Authorization: getAuthToken() },
+      });
+      return res.data;
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        throw rejectWithValue(
+          err.response.data.status === 400
+            ? "Please enter valid credintial"
+            : "Something went wrong, Please try again later"
+        );
+      } else {
+        throw rejectWithValue("Something went wrong, Please try again later");
+      }
+    }
+  }
+);
+
+export const getReceivers = async (data: any) => {
+  const urlParams = queryString.stringify(data);
+  const res = await axios.get("/api/user/get-user-receiver?" + urlParams, {
+    headers: { Authorization: getAuthToken() },
+  });
+  return res.data;
+};
 const userSlice = createSlice({
   name: "auth",
   initialState,
@@ -312,6 +344,25 @@ const userSlice = createSlice({
       state.error = null;
       state.updatedUser = "";
       state.userList = null;
+    });
+    builder.addCase(getReceiverList.fulfilled, (state, action) => {
+      console.log("Create User Success::>>>", action.payload);
+      state.receiverLoding = false;
+      state.receiverList = action.payload;
+      state.success = true;
+      state.error = null;
+    });
+    builder.addCase(getReceiverList.rejected, (state, action: any) => {
+      console.log("Create User Error ::", action.payload);
+      state.receiverLoding = false;
+      state.receiverList = [];
+      state.error = action.payload;
+    });
+    builder.addCase(getReceiverList.pending, (state, action) => {
+      console.log("Create User pending ::", action.payload);
+      state.receiverLoding = true;
+      state.error = null;
+      state.receiverList = [];
     });
   },
 });

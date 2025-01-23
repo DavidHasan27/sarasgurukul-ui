@@ -47,6 +47,8 @@ export const APP_URL = [
   "/app/addImages",
   "/app/planner",
   "/app/addPlans",
+  "/app/messages",
+  "/app/newmessages",
 ];
 
 export const BLOODGROUP = [
@@ -66,6 +68,20 @@ export const CASH_PAID_BY = [
   { option: "UPA", value: "UPA" },
   { option: "Net Banking", value: "Net Banking" },
   { option: "Cash", value: "Cash" },
+];
+
+export const MESSAGE_TYPE = [
+  { option: "Notice", value: "NOTICE" },
+  { option: "Notification", value: "NOTIFICATION" },
+  { option: "WhatsApp", value: "WHATSAPP" },
+  { option: "Email", value: "EMAIL" },
+];
+export const MESSAGE_TYPE_WITH_ALL = [
+  { option: "Notice", value: "NOTICE" },
+  { option: "Notification", value: "NOTIFICATION" },
+  { option: "WhatsApp", value: "WHATSAPP" },
+  { option: "Email", value: "EMAIL" },
+  { option: "All", value: "" },
 ];
 
 export const RELATIONSHIP = [
@@ -111,7 +127,7 @@ export const ADMIN_MENU = [
     path: "/app/schoolHolidays",
     icon: faFaceGrinHearts,
   },
-  { name: "Emails", path: "/app/students", icon: faEnvelope },
+  // { name: "Messages", path: "/app/messages", icon: faEnvelope },
   { name: "Exam Time Table", path: "/app/staff", icon: faClipboard },
   { name: "Planner", path: "/app/planner", icon: faCalendarDay },
   { name: "Syllabus", path: "/", icon: faFileImport },
@@ -125,7 +141,7 @@ export const SUPER_ADMIN_MENU_LIST = [
   { name: "Student", path: "/app/students", icon: faHandsHoldingChild },
   { name: "Staff", path: "/app/staff", icon: faUserPlus },
   { name: "Class", path: "/app/class", icon: faPersonBooth },
-  { name: "Message", path: "/", icon: faMessage },
+  { name: "Message", path: "/app/messages", icon: faMessage },
   { name: "Calendar", path: "/", icon: faCalendarDays },
   {
     name: "Admin Tool",

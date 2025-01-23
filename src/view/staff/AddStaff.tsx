@@ -335,7 +335,7 @@ const AddStaff = () => {
         description: aboutStaff,
         jobTitle: role.roleDesc,
         joiningDate: joiningDate,
-        bloodGroup: bloodGroup.value,
+        bloodGroup: bloodGroup ? bloodGroup.value : "",
         speciality: role.roleDesc,
         relativeName: relativeName,
         relativeNo: relativeNo,

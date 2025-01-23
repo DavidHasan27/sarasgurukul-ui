@@ -41,6 +41,8 @@ import Gallery from "./Gallery";
 import AddImages from "../view/Gallery/AddImages";
 import Planner from "../view/admin/Planner";
 import AddNewPlans from "../view/admin/AddNewPlans";
+import Messages from "../view/Messages/Messages";
+import AddNewMessage from "../view/Messages/NewMessage";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -88,6 +90,8 @@ const Dashboard = () => {
               <Route path="addImages" element={<AddImages />} />
               <Route path="planner" element={<Planner />} />
               <Route path="addPlans" element={<AddNewPlans />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="newmessages" element={<AddNewMessage />} />
             </Route>
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
