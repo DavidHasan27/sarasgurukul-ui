@@ -268,12 +268,12 @@ const Worksheets = () => {
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
-          <h1 className="text-3xl text-black pb-6">Schools Holidays</h1>
+          <h1 className="text-3xl text-black pb-6">Worksheets</h1>
 
           <div className="w-full mt-6">
             <div className="w-full flex flex-row justify-between items-center">
               <p className="text-xl pb-3 flex items-center">
-                <i className="fas fa-list mr-3"></i> Holiday List
+                <i className="fas fa-list mr-3"></i> Worksheet List
               </p>
               <div className="flex flex-row  mb-2 ">
                 <div className="relative flex w-full ">

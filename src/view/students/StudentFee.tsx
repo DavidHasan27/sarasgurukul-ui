@@ -22,6 +22,7 @@ import {
 } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faAngleLeft,
   faBell,
   faChevronDown,
   faChevronRight,
@@ -2191,13 +2192,28 @@ const StudentFeeDetails = () => {
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
-          <span>
-            <FontAwesomeIcon
-              icon={faCommentDollar}
-              className="mr-2 fa-4x p-0"
-            />
-            <h1 className="w-full text-3xl text-black pb-6">Student Fees</h1>
-          </span>
+          <div className="flex flex-row w-full justify-between">
+            <div className="flex flex-row w-24 ">
+              <a
+                className="text-gray-800 hover:text-blue-600 hover:font-semibold"
+                href="/app/students"
+              >
+                <FontAwesomeIcon
+                  icon={faAngleLeft}
+                  className="mr-2 fa-1x p-0"
+                />
+                Students
+              </a>
+            </div>
+            <span>
+              <FontAwesomeIcon
+                icon={faCommentDollar}
+                className="mr-2 fa-4x p-0"
+              />
+              <h1 className="w-full text-3xl text-black pb-6">Student Fees</h1>
+            </span>
+            <div className="flex flex-row  w-24"></div>
+          </div>
 
           <Tabs
             value="studentfeeDetails"

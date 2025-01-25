@@ -3,6 +3,7 @@ import axios from "axios";
 import { getAuthToken, setSessionStorage } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove } from "lodash";
+import { uploadFiles } from "../admin/adminSlice";
 
 const initialState = {
   loading: false,
@@ -44,6 +45,34 @@ export const createNewUser = createAsyncThunk(
   `/user/createUser`,
   async (data: any, { rejectWithValue }) => {
     try {
+      if (data.userProfilePhoto) {
+        const result = await uploadFiles(data.userProfilePhoto);
+        const finalResult =
+          result.data.bucket +
+          "|" +
+          result.data.name +
+          "|" +
+          data.userProfilePhoto.file.name;
+        data.userProfilePhoto = finalResult;
+      }
+
+      if (data.fileList && data.fileList.length > 0) {
+        for (let i = 0; i < data.fileList.length; i++) {
+          const result = await uploadFiles(data.fileList[i]);
+          if (result && result.data) {
+            const finalResult =
+              result.data.bucket +
+              "|" +
+              result.data.name +
+              "|" +
+              data.fileList[i].file.name;
+            data.userDetails["doc" + (i + 1)] = finalResult;
+          }
+        }
+      }
+
+      delete data.fileList;
+
       const res = await axios.post("/api/user/createUser", data, {
         headers: { Authorization: getAuthToken() },
       });
@@ -134,10 +163,48 @@ export const activeDeactiveUser = createAsyncThunk(
   }
 );
 
+const isString = (value: any) => {
+  return typeof value === "string" || value instanceof String;
+};
+
 export const updateUser = createAsyncThunk(
   `/user/update`,
   async (data: any, { rejectWithValue }) => {
     try {
+      if (data.userProfilePhoto && !isString(data.userProfilePhoto)) {
+        const result = await uploadFiles(data.userProfilePhoto);
+        const finalResult =
+          result.data.bucket +
+          "|" +
+          result.data.name +
+          "|" +
+          data.userProfilePhoto.file.name;
+        data.userProfilePhoto = finalResult;
+      }
+
+      for (let i = 1; i <= 3; i++) {
+        if (data.fileList && data.fileList[i - 1]) {
+          if (!isString(data.fileList[i - 1])) {
+            const result = await uploadFiles(data.fileList[i - 1]);
+            if (result && result.data) {
+              const finalResult =
+                result.data.bucket +
+                "|" +
+                result.data.name +
+                "|" +
+                data.fileList[i - 1].file.name;
+              data.userDetails["doc" + i] = finalResult;
+            }
+          } else {
+            data.userDetails["doc" + i] = data.fileList[i - 1];
+          }
+        } else {
+          data.userDetails["doc" + i] = null;
+        }
+      }
+
+      delete data.fileList;
+
       const res = await axios.put("/api/user/update", data, {
         headers: { Authorization: getAuthToken() },
       });

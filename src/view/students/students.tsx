@@ -23,6 +23,7 @@ import Toggle from "react-toggle";
 import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import Pagination from "../../component/app-component/Pagination";
 import WarningDialog from "../../component/app-component/WarningDialog";
+import studentPhoto from "../assets/user.png";
 
 import { getClassList } from "../../redux/class/classSlice";
 import {
@@ -131,6 +132,19 @@ const Students = () => {
       }
     }
     return schoolName;
+  };
+
+  const getImageURL = (item: any) => {
+    if (item && item.studentPhoto) {
+      const imageData = item.studentPhoto.split("|");
+      return (
+        "https://" +
+        imageData[0] +
+        ".s3.ap-south-1.amazonaws.com/" +
+        imageData[1]
+      );
+    }
+    return studentPhoto;
   };
 
   const getRollNo = (rollNo: any) => {
@@ -412,7 +426,14 @@ const Students = () => {
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            {item.firstName + " " + item.lastName}
+                            <div className="flex flex-row items-center">
+                              <img
+                                src={getImageURL(item)}
+                                className="h-10 mr-2"
+                                alt="student"
+                              />
+                              {item.firstName + " " + item.lastName}
+                            </div>
                           </td>
                           <td
                             className={`w-1/7 text-left py-3 px-4 ${

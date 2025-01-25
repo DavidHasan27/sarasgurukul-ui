@@ -10,6 +10,7 @@ import React, {
 import { Button, Chip } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faAngleLeft,
   faBriefcase,
   faFaceGrinHearts,
   faSchool,
@@ -393,10 +394,28 @@ const AddNewWorksheets = () => {
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
-          <span>
-            <FontAwesomeIcon icon={faBriefcase} className="mr-2 fa-4x p-0" />
-            <h1 className="w-full text-3xl text-black ">Add New Worksheets</h1>
-          </span>
+          <div className="flex flex-row w-full justify-between">
+            <div className="flex flex-row w-36 ">
+              <a
+                className="text-gray-800 hover:text-blue-600 hover:font-semibold"
+                href="/app/worksheets"
+              >
+                <FontAwesomeIcon
+                  icon={faAngleLeft}
+                  className="mr-2 fa-1x p-0"
+                />
+                Worksheets
+              </a>
+            </div>
+
+            <span>
+              <FontAwesomeIcon icon={faBriefcase} className="mr-2 fa-4x p-0" />
+              <h1 className="w-full text-3xl text-black ">
+                Add New Worksheets
+              </h1>
+            </span>
+            <div className="flex flex-row  w-36"></div>
+          </div>
 
           <div className="flex justify-center items-center ">
             <div className="w-full lg:w-1/2 my-1 pr-0 lg:pr-2 mt-2 ">

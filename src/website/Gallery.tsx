@@ -1,4 +1,10 @@
 import { useEffect, useState } from "react";
+import { getImages, getImageTags } from "../redux/admin/adminSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { IMAGE_TAG } from "../utils/constants";
+import { clone } from "lodash";
+
+import noImage from "../view/assets/no_image.png";
 
 const galleryList = [
   {
@@ -78,6 +84,12 @@ const galleryList = [
 const Gallery = () => {
   const [filetrType, setFilterType] = useState("All");
   const [imageList, setImageList] = useState(galleryList);
+  const [imageTagList, setImageTagList] = useState<any>(IMAGE_TAG);
+  const dispatch = useAppDispatch();
+  const { imageTags, success, loading, error, imagesData, updateImageMessage } =
+    useAppSelector((state: any) => state.admin);
+
+  console.log("imageData", imagesData, imageTags);
 
   useEffect(() => {
     if (filetrType === "All") {
@@ -86,6 +98,62 @@ const Gallery = () => {
       setImageList(galleryList.filter((obj) => obj.type === filetrType));
     }
   }, [filetrType]);
+
+  useEffect(() => {
+    dispatch(getImageTags());
+    getImageList();
+  }, []);
+
+  useEffect(() => {
+    if (imageTags && imageTags.length > 0) {
+      const tagList = clone(imageTagList);
+      const mergedArray = tagList.concat(
+        imageTags.filter(
+          (item2: any) =>
+            !tagList.some(
+              (item1: any) =>
+                item1.value.toLowerCase() === item2.value.toLowerCase()
+            )
+        )
+      );
+      setImageTagList(mergedArray);
+    }
+  }, [imageTags]);
+
+  const getImageList = (
+    page: number = 0,
+    school: any = undefined,
+    tag: any = undefined
+  ) => {
+    const body: any = {
+      page: page,
+      size: 1000,
+      active: true,
+    };
+
+    if (tag) {
+      body["tag"] = tag;
+    }
+
+    if (school) {
+      body["schoolId"] = school.id;
+    }
+
+    dispatch(getImages(body));
+  };
+
+  const getImageURL = (urlString: any) => {
+    if (urlString) {
+      const imageData = urlString.split("|");
+      const url =
+        "https://" +
+        imageData[0] +
+        ".s3.ap-south-1.amazonaws.com/" +
+        imageData[1];
+      return { url, name: imageData[2] };
+    }
+    return { url: noImage, name: "noImage" };
+  };
 
   return (
     <>
@@ -119,53 +187,48 @@ const Gallery = () => {
           <div className="row">
             <div className="col-12 text-center mb-2">
               <ul className="list-inline mb-4" id="portfolio-flters">
-                <li
-                  className={`btn btn-outline-primary m-1 ${
-                    filetrType === "All" ? "active" : ""
-                  }`}
-                  onClick={() => setFilterType("All")}
-                >
-                  All
-                </li>
-                <li
-                  className={`btn btn-outline-primary m-1 ${
-                    filetrType === "Playing" ? "active" : ""
-                  }`}
-                  onClick={() => setFilterType("Playing")}
-                >
-                  Playing
-                </li>
-                <li
-                  className={`btn btn-outline-primary m-1 ${
-                    filetrType === "Drawing" ? "active" : ""
-                  }`}
-                  onClick={() => setFilterType("Drawing")}
-                >
-                  Drawing
-                </li>
-                <li
-                  className={`btn btn-outline-primary m-1 ${
-                    filetrType === "Reading" ? "active" : ""
-                  }`}
-                  onClick={() => setFilterType("Reading")}
-                >
-                  Reading
-                </li>
+                {imageTagList &&
+                  imageTagList.map((item: any) => {
+                    return (
+                      <li
+                        className={`btn btn-outline-primary m-1 ${
+                          filetrType === item.value ? "active" : ""
+                        }`}
+                        onClick={() => {
+                          setFilterType(item.value);
+                          getImageList(0, undefined, item.value.toLowerCase());
+                        }}
+                        key={item.value}
+                      >
+                        {item.option}
+                      </li>
+                    );
+                  })}
               </ul>
             </div>
           </div>
-          <div className="row portfolio-container">
-            {imageList.map((img, index) => {
-              return (
-                <div className="col-lg-4 col-md-6 mb-4 portfolio-item first">
-                  <div className="position-relative overflow-hidden mb-2">
+
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 md:grid-cols-4 overflow-y-auto max-h-[70vh]">
+            {imagesData &&
+              imagesData.content.map((obj: any, index: any) => {
+                const image = getImageURL(obj.imageDetails);
+                return (
+                  <div
+                    key={index}
+                    className="relative portfolio-item"
+                    onClick={() => {
+                      // setCurrentImage(index);
+                      // setIsViewerOpen(true);
+                    }}
+                  >
                     <img
-                      className="img-fluid w-100"
-                      src={"img/" + img.name}
-                      alt=""
+                      className="h-64 w-full max-w-full rounded-lg object-cover object-center"
+                      src={image.url}
+                      alt="gallery-photo "
                     />
+
                     <div className="portfolio-btn bg-primary d-flex align-items-center justify-content-center">
-                      <a href={"img/" + img.name} data-lightbox="portfolio">
+                      <a href={image.url} data-lightbox="portfolio">
                         <i
                           className="fa fa-plus text-white"
                           style={{ fontSize: 60 }}
@@ -173,11 +236,11 @@ const Gallery = () => {
                       </a>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
 
-            {/* <div className="col-lg-4 col-md-6 mb-4 portfolio-item first">
+          {/* <div className="col-lg-4 col-md-6 mb-4 portfolio-item first">
               <div className="position-relative overflow-hidden mb-2">
                 <img
                   className="img-fluid w-100"
@@ -279,9 +342,9 @@ const Gallery = () => {
                 </div>
               </div>
             </div> */}
-          </div>
         </div>
       </div>
+      {/* </div> */}
       {/* <!-- Gallery End --> */}
     </>
   );

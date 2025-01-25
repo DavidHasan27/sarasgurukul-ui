@@ -10,6 +10,7 @@ import React, {
 import { Button, Chip } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faAngleLeft,
   faBriefcase,
   faEnvelope,
   faFaceGrinHearts,
@@ -59,12 +60,6 @@ const AddNewMessage = () => {
   const [title, setTitle] = useState<any>();
   const [titleError, setTitleError] = useState<any>("");
 
-  const [startDate, setStartDate] = useState<any>("");
-  const [startDateError, setStartDateError] = useState<any>("");
-
-  const [endDate, setEndDate] = useState<any>("");
-  const [endDateError, setEndDateError] = useState<any>("");
-
   const [description, setDescription] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [file, setFile] = useState<any>([]);
@@ -100,18 +95,6 @@ const AddNewMessage = () => {
 
   const userDetails = getUserDetails();
 
-  console.log("roleList", roleList);
-
-  //   useEffect(() => {
-  //     if (receiverList && receiverList.length > 0) {
-  //       var ids = new Set(user.map((obj: any) => obj.id));
-  //       var newArray = receiverList.filter((d: any) => !ids.has(d.id));
-  //       setUserList(newArray);
-  //       //   const year = find(yearList, (item: any) => item.active);
-  //       //   setMessageType(year);
-  //     }
-  //   }, [receiverList]);
-
   useEffect(() => {
     dispatch(getSchoolsForSelection());
     dispatch(getSchoolYear());
@@ -134,33 +117,6 @@ const AddNewMessage = () => {
       setServerRoles(tempList);
     }
   }, [roleList]);
-
-  useEffect(() => {
-    console.log("file >>>", file.length, file);
-  }, [file]);
-
-  // const onDrop = useCallback((acceptedFiles: any) => {
-  //   console.log("File Length ::", file.length);
-  //   const tempFileList = clone(file);
-  //   for (let i = 0; i < acceptedFiles.length; i++) {
-  //     var totalSizeMB = acceptedFiles[i].size / Math.pow(1024, 2);
-  //     if (totalSizeMB > 1) {
-  //       alert(acceptedFiles[i].name + " file size is more than 1MB");
-  //       break;
-  //     } else {
-  //       const fileObj = tempFileList.find(
-  //         (obj: any) =>
-  //           obj.name === acceptedFiles[i].name &&
-  //           obj.size === acceptedFiles[i].name
-  //       );
-  //       if (!fileObj) {
-  //         tempFileList.push(acceptedFiles[i]);
-  //       }
-  //     }
-  //     setFile(tempFileList);
-  //   }
-  //   // Do something with the files
-  // }, []);
 
   const onDrop = (acceptedFiles: any) => {
     console.log("File Length ::", file.length, acceptedFiles);
@@ -573,10 +529,25 @@ const AddNewMessage = () => {
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
-          <span>
-            <FontAwesomeIcon icon={faEnvelope} className="mr-2 fa-4x p-0" />
-            <h1 className="w-full text-3xl text-black ">New Message</h1>
-          </span>
+          <div className="flex flex-row w-full justify-between">
+            <div className="flex flex-row w-24 ">
+              <a
+                className="text-gray-800 hover:text-blue-600 hover:font-semibold"
+                href="/app/messages"
+              >
+                <FontAwesomeIcon
+                  icon={faAngleLeft}
+                  className="mr-2 fa-1x p-0"
+                />
+                Messages
+              </a>
+            </div>
+            <span>
+              <FontAwesomeIcon icon={faEnvelope} className="mr-2 fa-4x p-0" />
+              <h1 className="w-full text-3xl text-black ">New Message</h1>
+            </span>
+            <div className="flex flex-row  w-24"></div>
+          </div>
 
           <div className="flex flex-wrap">
             <div className="w-full lg:w-[30%] my-1 pr-0 lg:pr-2 mt-2 ">

@@ -1,7 +1,7 @@
 import ParentLayout from "../../component/app-component/Parent";
 import { useDropzone } from "react-dropzone";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Button } from "@material-tailwind/react";
+import { Avatar, Button, Chip } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { isEmailValid, isMobileValid } from "../../utils";
@@ -16,6 +16,7 @@ import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { BLOODGROUP } from "../../utils/constants";
 import DatePicker from "../../component/app-component/DatePicker";
+import { clone } from "lodash";
 
 const AddStaff = () => {
   const [firstName, setFirstName] = useState("");
@@ -78,6 +79,9 @@ const AddStaff = () => {
   const [addressError, setAddressError] = useState("");
   const [joiningDate, setJoiningDate] = useState<any>(new Date());
   const [requiredRoleList, setRequiredRoleList] = useState<any>([]);
+
+  const [profilePhoto, setProfilePhoto] = useState<any>();
+  const [documentsFile, setDocumentsFile] = useState<any>([]);
   const dispatch = useAppDispatch();
   const { loading, error, success, roleList, newuser } = useAppSelector(
     (state: any) => state.user
@@ -109,8 +113,40 @@ const AddStaff = () => {
   }, []);
 
   const onDrop = useCallback((acceptedFiles: any) => {
-    // Do something with the files
+    console.log("Profile Photo", acceptedFiles);
+    var totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
+    if (totalSizeMB > 1) {
+      alert("Maximum size for file is 1MB");
+    } else {
+      setProfilePhoto(acceptedFiles[0]);
+    }
   }, []);
+
+  const onDropDocuments = (acceptedFiles: any) => {
+    const tempFileList = clone(documentsFile);
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      var totalSizeMB = acceptedFiles[i].size / Math.pow(1024, 2);
+      if (totalSizeMB > 1) {
+        alert(acceptedFiles[i].name + " file size is more than 1MB");
+        break;
+      } else {
+        const fileObj = tempFileList.find(
+          (obj: any) =>
+            obj.name === acceptedFiles[i].name &&
+            obj.size === acceptedFiles[i].size
+        );
+        if (!fileObj) {
+          tempFileList.push(acceptedFiles[i]);
+        }
+      }
+    }
+    if (tempFileList.length > 3) {
+      alert("You can select maximum 3 files ");
+      return;
+    }
+    setDocumentsFile(tempFileList);
+  };
+
   const {
     getRootProps,
     getInputProps,
@@ -118,7 +154,31 @@ const AddStaff = () => {
     isFocused,
     isDragAccept,
     isDragReject,
-  } = useDropzone({ onDrop });
+  } = useDropzone({
+    onDrop,
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+      "image/webp": [],
+      "image/heic": [],
+      "image/jfif": [],
+    },
+    multiple: false,
+  });
+
+  const {
+    getRootProps: getRootDocumentsProps,
+    getInputProps: getInputDocumentsProps,
+    isDragActive: isDocDragActive,
+    isFocused: isDocFocused,
+    isDragAccept: isDocDragAccept,
+    isDragReject: isDocDragReject,
+  } = useDropzone({
+    onDrop: onDropDocuments,
+    multiple: true,
+    maxFiles: 3,
+    disabled: documentsFile.length == 3,
+  });
 
   const baseStyle = {
     flex: 1,
@@ -205,6 +265,8 @@ const AddStaff = () => {
     setRoleError("");
     setBloodGroup(null);
     setSchoolList([]);
+    setDocumentsFile([]);
+    setProfilePhoto("");
   };
 
   const onSubmitSchool = () => {
@@ -314,7 +376,18 @@ const AddStaff = () => {
 
     const schoolListIemp = schoolList.map((element: any) => element.id);
 
-    const body = {
+    const fileList = [];
+    for (let i = 0; i < documentsFile.length; i++) {
+      const fileObj = {
+        type: "user-doc",
+        bucket: "saras-doc",
+        subtype: firstName + "_" + lastName,
+        file: documentsFile[i],
+      };
+      fileList.push(fileObj);
+    }
+
+    const body: any = {
       firstName: firstName,
       lastName: lastName,
       middleName: middleName,
@@ -342,6 +415,19 @@ const AddStaff = () => {
         birthDate: birthDate,
       },
     };
+
+    if (profilePhoto) {
+      body["userProfilePhoto"] = {
+        type: "user-profile",
+        bucket: "saras-doc",
+        subtype: firstName + "_" + lastName,
+        file: profilePhoto,
+      };
+    }
+
+    if (fileList.length > 0) {
+      body["fileList"] = fileList;
+    }
 
     // console.log("Create User Body", body);
 
@@ -575,59 +661,6 @@ const AddStaff = () => {
                       </div>
                     </div>
 
-                    {/* <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Relative Name
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="relativename"
-                          name="relativename"
-                          required
-                          placeholder="Relative Name"
-                          aria-label="relativename"
-                          value={phone1}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
-                            }
-                          }}
-                        />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Relative Number
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="Phone1"
-                          name="Phone1"
-                          type="number"
-                          required
-                          placeholder="Relative number"
-                          aria-label="Phone1"
-                          value={phone1}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
-                            }
-                          }}
-                        />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
-                      </div>
-                    </div> */}
-
                     <label className="block text-sm text-gray-600 text-left mb-0">
                       Schools
                     </label>
@@ -702,107 +735,84 @@ const AddStaff = () => {
                     </label>
                   </div>
 
-                  {/* <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      About Staff
-                    </label>
-                    <textarea
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="message"
-                      name="message"
-                      rows={4}
-                      required
-                      placeholder="About Staff"
-                      aria-label="Email"
-                      value={aboutSchool}
-                      onChange={(event) => {
-                        setAboutSchool(event.target.value);
-                        setAboutSchoolError("");
-                      }}
-                    ></textarea>
-                    <label className="block text-sm text-left text-red-600 h-4 mt-[-10px]">
-                      {aboutSchoolError ? "Please Enter About School Info" : ""}
-                    </label>
-                  </div> */}
-                  <div className="inline-block w-1/5 mt-4">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Profile Photo
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
+                  <div className="grid">
+                    <div className="inline-block w-full">
+                      <label className="block text-sm text-gray-600 text-left">
+                        Profile Photo
+                      </label>
+                      <div
+                        {...getRootProps(style)}
+                        className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                      >
+                        <input {...getInputProps()} />
+                        {profilePhoto ? (
+                          <Avatar
+                            variant="circular"
+                            alt="candice"
+                            src={URL.createObjectURL(profilePhoto)}
+                            placeholder={undefined}
+                            size="xxl"
+                            className="object-fill"
+                          />
+                        ) : (
+                          // <img
+                          //   src={URL.createObjectURL(profilePhoto)}
+                          //   //   height={200}
+                          //   alt="ProfilePhoto"
+                          //   className="h-12 w-30 object-contain "
+                          // />
+                          <>
+                            {isDragActive ? (
+                              <p>Drop the files here ...</p>
+                            ) : (
+                              <p>Click to select files</p>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
+                    <div className="inline-block ml-1">
+                      <label className="block text-sm text-gray-600 text-left">
+                        Documents(Max 3 Files)
+                      </label>
+                      <div
+                        {...getRootDocumentsProps(style)}
+                        className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-36  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                      >
+                        <input {...getInputDocumentsProps()} />
+                        {isDocDragActive ? (
+                          <p>Click to select files or Drop the files here ..</p>
+                        ) : (
+                          <p>Click to select files</p>
+                        )}
+                      </div>
 
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-1
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
+                      <div className="flex flex-wrap flex-row w-full ">
+                        {documentsFile.map((obj: any, index: any) => {
+                          return (
+                            <>
+                              <Chip
+                                open={true}
+                                value={obj.name}
+                                onClose={() => {
+                                  const fileList = clone(documentsFile);
+                                  fileList.splice(index, 1);
+                                  setDocumentsFile(fileList);
+                                }}
+                                className={`${
+                                  index != 0 ? "ml-0" : ""
+                                } mt-2 mr-2`}
+                                color="teal"
+                              />
+                            </>
+                          );
+                        })}
+                      </div>
+
+                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                        {schoolImageError ? "Please select school image" : ""}
+                      </label>
                     </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-2
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-3
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
                   </div>
                 </form>
               </div>
@@ -814,78 +824,6 @@ const AddStaff = () => {
               </p>
               <div className="leading-loose">
                 <form className="p-10 bg-white rounded shadow-xl min-h-[470px]">
-                  {/* <label className="block text-sm text-left text-gray-600">
-                    Phone
-                  </label>
-                  <div className="inline-block w-1/2 pr-1">
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone1"
-                        name="Phone1"
-                        type="number"
-                        required
-                        placeholder="Phone1"
-                        aria-label="Phone1"
-                        value={phone1}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setPhone1(event.target.value);
-                            setPhone1Error("");
-                          }
-                        }}
-                      />
-                      <div className="block text-sm text-left text-red-600 h-4">
-                        {phone1Error && phone1Error}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="inline-block mt-2 w-1/2 pr-1">
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone2"
-                        name="Phone2"
-                        type="number"
-                        required
-                        placeholder="Phone2"
-                        aria-label="Phone2"
-                        value={phone2}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setPhone2(event.target.value);
-                            setPhone2Error("");
-                          }
-                        }}
-                      />
-                      <div className="block text-sm text-left text-red-600 h-4">
-                        {phone2Error && phone2Error}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      School Email
-                    </label>
-                    <input
-                      className="w-full px-2  py-1 text-gray-700 bg-[#e5e7eb] rounded "
-                      id="email"
-                      name="email"
-                      type="text"
-                      required
-                      placeholder="Your Email"
-                      aria-label="Email"
-                      value={email}
-                      onChange={(event) => {
-                        setEmail(event.target.value);
-                        setEmailError("");
-                      }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {emailError && emailError}
-                    </label>
-                  </div> */}
                   <div className="inline-block w-1/2 pr-1">
                     <label className=" block text-sm text-gray-600 text-left">
                       Address1

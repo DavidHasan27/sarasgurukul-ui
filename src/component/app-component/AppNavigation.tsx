@@ -1,6 +1,6 @@
 import { Typography } from "@material-tailwind/react";
 import { useCallback, useEffect, useState } from "react";
-import { clearSession } from "../../utils";
+import { clearSession, getUserDetails } from "../../utils";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { resetUserDetails } from "../../redux/user_auth/authSlice";
@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import "../../view/main-view/mainview.css";
 import logoImage from "../../view/assets/sidebar_image.png";
+import user from "../../view/assets/user.png";
 
 const AppNavigation = ({ children, currentPath }: any) => {
   const [dropdown, setDropdown] = useState(false);
@@ -19,6 +20,7 @@ const AppNavigation = ({ children, currentPath }: any) => {
   const dispatch = useAppDispatch();
   const user: any = useAppSelector((state) => state.auth.user);
   const [isExpanded, setIsExpanded] = useState(false);
+  const userDetails = getUserDetails();
   const toggleIsExpanded = useCallback(() => {
     setIsExpanded((isExpanded) => !isExpanded);
   }, []);
@@ -30,6 +32,21 @@ const AppNavigation = ({ children, currentPath }: any) => {
       setMenulist([]);
     }
   }, [user]);
+
+  console.log("User Details ::", userDetails);
+
+  const getImageURL = () => {
+    if (userDetails && userDetails.userProfilePhoto) {
+      const imageData = userDetails.userProfilePhoto.split("|");
+      return (
+        "https://" +
+        imageData[0] +
+        ".s3.ap-south-1.amazonaws.com/" +
+        imageData[1]
+      );
+    }
+    return user;
+  };
 
   return (
     <div className="bg-gray-100 font-family-karla flex">
@@ -163,7 +180,7 @@ const AppNavigation = ({ children, currentPath }: any) => {
               onClick={() => setDropdown(!dropdown)}
               onMouseEnter={() => setDropdown(!dropdown)}
             >
-              <img src="https://source.unsplash.com/uJ8LNVCBjFQ/400x400" />
+              <img src={getImageURL()} alt="profileImage" />
             </button>
 
             <div

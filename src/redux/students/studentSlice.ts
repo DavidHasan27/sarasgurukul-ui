@@ -3,6 +3,7 @@ import axios from "axios";
 import { getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove } from "lodash";
+import { uploadFiles } from "../admin/adminSlice";
 
 const initialState = {
   loading: false,
@@ -48,6 +49,60 @@ export const createNewStudent = createAsyncThunk(
   `/student/createStudent`,
   async (data: any, { rejectWithValue }) => {
     try {
+      if (data.studentPhoto) {
+        const result = await uploadFiles(data.studentPhoto);
+        const finalResult =
+          result.data.bucket +
+          "|" +
+          result.data.name +
+          "|" +
+          data.studentPhoto.file.name;
+        data.studentPhoto = finalResult;
+      }
+
+      if (data.parents.userProfilePhoto) {
+        const result = await uploadFiles(data.parents.userProfilePhoto);
+        const finalResult =
+          result.data.bucket +
+          "|" +
+          result.data.name +
+          "|" +
+          data.parents.userProfilePhoto.file.name;
+        data.parents.userProfilePhoto = finalResult;
+      }
+
+      if (data.studentFileList && data.studentFileList.length > 0) {
+        for (let i = 0; i < data.studentFileList.length; i++) {
+          const result = await uploadFiles(data.studentFileList[i]);
+          if (result && result.data) {
+            const finalResult =
+              result.data.bucket +
+              "|" +
+              result.data.name +
+              "|" +
+              data.studentFileList[i].file.name;
+            data["doc" + (i + 1)] = finalResult;
+          }
+        }
+      }
+      delete data.studentFileList;
+
+      if (data.parentFileList && data.parentFileList.length > 0) {
+        for (let i = 0; i < data.parentFileList.length; i++) {
+          const result = await uploadFiles(data.parentFileList[i]);
+          if (result && result.data) {
+            const finalResult =
+              result.data.bucket +
+              "|" +
+              result.data.name +
+              "|" +
+              data.parentFileList[i].file.name;
+            data.parents["doc" + (i + 1)] = finalResult;
+          }
+        }
+      }
+      delete data.parentFileList;
+
       const res = await axios.post("/api/student/createStudent", data, {
         headers: { Authorization: getAuthToken() },
       });
@@ -74,10 +129,83 @@ export const createNewStudent = createAsyncThunk(
   }
 );
 
+const isString = (value: any) => {
+  return typeof value === "string" || value instanceof String;
+};
+
 export const updateStudentDetails = createAsyncThunk(
   `/student/update`,
   async (data: any, { rejectWithValue }) => {
     try {
+      if (data.studentPhoto && !isString(data.studentPhoto)) {
+        const result = await uploadFiles(data.studentPhoto);
+        const finalResult =
+          result.data.bucket +
+          "|" +
+          result.data.name +
+          "|" +
+          data.studentPhoto.file.name;
+        data.studentPhoto = finalResult;
+      }
+
+      if (
+        data.parents.userProfilePhoto &&
+        !isString(data.parents.userProfilePhoto)
+      ) {
+        const result = await uploadFiles(data.parents.userProfilePhoto);
+        const finalResult =
+          result.data.bucket +
+          "|" +
+          result.data.name +
+          "|" +
+          data.parents.userProfilePhoto.file.name;
+        data.parents.userProfilePhoto = finalResult;
+      }
+
+      for (let i = 1; i <= 3; i++) {
+        if (data.studentFileList && data.studentFileList[i - 1]) {
+          if (!isString(data.studentFileList[i - 1])) {
+            const result = await uploadFiles(data.studentFileList[i - 1]);
+            if (result && result.data) {
+              const finalResult =
+                result.data.bucket +
+                "|" +
+                result.data.name +
+                "|" +
+                data.studentFileList[i - 1].file.name;
+              data["doc" + i] = finalResult;
+            }
+          } else {
+            data["doc" + i] = data.studentFileList[i - 1];
+          }
+        } else {
+          data["doc" + i] = null;
+        }
+      }
+      delete data.studentFileList;
+
+      for (let i = 1; i <= 3; i++) {
+        if (data.parentFileList && data.parentFileList[i - 1]) {
+          if (!isString(data.parentFileList[i - 1])) {
+            const result = await uploadFiles(data.parentFileList[i - 1]);
+            if (result && result.data) {
+              const finalResult =
+                result.data.bucket +
+                "|" +
+                result.data.name +
+                "|" +
+                data.parentFileList[i - 1].file.name;
+              data.parents["doc" + i] = finalResult;
+            }
+          } else {
+            data.parents["doc" + i] = data.parentFileList[i - 1];
+          }
+        } else {
+          data.parents["doc" + i] = null;
+        }
+      }
+      delete data.parentFileList;
+
       const res = await axios.put("/api/student/update", data, {
         headers: { Authorization: getAuthToken() },
       });

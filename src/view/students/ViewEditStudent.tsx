@@ -7,9 +7,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Button } from "@material-tailwind/react";
+import { Avatar, Button, Chip } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSchool, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleLeft,
+  faFileDownload,
+  faSchool,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { isEmailValid, isMobileValid } from "../../utils";
 
 import Select from "react-select";
@@ -24,8 +29,8 @@ import {
   resetNewStudent,
   updateStudentDetails,
 } from "../../redux/students/studentSlice";
-import { getSchoolYear } from "../../redux/admin/adminSlice";
-import { find } from "lodash";
+import { downloadFile, getSchoolYear } from "../../redux/admin/adminSlice";
+import { clone, find } from "lodash";
 import { useLocation } from "react-router-dom";
 
 const ViewEditStudent = () => {
@@ -163,6 +168,41 @@ const ViewEditStudent = () => {
   const [schoolMenu, setSchoolMenu] = useState<any>();
   const [YearMenu, setYearMenu] = useState<any>();
   const [selectedYear, setSelectedYear] = useState<any>();
+
+  console.log("Current Obj", currentObj);
+
+  const [studentProfilePhoto, setStudentProfilePhoto] = useState<any>(
+    currentObj.studentPhoto
+  );
+
+  const docList = [];
+  if (currentObj.doc1) {
+    docList.push(currentObj.doc1);
+  }
+  if (currentObj.doc2) {
+    docList.push(currentObj.doc2);
+  }
+  if (currentObj.doc3) {
+    docList.push(currentObj.doc3);
+  }
+
+  const parentDocList = [];
+  if (currentObj.parents.userDetails.doc1) {
+    parentDocList.push(currentObj.parents.userDetails.doc1);
+  }
+  if (currentObj.parents.userDetails.doc2) {
+    parentDocList.push(currentObj.parents.userDetails.doc2);
+  }
+  if (currentObj.parents.userDetails.doc3) {
+    parentDocList.push(currentObj.parents.userDetails.doc3);
+  }
+
+  const [studentDocuments, setStudentDocuments] = useState<any>(docList);
+
+  const [parentProfilePhoto, setParentProfilePhoto] = useState<any>(
+    currentObj.parents.userProfilePhoto
+  );
+  const [parentsDocuments, setParentsDocuments] = useState<any>(parentDocList);
   const dispatch = useAppDispatch();
   // const { newuser } = useAppSelector(
   //   (state: any) => state.user
@@ -200,7 +240,7 @@ const ViewEditStudent = () => {
 
       let year;
       if (studentyear) {
-        year = find(yearList, (item: any) => item.id === studentyear.yearId);
+        year = find(yearList, (item: any) => item.id === studentyear.year.id);
       } else {
         year = find(yearList, (item: any) => item.active);
       }
@@ -212,9 +252,14 @@ const ViewEditStudent = () => {
     dispatch(getSchoolsForSelection());
     dispatch(getSchoolYear());
   }, []);
-
   const onDrop = useCallback((acceptedFiles: any) => {
-    // Do something with the files
+    console.log("Profile Photo", acceptedFiles);
+    var totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
+    if (totalSizeMB > 1) {
+      alert("Maximum size for file is 1MB");
+    } else {
+      setStudentProfilePhoto(acceptedFiles[0]);
+    }
   }, []);
   const {
     getRootProps,
@@ -224,6 +269,100 @@ const ViewEditStudent = () => {
     isDragAccept,
     isDragReject,
   } = useDropzone({ onDrop });
+
+  const onParentProfilePhotoDrop = useCallback((acceptedFiles: any) => {
+    console.log("Profile Photo", acceptedFiles);
+    var totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
+    if (totalSizeMB > 1) {
+      alert("Maximum size for file is 1MB");
+    } else {
+      setParentProfilePhoto(acceptedFiles[0]);
+    }
+  }, []);
+  const {
+    getRootProps: getRootParentPhotoProps,
+    getInputProps: getInputParentPhotoProps,
+    isDragActive: isParentPhotoDragActive,
+    isFocused: isParentPhotoFocused,
+    isDragAccept: isParentPhotoAccept,
+    isDragReject: isParentPhotoDragReject,
+  } = useDropzone({ onDrop: onParentProfilePhotoDrop });
+
+  const onDropDocuments = (acceptedFiles: any) => {
+    const tempFileList = clone(studentDocuments);
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      var totalSizeMB = acceptedFiles[i].size / Math.pow(1024, 2);
+      if (totalSizeMB > 1) {
+        alert(acceptedFiles[i].name + " file size is more than 1MB");
+        break;
+      } else {
+        const fileObj = tempFileList.find(
+          (obj: any) =>
+            obj.name === acceptedFiles[i].name &&
+            obj.size === acceptedFiles[i].size
+        );
+        if (!fileObj) {
+          tempFileList.push(acceptedFiles[i]);
+        }
+      }
+    }
+    if (tempFileList.length > 3) {
+      alert("You can select maximum 3 files ");
+      return;
+    }
+    setStudentDocuments(tempFileList);
+  };
+  const {
+    getRootProps: getRootDocumentsProps,
+    getInputProps: getInputDocumentsProps,
+    isDragActive: isDocDragActive,
+    isFocused: isDocFocused,
+    isDragAccept: isDocDragAccept,
+    isDragReject: isDocDragReject,
+  } = useDropzone({
+    onDrop: onDropDocuments,
+    multiple: true,
+    maxFiles: 3,
+    disabled: studentDocuments.length == 3,
+  });
+
+  const onParentDropDocuments = (acceptedFiles: any) => {
+    const tempFileList = clone(parentsDocuments);
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      var totalSizeMB = acceptedFiles[i].size / Math.pow(1024, 2);
+      if (totalSizeMB > 1) {
+        alert(acceptedFiles[i].name + " file size is more than 1MB");
+        break;
+      } else {
+        const fileObj = tempFileList.find(
+          (obj: any) =>
+            obj.name === acceptedFiles[i].name &&
+            obj.size === acceptedFiles[i].size
+        );
+        if (!fileObj) {
+          tempFileList.push(acceptedFiles[i]);
+        }
+      }
+    }
+    if (tempFileList.length > 3) {
+      alert("You can select maximum 3 files ");
+      return;
+    }
+    setParentsDocuments(tempFileList);
+  };
+  const {
+    getRootProps: getRootParentDocumentsProps,
+    getInputProps: getInputParentDocumentsProps,
+    isDragActive: isParentDocDragActive,
+    isFocused: isParentDocFocused,
+    isDragAccept: isParentDocDragAccept,
+    isDragReject: isParentDocDragReject,
+  } = useDropzone({
+    onDrop: onParentDropDocuments,
+    multiple: true,
+    maxFiles: 3,
+    disabled: parentsDocuments.length == 3,
+  });
 
   const baseStyle = {
     flex: 1,
@@ -267,7 +406,7 @@ const ViewEditStudent = () => {
   useEffect(() => {
     if (updateStudent) {
       // navigate("/app/dash", { replace: true });
-      resetAllData();
+      // resetAllData();
     }
   }, [updateStudent]);
 
@@ -324,7 +463,7 @@ const ViewEditStudent = () => {
     setStudentRelationError("");
   };
 
-  const onSubmitSchool = () => {
+  const onSubmitStudent = () => {
     let isError = false;
 
     let firstScreenError = false;
@@ -485,7 +624,39 @@ const ViewEditStudent = () => {
 
     // const schoolListIemp = school.map((element: any) => element.id);
 
-    const studentBody = {
+    const studentfileList = [];
+    for (let i = 0; i < studentDocuments.length; i++) {
+      let fileObj: any = "";
+      if (isString(studentDocuments[i])) {
+        fileObj = studentDocuments[i];
+      } else {
+        fileObj = {
+          type: "student-doc",
+          bucket: "saras-doc",
+          subtype: sFirstName + "_" + sLastName,
+          file: studentDocuments[i],
+        };
+      }
+      studentfileList.push(fileObj);
+    }
+
+    const parentFileList = [];
+    for (let i = 0; i < parentsDocuments.length; i++) {
+      let fileObj: any = "";
+      if (isString(parentsDocuments[i])) {
+        fileObj = parentsDocuments[i];
+      } else {
+        fileObj = {
+          type: "parent-doc",
+          bucket: "saras-doc",
+          subtype: firstName + "_" + lastName,
+          file: parentsDocuments[i],
+        };
+      }
+      parentFileList.push(fileObj);
+    }
+
+    const studentBody: any = {
       id: currentObj.id,
       firstName: sFirstName,
       middleName: smiddleName,
@@ -531,38 +702,46 @@ const ViewEditStudent = () => {
       },
     };
 
-    // const body = {
-    //   firstName: firstName,
-    //   lastName: lastName,
-    //   middleName: middleName,
-    //   email: email,
-    //   phone: phone1,
-    //   role: role.id,
-    //   schools: schoolListIemp,
-    //   userDetails: {
-    //     addressLine1: addressLine1,
-    //     addressLine2: addressLine2,
-    //     city: city,
-    //     area: branch,
-    //     state: state,
-    //     country: country,
-    //     pinCode: pincode,
-    //     phone1: phone1,
-    //     phone2: phone2,
-    //     description: aboutStaff,
-    //     jobTitle: role.roleDesc,
-    //     joiningDate: joiningDate,
-    //     bloodGroup: bloodGroup.value,
-    //     speciality: role.roleDesc,
-    //     relativeName: relativeName,
-    //     relativeNo: relativeNo,
-    //     birthDate: birthDate,
-    //   },
-    // };
+    studentBody["studentFileList"] = studentfileList;
+    studentBody["parentFileList"] = parentFileList;
 
-    // console.log("Create User Body", body);
+    if (studentProfilePhoto) {
+      if (isString(studentProfilePhoto)) {
+        studentBody["studentPhoto"] = studentProfilePhoto;
+      } else {
+        studentBody["studentPhoto"] = {
+          type: "user-profile",
+          bucket: "saras-doc",
+          subtype: sFirstName + "_" + sLastName,
+          file: studentProfilePhoto,
+        };
+      }
+    }
+
+    if (parentProfilePhoto) {
+      if (isString(parentProfilePhoto)) {
+        studentBody.parents["userProfilePhoto"] = parentProfilePhoto;
+      } else {
+        studentBody.parents["userProfilePhoto"] = {
+          type: "user-profile",
+          bucket: "saras-doc",
+          subtype: firstName + "_" + lastName,
+          file: parentProfilePhoto,
+        };
+      }
+    }
 
     dispatch(updateStudentDetails(studentBody));
+  };
+  const isString = (value: any) => {
+    return typeof value === "string" || value instanceof String;
+  };
+
+  const getImageURL = (item: any) => {
+    const imageData = item.split("|");
+    return (
+      "https://" + imageData[0] + ".s3.ap-south-1.amazonaws.com/" + imageData[1]
+    );
   };
 
   const formatOptionLabel = ({ value, label }: any) => {
@@ -634,10 +813,25 @@ const ViewEditStudent = () => {
     >
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
         <main className="w-full flex-grow p-6">
-          <span>
-            <FontAwesomeIcon icon={faUserPlus} className="mr-2 fa-4x p-0" />
-            <h1 className="w-full text-3xl text-black ">Add New Student</h1>
-          </span>
+          <div className="flex flex-row w-full justify-between">
+            <div className="flex flex-row w-24 ">
+              <a
+                className="text-gray-800 hover:text-blue-600 hover:font-semibold"
+                href="/app/students"
+              >
+                <FontAwesomeIcon
+                  icon={faAngleLeft}
+                  className="mr-2 fa-1x p-0"
+                />
+                Students
+              </a>
+            </div>
+            <span>
+              <FontAwesomeIcon icon={faUserPlus} className="mr-2 fa-4x p-0" />
+              <h1 className="w-full text-3xl text-black ">Update Student</h1>
+            </span>
+            <div className="flex flex-row  w-24"></div>
+          </div>
 
           <div className="flex flex-wrap">
             <div className="w-full lg:w-1/2 my-1 pr-0 lg:pr-2 mt-2 ">
@@ -887,136 +1081,6 @@ const ViewEditStudent = () => {
                       </div>
                     </div>
 
-                    {/* <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Email
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="email"
-                          name="email"
-                          required
-                          placeholder="Email Id"
-                          aria-label="email"
-                          value={email}
-                          onChange={(event) => {
-                            setEmail(event.target.value);
-                            setEmailError("");
-                          }}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {emailError && emailError}
-                        </div>
-                      </div>
-                    </div> */}
-
-                    {/* <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Primary Number
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="Phone1"
-                          name="Phone1"
-                          type="number"
-                          required
-                          placeholder="Phone1"
-                          aria-label="Phone1"
-                          value={phone1}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
-                            }
-                          }}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Secondary Number
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="Phone2"
-                          name="Phone2"
-                          type="number"
-                          required
-                          placeholder="Phone2"
-                          aria-label="Phone2"
-                          value={phone2}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone2(event.target.value);
-                              setPhone2Error("");
-                            }
-                          }}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {phone2Error && phone2Error}
-                        </div>
-                      </div>
-                    </div> */}
-
-                    {/* <div className="inline-block  w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Blood Group
-                      </label>
-                      <div className="flex flex-col">
-                        <Select
-                          name="role"
-                          placeholder="Select Blood Group"
-                          options={BLOODGROUP}
-                          getOptionLabel={(option: any) => option.option}
-                          getOptionValue={(option) => option.value}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              backgroundColor: "#e5e7eb",
-                              borderColor: state.isFocused
-                                ? "#0f58bf"
-                                : "#e1e4e8",
-                              textAlign: "left",
-                            }),
-                            option: (baseStyles, state) => ({
-                              ...baseStyles,
-                              textAlign: "left",
-                            }),
-                          }}
-                          classNamePrefix="Select Blood Group"
-                          onChange={(event) => {
-                            console.log("Bloood Group >>>>>", event);
-                            setBloodGroup(event);
-                          }}
-                          value={bloodGroup}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4"></div>
-                      </div>
-                    </div> */}
-
-                    {/* <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Birth Date
-                      </label>
-                      <div className="flex flex-col">
-                        <DatePicker
-                          startDate={birthDate}
-                          maxDate={new Date("2012-01-01")}
-                          minDate={new Date("1980-01-01")}
-                          onDateChange={(date: any) => setBirthDate(date)}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {birthDateError && birthDateError}
-                        </div>
-                      </div>
-                    </div> */}
-
                     <div className="inline-block mt-2 w-1/2 pr-1">
                       <label className="block text-sm text-gray-600 text-left">
                         Mother/Father Name
@@ -1042,30 +1106,6 @@ const ViewEditStudent = () => {
                       </div>
                     </div>
 
-                    {/* <div className="inline-block mt-2 w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Father Name
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="fatherName"
-                          name="fatherName"
-                          required
-                          placeholder="Father Name"
-                          aria-label="fatherName"
-                          value={fatherName}
-                          onChange={(event) => {
-                            setFatherName(event.target.value);
-                            setFatherNameError("");
-                          }}
-                          disabled={!school || !classs}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {fatherNameError && fatherNameError}
-                        </div>
-                      </div>
-                    </div> */}
                     <div className="inline-block mt-2 w-1/2 pr-1">
                       <label className="block text-sm text-gray-600 text-left">
                         Guardian Name
@@ -1090,235 +1130,43 @@ const ViewEditStudent = () => {
                         </div>
                       </div>
                     </div>
-                    {/* <div className="inline-block w-1/2 pr-1">
+                  </div>
+
+                  <div className="grid">
+                    <div className="inline-block w-full">
                       <label className="block text-sm text-gray-600 text-left">
-                        Relative Name
+                        Student Photo
                       </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="relativename"
-                          name="relativename"
-                          required
-                          placeholder="Relative Name"
-                          aria-label="relativename"
-                          value={phone1}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
+                      <div
+                        {...getRootProps(style)}
+                        className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                      >
+                        <input {...getInputProps()} />
+                        {studentProfilePhoto ? (
+                          <Avatar
+                            variant="circular"
+                            alt="candice"
+                            src={
+                              isString(studentProfilePhoto)
+                                ? getImageURL(studentProfilePhoto)
+                                : URL.createObjectURL(studentProfilePhoto)
                             }
-                          }}
-                        />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
+                            placeholder={undefined}
+                            size="xxl"
+                            className="object-fill"
+                          />
+                        ) : (
+                          <>
+                            {isDragActive ? (
+                              <p>Drop the files here ...</p>
+                            ) : (
+                              <p>Click to select files</p>
+                            )}
+                          </>
+                        )}
                       </div>
                     </div>
-
-                    <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Relative Number
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="Phone1"
-                          name="Phone1"
-                          type="number"
-                          required
-                          placeholder="Relative number"
-                          aria-label="Phone1"
-                          value={phone1}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
-                            }
-                          }}
-                        />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
-                      </div>
-                    </div> */}
-
-                    {/* <label className="block text-sm text-gray-600 text-left mb-0">
-                      Schools
-                    </label>
-                    <Select
-                      isMulti
-                      name="schools"
-                      placeholder="Select Schools"
-                      options={optionSchoolList}
-                      getOptionLabel={(option: any) => option.schoolName}
-                      getOptionValue={(option) => option.id}
-                      styles={{
-                        control: (baseStyles, state) => ({
-                          ...baseStyles,
-                          backgroundColor: "#e5e7eb",
-                          borderColor: state.isFocused ? "#0f58bf" : "#e1e4e8",
-                          textAlign: "left",
-                        }),
-                        option: (baseStyles, state) => ({
-                          ...baseStyles,
-                          textAlign: "left",
-                        }),
-                        multiValue: (styles, { data }) => {
-                          return {
-                            ...styles,
-                            backgroundColor: "white",
-                            borderWidth: "1px",
-                            borderColor: "black",
-                            borderStyle: "#c4cad2",
-                          };
-                        },
-                      }}
-                      classNamePrefix="Select Schools"
-                      onChange={(event: any) => {
-                        setSchoolList(event);
-                        if (event.length !== 0) {
-                          setSchoolListError("");
-                        }
-                      }}
-                      value={schoolList}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {schoolListError && schoolListError}
-                    </label> */}
-
-                    {/* <label className="block text-sm text-gray-600 text-left mb-0 mt-4">
-                      Roles
-                    </label>
-                    <Select
-                      name="role"
-                      placeholder="Select User Role"
-                      options={requiredRoleList}
-                      getOptionLabel={(option: any) => option.roleDesc}
-                      getOptionValue={(option) => option.id}
-                      styles={{
-                        control: (baseStyles, state) => ({
-                          ...baseStyles,
-                          backgroundColor: "#e5e7eb",
-                          borderColor: state.isFocused ? "#0f58bf" : "#e1e4e8",
-                          textAlign: "left",
-                        }),
-                        option: (baseStyles, state) => ({
-                          ...baseStyles,
-                          textAlign: "left",
-                        }),
-                      }}
-                      classNamePrefix="Select Role"
-                      onChange={(role) => setRole(role)}
-                      value={role}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {roleError && roleError}
-                    </label> */}
                   </div>
-
-                  {/* <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      About Staff
-                    </label>
-                    <textarea
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="message"
-                      name="message"
-                      rows={4}
-                      required
-                      placeholder="About Staff"
-                      aria-label="Email"
-                      value={aboutSchool}
-                      onChange={(event) => {
-                        setAboutSchool(event.target.value);
-                        setAboutSchoolError("");
-                      }}
-                    ></textarea>
-                    <label className="block text-sm text-left text-red-600 h-4 mt-[-10px]">
-                      {aboutSchoolError ? "Please Enter About School Info" : ""}
-                    </label>
-                  </div> */}
-                  <div className="inline-block w-1/4 mt-4">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Profile Photo
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-1
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-2
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  {/* <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-3
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div> */}
                 </form>
               </div>
             </div>
@@ -1384,243 +1232,6 @@ const ViewEditStudent = () => {
                       </div>
                     </div>
                   </div>
-                  {/* <label className="block text-sm text-left text-gray-600">
-                    Phone
-                  </label>
-                  <div className="inline-block w-1/2 pr-1">
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone1"
-                        name="Phone1"
-                        type="number"
-                        required
-                        placeholder="Phone1"
-                        aria-label="Phone1"
-                        value={phone1}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setPhone1(event.target.value);
-                            setPhone1Error("");
-                          }
-                        }}
-                      />
-                      <div className="block text-sm text-left text-red-600 h-4">
-                        {phone1Error && phone1Error}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="inline-block mt-2 w-1/2 pr-1">
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone2"
-                        name="Phone2"
-                        type="number"
-                        required
-                        placeholder="Phone2"
-                        aria-label="Phone2"
-                        value={phone2}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setPhone2(event.target.value);
-                            setPhone2Error("");
-                          }
-                        }}
-                      />
-                      <div className="block text-sm text-left text-red-600 h-4">
-                        {phone2Error && phone2Error}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      School Email
-                    </label>
-                    <input
-                      className="w-full px-2  py-1 text-gray-700 bg-[#e5e7eb] rounded "
-                      id="email"
-                      name="email"
-                      type="text"
-                      required
-                      placeholder="Your Email"
-                      aria-label="Email"
-                      value={email}
-                      onChange={(event) => {
-                        setEmail(event.target.value);
-                        setEmailError("");
-                      }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {emailError && emailError}
-                    </label>
-                  </div> */}
-                  {/* <div className="inline-block w-1/2 pr-1">
-                    <label className=" block text-sm text-gray-600 text-left">
-                      Address1
-                    </label>
-                    <input
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="address1"
-                      name="address1"
-                      type="text"
-                      required
-                      placeholder="Address Line 1"
-                      aria-label="Address1"
-                      value={addressLine1}
-                      onChange={(event) => {
-                        setAddressLine1(event.target.value);
-                        setAddressError("");
-                      }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {addressError && addressError}
-                    </label>
-                  </div> */}
-                  {/* <div className="inline-block w-1/2 pr-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Address2
-                    </label>
-                    <input
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="address2"
-                      name="address2"
-                      type="text"
-                      required
-                      placeholder="Address Line 2"
-                      aria-label="Address2"
-                      value={addressLine2}
-                      onChange={(event) => {
-                        setAddressLine2(event.target.value);
-                      }}
-                    />
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {""}
-                    </label>
-                  </div> */}
-                  {/* <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-left text-sm block text-gray-600">
-                      Area
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="area"
-                        name="area"
-                        type="text"
-                        required
-                        placeholder="Area"
-                        aria-label="Area"
-                        value={branch}
-                        onChange={(event) => {
-                          setBranch(event.target.value);
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {""}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-left text-[12px] mt-[-5px] mb-2 block text-gray-600">
-                      City
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="city"
-                        name="city"
-                        type="text"
-                        required
-                        placeholder="City"
-                        aria-label="City"
-                        value={city}
-                        onChange={(event) => {
-                          setCity(event.target.value);
-                          setCityError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {cityError && cityError}
-                      </label>
-                    </div>
-                  </div> */}
-                  {/* <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-left block text-sm text-gray-600">
-                      Country
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="country"
-                        name="country"
-                        type="text"
-                        required
-                        placeholder="Country"
-                        aria-label="Country"
-                        value={country}
-                        readOnly
-                        onChange={(event) => {
-                          setCountry(event.target.value);
-                          setCountryError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {countryError && countryError}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="inline-block  -mx-1 pl-1 w-1/2">
-                    <label className="text-left block text-sm text-gray-600">
-                      Pincode
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="zip"
-                        name="zip"
-                        type="number"
-                        required
-                        placeholder="Pincode"
-                        aria-label="Zip"
-                        maxLength={6}
-                        value={pincode}
-                        onChange={(event) => {
-                          setPincode(event.target.value);
-                          setPincodeError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {pincodeError && pincodeError}
-                      </label>
-                    </div>
-                  </div> */}
-
-                  {/* <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-sm text-left block text-gray-600">
-                      State
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="state"
-                        name="state"
-                        type="text"
-                        required
-                        placeholder="State"
-                        aria-label="State"
-                        value={state}
-                        onChange={(event) => {
-                          setState(event.target.value);
-                          setStateError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {cityError && cityError}
-                      </label>
-                    </div>
-                  </div> */}
 
                   <div className="inline-block  w-1/2 pr-1">
                     <label className="block text-sm text-gray-600 text-left">
@@ -1663,59 +1274,6 @@ const ViewEditStudent = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* <div className="inline-block w-1/2 pr-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Relative Name
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="relativename"
-                        name="relativename"
-                        required
-                        placeholder="Relative Name"
-                        aria-label="relativename"
-                        value={relativeName}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setRelativeName(event.target.value);
-                            setRelativeNameError("");
-                          }
-                        }}
-                      />
-                      <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {relativeNameError && relativeNameError}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="inline-block w-1/2 pr-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Relative Number
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone1"
-                        name="Phone1"
-                        type="number"
-                        required
-                        placeholder="Relative number"
-                        aria-label="Phone1"
-                        value={relativeNo}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setrelativeNo(event.target.value);
-                            setrelativeNoError("");
-                          }
-                        }}
-                      />
-                      <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {relativeNoError && relativeNoError}
-                      </div>
-                    </div>
-                  </div> */}
 
                   <div className="mt-1">
                     <label className="block text-sm text-gray-600 text-left">
@@ -1764,34 +1322,77 @@ const ViewEditStudent = () => {
                       {medicalHistoryError && medicalHistoryError}
                     </label>
                   </div>
-                  {/* <div className="flex flex-row-reverse items-end w-full mt-1">
-                    <Button
-                      variant="gradient"
-                      color="blue"
-                      placeholder={"Submit"}
-                      onClick={() => onSubmitSchool()}
-                    >
-                      <FontAwesomeIcon
-                        icon={faUserPlus}
-                        className="mr-2 fa-1x p-0"
-                      />
-                      Add New Staff
-                    </Button>
-                  </div> */}
+
+                  <div className="grid mt-[-10px]">
+                    <div className="inline-block ml-1">
+                      <label className="block text-sm text-gray-600 text-left">
+                        Documents(Max 3 Files)
+                      </label>
+                      <div
+                        {...getRootDocumentsProps(style)}
+                        className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                      >
+                        <input {...getInputDocumentsProps()} />
+                        {isDocDragActive ? (
+                          <p>Click to select files or Drop the files here ..</p>
+                        ) : (
+                          <p>Click to select files</p>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap flex-row w-full ">
+                        {studentDocuments.map((obj: any, index: any) => {
+                          let name = "";
+                          if (isString(obj)) {
+                            const imageData = obj.split("|");
+                            name = imageData[2];
+                          } else {
+                            name = obj.name;
+                          }
+                          return (
+                            <>
+                              <Chip
+                                open={true}
+                                value={name}
+                                onClose={() => {
+                                  const fileList = clone(studentDocuments);
+                                  fileList.splice(index, 1);
+                                  setStudentDocuments(fileList);
+                                }}
+                                className={`${
+                                  index != 0 ? "ml-0" : ""
+                                } mt-2 mr-2`}
+                                color="teal"
+                                icon={
+                                  isString(obj) ? (
+                                    <FontAwesomeIcon
+                                      icon={faFileDownload}
+                                      onClick={() => {
+                                        const imageData = obj.split("|");
+                                        console.log("Image Data", imageData);
+                                        downloadFile({
+                                          bucketName: imageData[0],
+                                          fileName: imageData[1],
+                                          name: name,
+                                        });
+                                      }}
+                                    />
+                                  ) : null
+                                }
+                              />
+                            </>
+                          );
+                        })}
+                      </div>
+
+                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                        {schoolImageError ? "Please select school image" : ""}
+                      </label>
+                    </div>
+                  </div>
                 </form>
               </div>
             </div>
-            {/* <div className="flex flex-row-reverse items-end w-full mt-5">
-              <Button
-                variant="gradient"
-                color="blue"
-                placeholder={"Submit"}
-                onClick={() => onSubmitSchool()}
-              >
-                <FontAwesomeIcon icon={faSchool} className="mr-2 fa-1x p-0" />
-                Add New School
-              </Button>
-            </div> */}
           </div>
 
           {/* Parent Info */}
@@ -2031,192 +1632,8 @@ const ViewEditStudent = () => {
                         </div>
                       </div>
                     </div>
-                    {/* <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Birth Date
-                      </label>
-                      <div className="flex flex-col">
-                        <DatePicker
-                          startDate={birthDate}
-                          maxDate={new Date("2012-01-01")}
-                          minDate={new Date("1980-01-01")}
-                          onDateChange={(date: any) => setBirthDate(date)}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {birthDateError && birthDateError}
-                        </div>
-                      </div>
-                    </div> */}
-
-                    {/* <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Relative Name
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="relativename"
-                          name="relativename"
-                          required
-                          placeholder="Relative Name"
-                          aria-label="relativename"
-                          value={phone1}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
-                            }
-                          }}
-                        />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Relative Number
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="Phone1"
-                          name="Phone1"
-                          type="number"
-                          required
-                          placeholder="Relative number"
-                          aria-label="Phone1"
-                          value={phone1}
-                          onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
-                            }
-                          }}
-                        />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
-                      </div>
-                    </div> */}
-
-                    {/* <label className="block text-sm text-gray-600 text-left mb-0">
-                      Schools
-                    </label>
-                    <Select
-                      isMulti
-                      name="schools"
-                      placeholder="Select Schools"
-                      options={optionSchoolList}
-                      getOptionLabel={(option: any) => option.schoolName}
-                      getOptionValue={(option) => option.id}
-                      styles={{
-                        control: (baseStyles, state) => ({
-                          ...baseStyles,
-                          backgroundColor: "#e5e7eb",
-                          borderColor: state.isFocused ? "#0f58bf" : "#e1e4e8",
-                          textAlign: "left",
-                        }),
-                        option: (baseStyles, state) => ({
-                          ...baseStyles,
-                          textAlign: "left",
-                        }),
-                        multiValue: (styles, { data }) => {
-                          return {
-                            ...styles,
-                            backgroundColor: "white",
-                            borderWidth: "1px",
-                            borderColor: "black",
-                            borderStyle: "#c4cad2",
-                          };
-                        },
-                      }}
-                      classNamePrefix="Select Schools"
-                      onChange={(event: any) => {
-                        setSchoolList(event);
-                        if (event.length !== 0) {
-                          setSchoolListError("");
-                        }
-                      }}
-                      value={schoolList}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {schoolListError && schoolListError}
-                    </label> */}
-
-                    {/* <label className="block text-sm text-gray-600 text-left mb-0 mt-4">
-                      Roles
-                    </label>
-                    <Select
-                      name="role"
-                      placeholder="Select User Role"
-                      options={requiredRoleList}
-                      getOptionLabel={(option: any) => option.roleDesc}
-                      getOptionValue={(option) => option.id}
-                      styles={{
-                        control: (baseStyles, state) => ({
-                          ...baseStyles,
-                          backgroundColor: "#e5e7eb",
-                          borderColor: state.isFocused ? "#0f58bf" : "#e1e4e8",
-                          textAlign: "left",
-                        }),
-                        option: (baseStyles, state) => ({
-                          ...baseStyles,
-                          textAlign: "left",
-                        }),
-                      }}
-                      classNamePrefix="Select Role"
-                      onChange={(role) => setRole(role)}
-                      value={role}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {roleError && roleError}
-                    </label> */}
                   </div>
 
-                  {/* <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      About Staff
-                    </label>
-                    <textarea
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="message"
-                      name="message"
-                      rows={4}
-                      required
-                      placeholder="About Staff"
-                      aria-label="Email"
-                      value={aboutSchool}
-                      onChange={(event) => {
-                        setAboutSchool(event.target.value);
-                        setAboutSchoolError("");
-                      }}
-                    ></textarea>
-                    <label className="block text-sm text-left text-red-600 h-4 mt-[-10px]">
-                      {aboutSchoolError ? "Please Enter About School Info" : ""}
-                    </label>
-                  </div> */}
-                  {/* <div className="inline-block w-1/5 mt-4">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Profile Photo
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div> */}
                   <div className="mt-1">
                     <label className="block text-sm text-gray-600 text-left">
                       About Staff
@@ -2240,65 +1657,40 @@ const ViewEditStudent = () => {
                     </label>
                   </div>
 
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-1
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
+                  <div className="grid">
+                    <div className="inline-block w-full">
+                      <label className="block text-sm text-gray-600 text-left">
+                        Parent Photo
+                      </label>
+                      <div
+                        {...getRootParentPhotoProps(style)}
+                        className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                      >
+                        <input {...getInputParentPhotoProps()} />
+                        {parentProfilePhoto ? (
+                          <Avatar
+                            variant="circular"
+                            alt="candice"
+                            src={
+                              isString(parentProfilePhoto)
+                                ? getImageURL(parentProfilePhoto)
+                                : URL.createObjectURL(parentProfilePhoto)
+                            }
+                            placeholder={undefined}
+                            size="xxl"
+                            className="object-fill"
+                          />
+                        ) : (
+                          <>
+                            {isParentPhotoDragActive ? (
+                              <p>Drop the files here ...</p>
+                            ) : (
+                              <p>Click to select files</p>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-2
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/4 ml-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Document-3
-                    </label>
-                    <div
-                      {...getRootProps(style)}
-                      className="bg-[#e5e7eb] flex flex-col items-center p-5 border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                    >
-                      <input {...getInputProps()} />
-                      {isDragActive ? (
-                        <p>Drop the files here ...</p>
-                      ) : (
-                        <p>Click to select files</p>
-                      )}
-                    </div>
-
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {schoolImageError ? "Please select school image" : ""}
-                    </label>
                   </div>
                 </form>
               </div>
@@ -2310,78 +1702,6 @@ const ViewEditStudent = () => {
               </p>
               <div className="leading-loose">
                 <form className="p-10 bg-white rounded shadow-xl min-h-[470px]">
-                  {/* <label className="block text-sm text-left text-gray-600">
-                    Phone
-                  </label>
-                  <div className="inline-block w-1/2 pr-1">
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone1"
-                        name="Phone1"
-                        type="number"
-                        required
-                        placeholder="Phone1"
-                        aria-label="Phone1"
-                        value={phone1}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setPhone1(event.target.value);
-                            setPhone1Error("");
-                          }
-                        }}
-                      />
-                      <div className="block text-sm text-left text-red-600 h-4">
-                        {phone1Error && phone1Error}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="inline-block mt-2 w-1/2 pr-1">
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone2"
-                        name="Phone2"
-                        type="number"
-                        required
-                        placeholder="Phone2"
-                        aria-label="Phone2"
-                        value={phone2}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setPhone2(event.target.value);
-                            setPhone2Error("");
-                          }
-                        }}
-                      />
-                      <div className="block text-sm text-left text-red-600 h-4">
-                        {phone2Error && phone2Error}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      School Email
-                    </label>
-                    <input
-                      className="w-full px-2  py-1 text-gray-700 bg-[#e5e7eb] rounded "
-                      id="email"
-                      name="email"
-                      type="text"
-                      required
-                      placeholder="Your Email"
-                      aria-label="Email"
-                      value={email}
-                      onChange={(event) => {
-                        setEmail(event.target.value);
-                        setEmailError("");
-                      }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {emailError && emailError}
-                    </label>
-                  </div> */}
                   <div className="inline-block w-1/2 pr-1">
                     <label className=" block text-sm text-gray-600 text-left">
                       Address1
@@ -2618,34 +1938,80 @@ const ViewEditStudent = () => {
                     </div>
                   </div>
 
-                  {/* <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      About Staff
-                    </label>
-                    <textarea
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="message"
-                      name="message"
-                      rows={4}
-                      required
-                      placeholder="About Staff"
-                      aria-label="Email"
-                      value={aboutStaff}
-                      onChange={(event) => {
-                        setAboutStaff(event.target.value);
-                        setAboutStaffError("");
-                      }}
-                    ></textarea>
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 mt-[-10px]">
-                      {aboutStaffError ? "Please Enter About School Info" : ""}
-                    </label>
-                  </div> */}
-                  <div className="flex flex-row-reverse items-end w-full mt-[120px]">
+                  <div className="grid mt-[-10px]">
+                    <div className="inline-block ml-1">
+                      <label className="block text-sm text-gray-600 text-left">
+                        Documents(Max 3 Files)
+                      </label>
+                      <div
+                        {...getRootParentDocumentsProps(style)}
+                        className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                      >
+                        <input {...getInputParentDocumentsProps()} />
+                        {isParentDocDragActive ? (
+                          <p>Click to select files or Drop the files here ..</p>
+                        ) : (
+                          <p>Click to select files</p>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap flex-row w-full ">
+                        {parentsDocuments.map((obj: any, index: any) => {
+                          let name = "";
+                          if (isString(obj)) {
+                            const imageData = obj.split("|");
+                            name = imageData[2];
+                          } else {
+                            name = obj.name;
+                          }
+                          return (
+                            <>
+                              <Chip
+                                open={true}
+                                value={name}
+                                onClose={() => {
+                                  const fileList = clone(parentsDocuments);
+                                  fileList.splice(index, 1);
+                                  setParentsDocuments(fileList);
+                                }}
+                                className={`${
+                                  index != 0 ? "ml-0" : ""
+                                } mt-2 mr-2`}
+                                color="teal"
+                                icon={
+                                  isString(obj) ? (
+                                    <FontAwesomeIcon
+                                      icon={faFileDownload}
+                                      onClick={() => {
+                                        const imageData = obj.split("|");
+                                        console.log("Image Data", imageData);
+                                        downloadFile({
+                                          bucketName: imageData[0],
+                                          fileName: imageData[1],
+                                          name: name,
+                                        });
+                                      }}
+                                    />
+                                  ) : null
+                                }
+                              />
+                            </>
+                          );
+                        })}
+                      </div>
+
+                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                        {schoolImageError ? "Please select school image" : ""}
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-row-reverse items-end w-full mt-4">
                     <Button
                       variant="gradient"
                       color="blue"
                       placeholder={"Submit"}
-                      onClick={() => onSubmitSchool()}
+                      onClick={() => onSubmitStudent()}
                       onPointerEnterCapture={undefined}
                       onPointerLeaveCapture={undefined}
                     >
@@ -2653,23 +2019,12 @@ const ViewEditStudent = () => {
                         icon={faUserPlus}
                         className="mr-2 fa-1x p-0"
                       />
-                      Add New Student
+                      Update Student
                     </Button>
                   </div>
                 </form>
               </div>
             </div>
-            {/* <div className="flex flex-row-reverse items-end w-full mt-5">
-              <Button
-                variant="gradient"
-                color="blue"
-                placeholder={"Submit"}
-                onClick={() => onSubmitSchool()}
-              >
-                <FontAwesomeIcon icon={faSchool} className="mr-2 fa-1x p-0" />
-                Add New School
-              </Button>
-            </div> */}
           </div>
         </main>
       </div>

@@ -27,6 +27,8 @@ import Select1 from "react-select";
 
 import ImageActionMenu from "./ImageActionMenu";
 import ImageUpdateDialog from "./ImageUpdateDialog";
+import { IMAGE_TAG } from "../../utils/constants";
+import { clone } from "lodash";
 
 const Gallery = () => {
   const navigate = useNavigate();
@@ -47,8 +49,6 @@ const Gallery = () => {
   const { imageTags, success, loading, error, imagesData, updateImageMessage } =
     useAppSelector((state: any) => state.admin);
 
-  console.log("imageData", imagesData);
-
   const [imagesUrl, setImagesUrl] = useState<any>([]);
   const [tag, setTag] = useState<any>();
 
@@ -57,6 +57,25 @@ const Gallery = () => {
     dispatch(getImageTags());
     getImageList();
   }, []);
+
+  // useEffect(() => {
+  //   if (imageTags && imageTags.length > 0) {
+  //     const tagList = clone(imageTagList);
+
+  //     const mergedArray = tagList.concat(
+  //       imageTags.filter(
+  //         (item2: any) =>
+  //           !tagList.some(
+  //             (item1: any) =>
+  //               item1.value.toLowerCase() === item2.value.toLowerCase()
+  //           )
+  //       )
+  //     );
+  //     setImageTagList(mergedArray);
+
+  //     console.log("mergedArray", mergedArray);
+  //   }
+  // }, [imageTags]);
 
   useEffect(() => {
     if (

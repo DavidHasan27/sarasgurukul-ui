@@ -43,6 +43,7 @@ import Planner from "../view/admin/Planner";
 import AddNewPlans from "../view/admin/AddNewPlans";
 import Messages from "../view/Messages/Messages";
 import AddNewMessage from "../view/Messages/NewMessage";
+import AdminContactUs from "../view/admin/AdminContactUs";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -92,6 +93,7 @@ const Dashboard = () => {
               <Route path="addPlans" element={<AddNewPlans />} />
               <Route path="messages" element={<Messages />} />
               <Route path="newmessages" element={<AddNewMessage />} />
+              <Route path="contact" element={<AdminContactUs />} />
             </Route>
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>

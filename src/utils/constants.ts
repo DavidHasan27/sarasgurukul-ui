@@ -16,6 +16,7 @@ import {
   faFaceGrinHearts,
   faImagePortrait,
   faPhotoFilm,
+  faIdCard,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const APP_URL = [
@@ -49,6 +50,7 @@ export const APP_URL = [
   "/app/addPlans",
   "/app/messages",
   "/app/newmessages",
+  "/app/contact",
 ];
 
 export const BLOODGROUP = [
@@ -133,6 +135,7 @@ export const ADMIN_MENU = [
   { name: "Syllabus", path: "/", icon: faFileImport },
   { name: "Worksheet", path: "/app/worksheets", icon: faBriefcase },
   { name: "Gallery", path: "/app/galleryview", icon: faPhotoFilm },
+  { name: "Contact Us", path: "/app/contact", icon: faIdCard },
 ];
 
 export const SUPER_ADMIN_MENU_LIST = [

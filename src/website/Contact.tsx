@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { event } from "react-ga";
 import { isEmailValid, isMobileValid } from "../utils";
-import { addContactedInfo } from "../redux/contactsus/contactUsSlice";
+import {
+  addContactedInfo,
+  resetNewContact,
+} from "../redux/contactsus/contactUsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { RAHATANI_BRANCH } from "../utils/constants";
+import { Button, Spinner } from "@material-tailwind/react";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Contact = () => {
   const [name, setName] = useState<string>();
@@ -17,6 +23,12 @@ const Contact = () => {
   const [phone, setPhone] = useState<string>();
   const [phoneError, setPhoneError] = useState<string>();
   const branch = useAppSelector((state: any) => state.website.branch);
+
+  const { loading, error, contactus, newMessage } = useAppSelector(
+    (state: any) => state.contactus
+  );
+
+  console.log("New Message", newMessage);
   const dispatch = useAppDispatch();
 
   const addContactUs = () => {
@@ -42,15 +54,15 @@ const Contact = () => {
       isErrorFound = true;
     }
 
-    if (!message || !message.trim()) {
-      setMessageError(true);
-      isErrorFound = true;
-    }
+    // if (!message || !message.trim()) {
+    //   setMessageError(true);
+    //   isErrorFound = true;
+    // }
 
-    if (!subject || !subject.trim()) {
-      setSubjectError(true);
-      isErrorFound = true;
-    }
+    // if (!subject || !subject.trim()) {
+    //   setSubjectError(true);
+    //   isErrorFound = true;
+    // }
 
     if (isErrorFound) {
       return;
@@ -64,6 +76,41 @@ const Contact = () => {
       mobile1: phone,
     };
     dispatch(addContactedInfo(contactBody));
+  };
+
+  useEffect(() => {
+    if (newMessage) {
+      console.log("New Messs Effff", newMessage);
+      resetAllData();
+      dispatch(resetNewContact());
+      // toast("Wow so easy !");
+      notify();
+    }
+  }, [newMessage]);
+
+  const notify = () => {
+    toast(
+      "Thank you for getting in touch, we always try our best to respond as soon as possible, you can expect a reply in at most 48 hours",
+      {
+        position: "top-center",
+        autoClose: 7000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      }
+    );
+  };
+
+  const resetAllData = () => {
+    setName("");
+    setEmail("");
+    setMessage("");
+    setSubject("");
+    setPhone("");
   };
 
   return (
@@ -133,8 +180,10 @@ const Contact = () => {
                     required
                     // data-validation-required-message="Please enter your phone"
                     onChange={(event: any) => {
-                      setPhone(event.target.value);
-                      setPhoneError("");
+                      if (event.target.value.length <= 10) {
+                        setPhone(event.target.value);
+                        setPhoneError("");
+                      }
                     }}
                     value={phone}
                   />
@@ -205,14 +254,21 @@ const Contact = () => {
                   )}
                 </div>
                 <div>
-                  <button
-                    className="btn py-2 px-4 mt-3 bg-[#e9390d] text-white"
+                  {/* <button
+                    className="btn py-2 px-4 mt-3 bg-[#e9390d] text-white "
                     type="submit"
                     id="sendMessageButton"
                     onClick={() => addContactUs()}
                   >
                     Send Message
-                  </button>
+                  </button> */}
+                  <Button
+                    className="bg-[#e9390d] mt-4"
+                    placeholder={undefined}
+                    onClick={() => addContactUs()}
+                  >
+                    Send Message
+                  </Button>
                 </div>
                 {/* </form> */}
               </div>
@@ -224,7 +280,7 @@ const Contact = () => {
               </p>
               <div className="flex flex-row mt-2 ">
                 <i
-                  className="fa fa-map-marker-alt d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
+                  className="fa fa-map-marker-alt d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle"
                   style={{ width: 45, height: 45 }}
                 ></i>
                 <div className="flex flex-col ml-3">
@@ -245,7 +301,7 @@ const Contact = () => {
               </div>
               <div className="d-flex mt-2">
                 <i
-                  className="fa fa-envelope d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
+                  className="fa fa-envelope d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle"
                   style={{ width: 45, height: 45 }}
                 ></i>
                 <div className="pl-3">
@@ -255,7 +311,7 @@ const Contact = () => {
               </div>
               <div className="d-flex mt-2">
                 <i
-                  className="fa fa-phone-alt d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
+                  className="fa fa-phone-alt d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle"
                   style={{ width: 45, height: 45 }}
                 ></i>
                 <div className="pl-3">
@@ -265,7 +321,7 @@ const Contact = () => {
               </div>
               <div className="d-flex mt-2">
                 <i
-                  className="far fa-clock d-inline-flex align-items-center justify-content-center bg-primary text-secondary rounded-circle"
+                  className="far fa-clock d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle"
                   style={{ width: 45, height: 45 }}
                 ></i>
                 <div className="pl-3">
@@ -279,6 +335,34 @@ const Contact = () => {
         </div>
       </div>
       {/* <!-- Contact End --> */}
+
+      {loading && (
+        <div
+          className="h-screen w-full bg-blue-gray-200 top-0 absolute z-50 flex flex-col justify-center items-center"
+          style={{ backgroundColor: "rgb(0,0,0, 0.3)" }}
+        >
+          <Spinner className="h-10 w-10" color="blue" />
+        </div>
+      )}
+      <ToastContainer
+        toastStyle={{ backgroundColor: "green", color: "white" }}
+      />
+
+      {/* {newMessage && (
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={true}
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover
+          theme="colored"
+          transition={Bounce}
+        />
+      )} */}
     </>
   );
 };
