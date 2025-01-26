@@ -33,7 +33,7 @@ const AppNavigation = ({ children, currentPath }: any) => {
     }
   }, [user]);
 
-  console.log("User Details ::", userDetails);
+  console.log("User Details ::", userDetails, menuList);
 
   const getImageURL = () => {
     if (userDetails && userDetails.userProfilePhoto) {

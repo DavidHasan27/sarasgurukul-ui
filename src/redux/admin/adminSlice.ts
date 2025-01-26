@@ -26,6 +26,7 @@ const initialState = {
   newPlans: undefined,
   planner: undefined,
   planDelete: "",
+  calenderEvents: undefined,
 };
 
 export const getSchoolYear = createAsyncThunk(
@@ -352,6 +353,21 @@ export const getImages = createAsyncThunk(
     let url = "/api/admin/get-images?" + urlParams;
     try {
       const res = await axios.get(url, {
+        headers: { Authorization: getAuthToken() },
+      });
+
+      return res.data;
+    } catch (err: any) {
+      throw rejectWithValue("Something went wrong, Please try again later");
+    }
+  }
+);
+
+export const getCalenderEvents = createAsyncThunk(
+  `/admin/get-calender-events`,
+  async (_: void, { rejectWithValue }) => {
+    try {
+      const res = await axios.get("/api/admin/get-calender-events", {
         headers: { Authorization: getAuthToken() },
       });
 
@@ -726,6 +742,20 @@ const adminSlice = createSlice({
       state.updated = false;
     });
     builder.addCase(activeDeactivePlanner.pending, (state) => {
+      state.loading = true;
+      state.updated = false;
+    });
+    builder.addCase(getCalenderEvents.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = false;
+      state.calenderEvents = action.payload;
+    });
+    builder.addCase(getCalenderEvents.rejected, (state) => {
+      state.loading = false;
+      state.success = false;
+      state.updated = false;
+    });
+    builder.addCase(getCalenderEvents.pending, (state) => {
       state.loading = true;
       state.updated = false;
     });

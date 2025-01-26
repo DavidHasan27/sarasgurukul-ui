@@ -51,6 +51,7 @@ export const APP_URL = [
   "/app/messages",
   "/app/newmessages",
   "/app/contact",
+  "/app/calendar",
 ];
 
 export const BLOODGROUP = [
@@ -132,7 +133,6 @@ export const ADMIN_MENU = [
   // { name: "Messages", path: "/app/messages", icon: faEnvelope },
   { name: "Exam Time Table", path: "/app/staff", icon: faClipboard },
   { name: "Planner", path: "/app/planner", icon: faCalendarDay },
-  { name: "Syllabus", path: "/", icon: faFileImport },
   { name: "Worksheet", path: "/app/worksheets", icon: faBriefcase },
   { name: "Gallery", path: "/app/galleryview", icon: faPhotoFilm },
   { name: "Contact Us", path: "/app/contact", icon: faIdCard },
@@ -145,7 +145,7 @@ export const SUPER_ADMIN_MENU_LIST = [
   { name: "Staff", path: "/app/staff", icon: faUserPlus },
   { name: "Class", path: "/app/class", icon: faPersonBooth },
   { name: "Message", path: "/app/messages", icon: faMessage },
-  { name: "Calendar", path: "/", icon: faCalendarDays },
+  { name: "Calendar", path: "/app/calendar", icon: faCalendarDays },
   {
     name: "Admin Tool",
     path: "/",
@@ -159,7 +159,7 @@ export const ADMIN_MENU_LIST = [
   { name: "Add Staff", path: "/", icon: "fa-tachometer-alt" },
   { name: "Add Class", path: "/", icon: "fa-tachometer-alt" },
   { name: "Message", path: "/", icon: "fa-tachometer-alt" },
-  { name: "Calendar", path: "/", icon: "fa-calendar" },
+  { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
 ];
 export const ASSISTANCE_MENU_LIST = [
   { name: "Dashboard", path: "/app/dash", icon: "fa-tachometer-alt" },
@@ -167,18 +167,18 @@ export const ASSISTANCE_MENU_LIST = [
   { name: "Add Staff", path: "" },
   { name: "Add Class", path: "" },
   { name: "Message", path: "" },
-  { name: "Calendar", path: "", icon: "fa-calendar" },
+  { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
 ];
 export const PARENT_MENU_LIST = [
   { name: "Dashboard", path: "/app/dash", icon: "fa-tachometer-alt" },
   { name: "Students", path: "" },
   { name: "Message", path: "" },
-  { name: "Calendar", path: "", icon: "fa-calendar" },
+  { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
 ];
 export const HELPER_MENU_LIST = [
   { name: "Dashboard", path: "/app/dash", icon: "fa-tachometer-alt" },
   { name: "Message", path: "" },
-  { name: "Calendar", path: "", icon: "fa-calendar" },
+  { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
 ];
 
 export const TEACHER_MENU_LIST = [
@@ -187,7 +187,7 @@ export const TEACHER_MENU_LIST = [
   { name: "Add Staff", path: "" },
   { name: "Add Class", path: "" },
   { name: "Message", path: "" },
-  { name: "Calendar", path: "", icon: "fa-calendar" },
+  { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
 ];
 
 export const MENU_LIST: any = {

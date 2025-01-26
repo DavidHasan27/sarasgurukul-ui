@@ -44,6 +44,7 @@ import AddNewPlans from "../view/admin/AddNewPlans";
 import Messages from "../view/Messages/Messages";
 import AddNewMessage from "../view/Messages/NewMessage";
 import AdminContactUs from "../view/admin/AdminContactUs";
+import Calendar from "../view/Calendar/Calender";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -94,6 +95,7 @@ const Dashboard = () => {
               <Route path="messages" element={<Messages />} />
               <Route path="newmessages" element={<AddNewMessage />} />
               <Route path="contact" element={<AdminContactUs />} />
+              <Route path="calendar" element={<Calendar />} />
             </Route>
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
