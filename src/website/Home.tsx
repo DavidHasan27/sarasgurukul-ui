@@ -6,6 +6,7 @@ import ReactGA from "react-ga";
 import { Typography } from "@material-tailwind/react";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { RAHATANI_BRANCH } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
 // import { Carousel } from "@material-tailwind/react";
 // import Carousel from "react-bootstrap/Carousel";
 
@@ -13,6 +14,7 @@ const Home = () => {
   console.log("ABC2");
   const branch = useAppSelector((state: any) => state.website.branch);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   return (
     <>
       {/* Navbar Start  */}

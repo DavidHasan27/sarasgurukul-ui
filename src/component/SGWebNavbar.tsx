@@ -79,7 +79,11 @@ const SGWebNavbar = (props: any) => {
         }`}
         placeholder={""}
       >
-        <a href="/class" className="flex items-center hover:text-[#430c07]">
+        <a
+          // href="/class"
+          className="flex items-center hover:text-[#430c07]"
+          onClick={() => navigate("/class")}
+        >
           Class
         </a>
       </Typography>
@@ -94,7 +98,11 @@ const SGWebNavbar = (props: any) => {
         }`}
         placeholder={""}
       >
-        <a href="/teachers" className="flex items-center hover:text-[#430c07]">
+        <a
+          // href="/teachers"
+          className="flex items-center hover:text-[#430c07]"
+          onClick={() => navigate("/teachers")}
+        >
           Team
         </a>
       </Typography>
@@ -110,7 +118,11 @@ const SGWebNavbar = (props: any) => {
         }`}
         placeholder={""}
       >
-        <a href="/gallery" className="flex items-center">
+        <a
+          href="/gallery"
+          className="flex items-center"
+          onClick={() => navigate("/gallery")}
+        >
           Gallery
         </a>
       </Typography>
