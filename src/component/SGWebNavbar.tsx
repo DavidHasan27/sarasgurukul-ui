@@ -119,7 +119,7 @@ const SGWebNavbar = (props: any) => {
         placeholder={""}
       >
         <a
-          href="/gallery"
+          // href="/gallery"
           className="flex items-center"
           onClick={() => navigate("/gallery")}
         >
@@ -138,7 +138,11 @@ const SGWebNavbar = (props: any) => {
         }`}
         placeholder={""}
       >
-        <a href="/contact" className="flex items-center hover:text-[#430c07]">
+        <a
+          // href="/contact"
+          className="flex items-center hover:text-[#430c07]"
+          onClick={() => navigate("/contact")}
+        >
           Contact
         </a>
       </Typography>
