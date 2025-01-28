@@ -64,7 +64,11 @@ const SGWebNavbar = (props: any) => {
         }`}
         placeholder={""}
       >
-        <a href="/about" className="flex items-center hover:text-[#430c07]">
+        <a
+          // href="/about"
+          className="flex items-center hover:text-[#430c07]"
+          onClick={() => navigate("/about")}
+        >
           About
         </a>
       </Typography>
