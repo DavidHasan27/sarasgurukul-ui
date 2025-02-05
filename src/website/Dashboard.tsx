@@ -45,6 +45,7 @@ import Messages from "../view/Messages/Messages";
 import AddNewMessage from "../view/Messages/NewMessage";
 import AdminContactUs from "../view/admin/AdminContactUs";
 import Calendar from "../view/Calendar/Calender";
+import TermsAndCondition from "./TemsConditionPage";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -63,6 +64,7 @@ const Dashboard = () => {
             <Route path="/teachers" element={<Teachers />} />
             <Route path="/blog-details" element={<BlogDetails />} />
             <Route path="/login" element={<LoginScreen />} />
+            <Route path="/terms" element={<TermsAndCondition />} />
             {/* <Route path="/app" element={<AppDashboard />} /> */}
             <Route path="/app" element={<AppNavigation />}>
               <Route path="dash" element={<AppDashbord />} />
