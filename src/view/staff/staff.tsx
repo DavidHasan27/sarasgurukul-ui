@@ -27,10 +27,12 @@ import {
   resetUpdatedUserDetails,
 } from "../../redux/user/userSlice";
 import { getClassList } from "../../redux/class/classSlice";
+import { getUserDetails } from "../../utils";
 
 const Staff = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = getUserDetails();
   const [pageIndex, setPageIndex] = useState(1);
   const [warningDialog, setWarningDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -46,7 +48,7 @@ const Staff = () => {
   );
 
   const { classList } = useAppSelector((state: any) => state.class);
-  console.log("userList List :", userList);
+  console.log("userList List :", user);
 
   useEffect(() => {
     dispatch(getSchoolsForSelection());
@@ -352,18 +354,20 @@ const Staff = () => {
                   Search
                 </Button>
 
-                <Button
-                  className="flex items-center justify-center  min-w-[150px]"
-                  placeholder={"Add New Staff"}
-                  color="blue"
-                  size="sm"
-                  onClick={() => navigate("/app/addstaff")}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  <FontAwesomeIcon icon={faSchool} className="mr-2" />
-                  Add New Staff
-                </Button>
+                {user && user.role === "SUPER_ADMIN" && (
+                  <Button
+                    className="flex items-center justify-center  min-w-[150px]"
+                    placeholder={"Add New Staff"}
+                    color="blue"
+                    size="sm"
+                    onClick={() => navigate("/app/addstaff")}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
+                    <FontAwesomeIcon icon={faSchool} className="mr-2" />
+                    Add New Staff
+                  </Button>
+                )}
               </div>
             </div>
             {(!userList ||

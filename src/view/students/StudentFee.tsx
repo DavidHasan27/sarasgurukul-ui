@@ -34,7 +34,12 @@ import {
 import Select from "react-select";
 import Select1 from "react-select";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { CASH_PAID_BY, CLASS_IDENTITY, LATE_FEE } from "../../utils/constants";
+import {
+  CASH_PAID_BY,
+  CLASS_IDENTITY,
+  LATE_FEE,
+  ROLE_SUPER_ADMIN,
+} from "../../utils/constants";
 import DatePickerComponent from "../../component/app-component/DatePicker";
 import Modal from "react-bootstrap/Modal";
 import { clone } from "lodash";
@@ -50,7 +55,7 @@ import {
 import moment from "moment";
 import Toggle from "react-toggle";
 import "react-toggle/style.css";
-import { getFormattedfee } from "../../utils";
+import { getFormattedfee, getUserDetails } from "../../utils";
 import logoImage from "../../view/assets/sidebar_image.png";
 import FeeDiscountDialog from "./FeeDiscountDialog";
 
@@ -58,6 +63,7 @@ const StudentFeeDetails = () => {
   const reference = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const currentObj = location.state;
+  const userObj = getUserDetails();
   const [errorModel, setErrorModel] = useState<any>("");
   const [currentActiveFee, setCurrentActiveFee] = useState<any>();
   const [studnetInstalltionList, setStudnetInstalltionList] = useState<any>([]);
@@ -1059,6 +1065,7 @@ const StudentFeeDetails = () => {
                                 }
                                 onPointerEnterCapture={undefined}
                                 onPointerLeaveCapture={undefined}
+                                disabled={userObj.role !== ROLE_SUPER_ADMIN}
                               >
                                 <FontAwesomeIcon
                                   icon={faCircleCheck}

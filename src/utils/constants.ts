@@ -138,6 +138,18 @@ export const ADMIN_MENU = [
   { name: "Contact Us", path: "/app/contact", icon: faIdCard },
 ];
 
+export const TEACHER_ADMIN_TOOLS = [
+  {
+    name: "School Holidays",
+    path: "/app/schoolHolidays",
+    icon: faFaceGrinHearts,
+  },
+  // { name: "Messages", path: "/app/messages", icon: faEnvelope },
+  { name: "Exam Time Table", path: "/app/staff", icon: faClipboard },
+  { name: "Planner", path: "/app/planner", icon: faCalendarDay },
+  { name: "Worksheet", path: "/app/worksheets", icon: faBriefcase },
+];
+
 export const SUPER_ADMIN_MENU_LIST = [
   { name: "Dashboard", path: "/app/dash", icon: faTableColumns },
   { name: "School", path: "/app/schools", icon: faSchoolFlag },
@@ -182,12 +194,16 @@ export const HELPER_MENU_LIST = [
 ];
 
 export const TEACHER_MENU_LIST = [
-  { name: "Dashboard", path: "/app/dash", icon: "fa-tachometer-alt" },
-  { name: "Add Student", path: "" },
-  { name: "Add Staff", path: "" },
-  { name: "Add Class", path: "" },
-  { name: "Message", path: "" },
-  { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
+  { name: "Dashboard", path: "/app/dash", icon: faTableColumns },
+  { name: "Student", path: "/app/students", icon: faHandsHoldingChild },
+  { name: "Message", path: "/app/messages", icon: faMessage },
+  { name: "Calendar", path: "/app/calendar", icon: faCalendarDays },
+  {
+    name: "Admin Tool",
+    path: "/",
+    icon: faWandMagicSparkles,
+    child: TEACHER_ADMIN_TOOLS,
+  },
 ];
 
 export const MENU_LIST: any = {
