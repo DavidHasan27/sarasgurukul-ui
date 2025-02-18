@@ -6,6 +6,7 @@ import axios from "axios";
 import { getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { clone, findIndex, remove } from "lodash";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -18,7 +19,7 @@ const initialState = {
 export const addContactedInfo = createAsyncThunk(
   `/contact/add`,
   async (data: any) => {
-    const res = await axios.post("/api/contact/add", data);
+    const res = await axios.post(SERVER_URL + "/api/contact/add", data);
     console.log("res", res);
     return res.data;
   }
@@ -28,7 +29,7 @@ export const getContactUs = createAsyncThunk(
   `/admin/contact/get-contacts`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/contact/get-contacts?" + urlParams;
+    let url = SERVER_URL + "/api/contact/get-contacts?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -45,9 +46,13 @@ export const updateContacts = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     console.log("Data ::", data);
     try {
-      const res = await axios.put("/api/contact/update-contact", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.put(
+        SERVER_URL + "/api/contact/update-contact",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       return data;
     } catch (err: any) {
       throw rejectWithValue("Something went wrong, Please try again later");

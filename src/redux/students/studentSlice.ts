@@ -4,6 +4,7 @@ import { getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove } from "lodash";
 import { uploadFiles } from "../admin/adminSlice";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -21,7 +22,7 @@ const initialState = {
 export const addContactedInfo = createAsyncThunk(
   `/contact/add`,
   async (data: any) => {
-    const res = await axios.post("/api/contact/add", data);
+    const res = await axios.post(SERVER_URL + "/api/contact/add", data);
     console.log("res", res);
     return res.data;
   }
@@ -32,7 +33,7 @@ export const getStudentList = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
     console.log("Params", urlParams);
-    let url = "/api/student/getStudents?" + urlParams;
+    let url = SERVER_URL + "/api/student/getStudents?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -103,9 +104,13 @@ export const createNewStudent = createAsyncThunk(
       }
       delete data.parentFileList;
 
-      const res = await axios.post("/api/student/createStudent", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.post(
+        SERVER_URL + "/api/student/createStudent",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
       return res.data;
     } catch (err: any) {
@@ -206,7 +211,7 @@ export const updateStudentDetails = createAsyncThunk(
       }
       delete data.parentFileList;
 
-      const res = await axios.put("/api/student/update", data, {
+      const res = await axios.put(SERVER_URL + "/api/student/update", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);
@@ -221,9 +226,13 @@ export const updateStudentFeesDetails = createAsyncThunk(
   `/student/update-student-fee`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.put("/api/student/update-student-fee", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.put(
+        SERVER_URL + "/api/student/update-student-fee",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
       return res.data;
     } catch (err: any) {
@@ -236,7 +245,7 @@ export const activeDeactiveStudent = createAsyncThunk(
   `/student/delete`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.delete("/api/student/delete", {
+      const res = await axios.delete(SERVER_URL + "/api/student/delete", {
         headers: { Authorization: getAuthToken() },
         data,
       });
@@ -252,7 +261,7 @@ export const getStudentClassFees = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
     console.log("Params", urlParams);
-    let url = "/api/school-fees/get-fee?" + urlParams;
+    let url = SERVER_URL + "/api/school-fees/get-fee?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -270,7 +279,7 @@ export const getStudentFeesDetails = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
     console.log("Params", urlParams);
-    let url = "/api/student/get-student-fee?" + urlParams;
+    let url = SERVER_URL + "/api/student/get-student-fee?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },

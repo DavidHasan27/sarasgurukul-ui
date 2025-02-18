@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { setSessionStorage } from "../../utils";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -13,7 +14,10 @@ export const login = createAsyncThunk(
   `/auth/v1/authenticate`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/auth/v1/authenticate", data);
+      const res = await axios.post(
+        SERVER_URL + "/api/auth/v1/authenticate",
+        data
+      );
       console.log("Login Response", res);
       setSessionStorage(res.data);
       return res.data;

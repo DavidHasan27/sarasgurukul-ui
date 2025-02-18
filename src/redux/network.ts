@@ -1,13 +1,13 @@
 import axios from "axios";
 import { getUserDetails } from "../utils";
+import { SERVER_URL } from "../utils/constants";
 
 export const axiosPublic = axios.create({
-  baseURL: "http://localhost:8089/api",
+  baseURL: SERVER_URL + "/api",
 });
 export const axiosPrivate = axios.create({
-  baseURL: "http://localhost:8089/api",
+  baseURL: SERVER_URL + "/api",
 });
-
 axiosPrivate.interceptors.request.use(
   async (config) => {
     const token = getUserDetails().token;

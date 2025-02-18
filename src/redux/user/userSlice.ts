@@ -4,6 +4,7 @@ import { getAuthToken, setSessionStorage } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove } from "lodash";
 import { uploadFiles } from "../admin/adminSlice";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -23,7 +24,7 @@ export const getUserRoles = createAsyncThunk(
   `/user/get-user-role`,
   async (_: void, { rejectWithValue }: any) => {
     try {
-      const res = await axios.get("/api/user/get-user-role", {
+      const res = await axios.get(SERVER_URL + "/api/user/get-user-role", {
         headers: { Authorization: getAuthToken() },
       });
       return res.data;
@@ -73,7 +74,7 @@ export const createNewUser = createAsyncThunk(
 
       delete data.fileList;
 
-      const res = await axios.post("/api/user/createUser", data, {
+      const res = await axios.post(SERVER_URL + "/api/user/createUser", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);
@@ -105,7 +106,7 @@ export const getUserForDropdown = createAsyncThunk(
     try {
       const params = "?roleId=" + data.roleId + "&schoolId=" + data.schoolId;
       const res = await axios.get(
-        "/api/user/getUsersByFilterForDropdown" + params,
+        SERVER_URL + "/api/user/getUsersByFilterForDropdown" + params,
         {
           headers: { Authorization: getAuthToken() },
         }
@@ -130,9 +131,12 @@ export const getUsersList = createAsyncThunk(
   async (data: any, { rejectWithValue }: any) => {
     try {
       const urlParams = queryString.stringify(data);
-      const res = await axios.get("/api/user/getUsersByFilter?" + urlParams, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.get(
+        SERVER_URL + "/api/user/getUsersByFilter?" + urlParams,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       return res.data;
     } catch (err: any) {
       if (err.response && err.response.data) {
@@ -152,7 +156,7 @@ export const activeDeactiveUser = createAsyncThunk(
   `/user/delete`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.delete("/api/user/delete", {
+      const res = await axios.delete(SERVER_URL + "/api/user/delete", {
         headers: { Authorization: getAuthToken() },
         data,
       });
@@ -205,7 +209,7 @@ export const updateUser = createAsyncThunk(
 
       delete data.fileList;
 
-      const res = await axios.put("/api/user/update", data, {
+      const res = await axios.put(SERVER_URL + "/api/user/update", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);
@@ -221,9 +225,12 @@ export const getReceiverList = createAsyncThunk(
   async (data: any, { rejectWithValue }: any) => {
     try {
       const urlParams = queryString.stringify(data);
-      const res = await axios.get("/api/user/get-user-receiver?" + urlParams, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.get(
+        SERVER_URL + "/api/user/get-user-receiver?" + urlParams,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       return res.data;
     } catch (err: any) {
       if (err.response && err.response.data) {
@@ -241,9 +248,12 @@ export const getReceiverList = createAsyncThunk(
 
 export const getReceivers = async (data: any) => {
   const urlParams = queryString.stringify(data);
-  const res = await axios.get("/api/user/get-user-receiver?" + urlParams, {
-    headers: { Authorization: getAuthToken() },
-  });
+  const res = await axios.get(
+    SERVER_URL + "/api/user/get-user-receiver?" + urlParams,
+    {
+      headers: { Authorization: getAuthToken() },
+    }
+  );
   return res.data;
 };
 const userSlice = createSlice({

@@ -65,6 +65,8 @@ export const BLOODGROUP = [
   { option: "AB+", value: "AB+" },
   { option: "AB-", value: "AB-" },
 ];
+export const SERVER_URL = "https://api.sarasgurukul.com";
+// export const SERVER_URL = "http://localhost:8080";
 
 export const LATE_FEE = 100;
 

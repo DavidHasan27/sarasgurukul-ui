@@ -31,6 +31,7 @@ import {
   IMAGE_TAG,
   ROLE_ADMIN,
   ROLE_PRINCIPAL,
+  ROLE_SUPER_ADMIN,
   ROLE_TEACHER,
   SUPER_ADMIN_MENU_LIST,
 } from "../../utils/constants";
@@ -338,7 +339,7 @@ const Gallery = () => {
                 </div>
                 {(user.role == ROLE_ADMIN ||
                   user.role == ROLE_TEACHER ||
-                  user.role == SUPER_ADMIN_MENU_LIST ||
+                  user.role == ROLE_SUPER_ADMIN ||
                   user.role == ROLE_PRINCIPAL) && (
                   <Button
                     className="flex items-center justify-center min-w-[200px] p-0 ml-2"
@@ -385,7 +386,7 @@ const Gallery = () => {
                     const isDisabled =
                       user.role == ROLE_ADMIN ||
                       user.role == ROLE_TEACHER ||
-                      user.role == SUPER_ADMIN_MENU_LIST ||
+                      user.role == ROLE_SUPER_ADMIN ||
                       user.role == ROLE_PRINCIPAL;
                     return (
                       <div

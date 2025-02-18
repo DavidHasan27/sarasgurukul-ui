@@ -6,6 +6,7 @@ import axios from "axios";
 import queryString from "query-string";
 import { getAuthToken } from "../../utils";
 import { cloneDeep, filter, orderBy, remove } from "lodash";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -21,7 +22,7 @@ const initialState = {
 export const addContactedInfo = createAsyncThunk(
   `/contact/add`,
   async (data: any) => {
-    const res = await axios.post("/api/contact/add", data);
+    const res = await axios.post(SERVER_URL + "/api/contact/add", data);
     console.log("res", res);
     return res.data;
   }
@@ -31,7 +32,7 @@ export const getReportQuestion = createAsyncThunk(
   `/report/get-report-questions`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/report/get-report-questions?" + urlParams;
+    let url = SERVER_URL + "/api/report/get-report-questions?" + urlParams;
     if (data.searchString) {
       url = url + "&searchString=" + data.searchString;
     }
@@ -51,7 +52,7 @@ export const getStudentYears = createAsyncThunk(
   `/report/get-student_years`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/report/get-student_years?" + urlParams;
+    let url = SERVER_URL + "/api/report/get-student_years?" + urlParams;
     if (data.searchString) {
       url = url + "&searchString=" + data.searchString;
     }
@@ -71,7 +72,7 @@ export const createNewReport = createAsyncThunk(
   `/report/create`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/report/create", data, {
+      const res = await axios.post(SERVER_URL + "/api/report/create", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);
@@ -110,7 +111,7 @@ export const getStudentReports = createAsyncThunk(
   `/report/get-student_reports`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/report/get-student_reports?" + urlParams;
+    let url = SERVER_URL + "/api/report/get-student_reports?" + urlParams;
     if (data.searchString) {
       url = url + "&searchString=" + data.searchString;
     }
@@ -148,9 +149,13 @@ export const updateReportCard = createAsyncThunk(
   `/report/update-report-card`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.put("/api/report/update-report-card", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.put(
+        SERVER_URL + "/api/report/update-report-card",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
       return res.data;
     } catch (err: any) {
@@ -163,7 +168,7 @@ export const activeDeactiveStudentReport = createAsyncThunk(
   `/report/delete-report`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.delete("/api/report/delete-report", {
+      const res = await axios.delete(SERVER_URL + "/api/report/delete-report", {
         headers: { Authorization: getAuthToken() },
         data,
       });

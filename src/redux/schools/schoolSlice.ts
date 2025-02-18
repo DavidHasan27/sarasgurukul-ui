@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { getAuthToken } from "../../utils";
 import { cloneDeep, findIndex } from "lodash";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -16,7 +17,7 @@ export const createNewSchool = createAsyncThunk(
   `/school/create`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/school/create", data, {
+      const res = await axios.post(SERVER_URL + "/api/school/create", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);
@@ -31,6 +32,7 @@ export const getSchoolList = createAsyncThunk(
   `/school/get-schools`,
   async (data: any, { rejectWithValue }) => {
     let url =
+      SERVER_URL +
       "/api/school/get-schools?page=" +
       data.pageIndex +
       "&size=" +
@@ -56,7 +58,7 @@ export const getSchoolList = createAsyncThunk(
 export const getSchoolsForSelection = createAsyncThunk(
   `/school/schoolList`,
   async (_: void, { rejectWithValue }) => {
-    let url = "/api/school/schoolList";
+    let url = SERVER_URL + "/api/school/schoolList";
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -72,7 +74,7 @@ export const activeDeactiveSchool = createAsyncThunk(
   `/school/delete`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.delete("/api/school/delete", {
+      const res = await axios.delete(SERVER_URL + "/api/school/delete", {
         headers: { Authorization: getAuthToken() },
         data,
       });
@@ -87,7 +89,7 @@ export const updateSchool = createAsyncThunk(
   `/school/update`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.put("/api/school/update", data, {
+      const res = await axios.put(SERVER_URL + "/api/school/update", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);

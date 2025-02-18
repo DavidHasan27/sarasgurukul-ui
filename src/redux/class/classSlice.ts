@@ -7,6 +7,7 @@ import queryString from "query-string";
 import { getAuthToken } from "../../utils";
 import { cloneDeep, findIndex, remove } from "lodash";
 import { getSchoolsForSelection } from "../schools/schoolSlice";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -19,7 +20,7 @@ export const createNewClass = createAsyncThunk(
   `/class/create`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/class/create", data, {
+      const res = await axios.post(SERVER_URL + "/api/class/create", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);
@@ -59,7 +60,7 @@ export const getClassList = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
     console.log("Params", urlParams);
-    let url = "/api/class/get-class?" + urlParams;
+    let url = SERVER_URL + "/api/class/get-class?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -76,9 +77,13 @@ export const getClassListBySchoolForDropdown = createAsyncThunk(
   `/class/get-class-by-school`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/class/get-class-by-school", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.post(
+        SERVER_URL + "/api/class/get-class-by-school",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
 
       return res.data;
     } catch (err: any) {
@@ -91,7 +96,7 @@ export const activeDeactiveClass = createAsyncThunk(
   `/class/delete`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.delete("/api/class/delete", {
+      const res = await axios.delete(SERVER_URL + "/api/class/delete", {
         headers: { Authorization: getAuthToken() },
         data,
       });
@@ -106,7 +111,7 @@ export const updateClass = createAsyncThunk(
   `/school/class`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.put("/api/class/update", data, {
+      const res = await axios.put(SERVER_URL + "/api/class/update", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);

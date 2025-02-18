@@ -6,6 +6,7 @@ import axios from "axios";
 import { getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove } from "lodash";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -19,7 +20,7 @@ const initialState = {
 export const addContactedInfo = createAsyncThunk(
   `/contact/add`,
   async (data: any) => {
-    const res = await axios.post("/api/contact/add", data);
+    const res = await axios.post(SERVER_URL + "/api/contact/add", data);
     console.log("res", res);
     return res.data;
   }
@@ -29,9 +30,13 @@ export const createNewFees = createAsyncThunk(
   `/school-fees/create-fee-type`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/school-fees/create-fee-type", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.post(
+        SERVER_URL + "/api/school-fees/create-fee-type",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
       return res.data;
     } catch (err: any) {
@@ -69,7 +74,7 @@ export const getAllFees = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
     console.log("Params", urlParams);
-    let url = "/api/school-fees/get-fee-type?" + urlParams;
+    let url = SERVER_URL + "/api/school-fees/get-fee-type?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -86,10 +91,13 @@ export const activeDeactiveFees = createAsyncThunk(
   `/school-fees/delete-fee-type`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.delete("/api/school-fees/delete-fee-type", {
-        headers: { Authorization: getAuthToken() },
-        data,
-      });
+      const res = await axios.delete(
+        SERVER_URL + "/api/school-fees/delete-fee-type",
+        {
+          headers: { Authorization: getAuthToken() },
+          data,
+        }
+      );
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
       throw rejectWithValue("Something went wrong, Please try again later");

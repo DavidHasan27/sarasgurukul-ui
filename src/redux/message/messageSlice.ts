@@ -8,6 +8,7 @@ import { getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { da } from "date-fns/locale";
 import { clone, findIndex, remove } from "lodash";
+import { SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -40,7 +41,7 @@ export const createNewMessage = createAsyncThunk(
       }
     }
     data.file = fileResult;
-    const res = await axios.post("/api/message/create", data, {
+    const res = await axios.post(SERVER_URL + "/api/message/create", data, {
       headers: { Authorization: getAuthToken() },
     });
     console.log("res", res);
@@ -51,7 +52,12 @@ export const createNewMessage = createAsyncThunk(
 export const markRead = createAsyncThunk(
   `/message/mark-read`,
   async (data: any) => {
-    const url = "/api/message/mark-read/" + data.messageId + "/" + data.userId;
+    const url =
+      SERVER_URL +
+      "/api/message/mark-read/" +
+      data.messageId +
+      "/" +
+      data.userId;
     const res = await axios.post(url, data, {
       headers: { Authorization: getAuthToken() },
     });
@@ -64,7 +70,7 @@ export const getMessageList = createAsyncThunk(
   `/message/inbox-message`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/message/inbox-message?" + urlParams;
+    let url = SERVER_URL + "/api/message/inbox-message?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -81,10 +87,13 @@ export const deleteMessage = createAsyncThunk(
   `/message/delete-message`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.delete("/api/message/delete-message", {
-        headers: { Authorization: getAuthToken() },
-        data,
-      });
+      const res = await axios.delete(
+        SERVER_URL + "/api/message/delete-message",
+        {
+          headers: { Authorization: getAuthToken() },
+          data,
+        }
+      );
       return { ...res.data, ...data };
     } catch (err: any) {
       throw rejectWithValue("Something went wrong, Please try again later");

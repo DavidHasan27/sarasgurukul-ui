@@ -7,7 +7,7 @@ import { getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove, unionBy } from "lodash";
 import fileDownload from "js-file-download";
-import { IMAGE_TAG } from "../../utils/constants";
+import { IMAGE_TAG, SERVER_URL } from "../../utils/constants";
 
 const initialState = {
   loading: false,
@@ -32,7 +32,7 @@ const initialState = {
 export const getSchoolYear = createAsyncThunk(
   `/admin/getYears`,
   async (_: void, { rejectWithValue }) => {
-    let url = "/api/admin/getYears";
+    let url = SERVER_URL + "/api/admin/getYears";
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -49,7 +49,7 @@ export const getSchoolHolidays = createAsyncThunk(
   `/school/get-schools-holidays`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/school/get-schools-holidays?" + urlParams;
+    let url = SERVER_URL + "/api/school/get-schools-holidays?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -67,9 +67,13 @@ export const activeDeactiveYears = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     console.log("Data ::", data);
     try {
-      const res = await axios.put("/api/admin/update-years", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.put(
+        SERVER_URL + "/api/admin/update-years",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       getSchoolYear();
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
@@ -83,10 +87,13 @@ export const activeDeactiveSchoolHoliday = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     console.log("Data ::", data);
     try {
-      const res = await axios.delete("/api/school/delete-holiday", {
-        headers: { Authorization: getAuthToken() },
-        data,
-      });
+      const res = await axios.delete(
+        SERVER_URL + "/api/school/delete-holiday",
+        {
+          headers: { Authorization: getAuthToken() },
+          data,
+        }
+      );
       getSchoolYear();
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
@@ -100,10 +107,13 @@ export const activeDeactiveWorksheet = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     console.log("Data ::", data);
     try {
-      const res = await axios.delete("/api/admin/delete-worksheet", {
-        headers: { Authorization: getAuthToken() },
-        data,
-      });
+      const res = await axios.delete(
+        SERVER_URL + "/api/admin/delete-worksheet",
+        {
+          headers: { Authorization: getAuthToken() },
+          data,
+        }
+      );
       getSchoolYear();
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
@@ -130,7 +140,7 @@ export const uploadFiles = async (data: any) => {
       }
     )
   );
-  const res = await axios.post("/api/file/upload", formData, {
+  const res = await axios.post(SERVER_URL + "/api/file/upload", formData, {
     headers: { Authorization: getAuthToken() },
   });
 
@@ -139,10 +149,13 @@ export const uploadFiles = async (data: any) => {
 
 export const downloadFile = async (data: any) => {
   const urlParams = queryString.stringify(data);
-  const res = await axios.get("/api/file/download-file?" + urlParams, {
-    headers: { Authorization: getAuthToken() },
-    responseType: "blob",
-  });
+  const res = await axios.get(
+    SERVER_URL + "/api/file/download-file?" + urlParams,
+    {
+      headers: { Authorization: getAuthToken() },
+      responseType: "blob",
+    }
+  );
   fileDownload(res.data, data.name);
 };
 
@@ -166,9 +179,13 @@ export const createNewHoliday = createAsyncThunk(
         delete data.fileObj;
       }
 
-      const res = await axios.post("/api/school/create-holidays", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.post(
+        SERVER_URL + "/api/school/create-holidays",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
       return res.data;
     } catch (err: any) {
@@ -222,9 +239,13 @@ export const createNewWorksheet = createAsyncThunk(
       }
       data.file = fileResult;
       console.log("Final Body", data);
-      const res = await axios.post("/api/admin/create-worksheet", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.post(
+        SERVER_URL + "/api/admin/create-worksheet",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
       return res.data;
     } catch (err: any) {
@@ -273,7 +294,7 @@ export const createNewImages = createAsyncThunk(
       }
 
       console.log("Final Body", data);
-      const res = await axios.post("/api/admin/add-images", data, {
+      const res = await axios.post(SERVER_URL + "/api/admin/add-images", data, {
         headers: { Authorization: getAuthToken() },
       });
       console.log("res", res);
@@ -309,7 +330,7 @@ export const createNewImages = createAsyncThunk(
 export const getImageTags = createAsyncThunk(
   `/admin/get-image-tags`,
   async (_: void, { rejectWithValue }) => {
-    let url = "/api/admin/get-image-tags";
+    let url = SERVER_URL + "/api/admin/get-image-tags";
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -326,9 +347,13 @@ export const updateImageActions = createAsyncThunk(
   `/admin/image-actions`,
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/api/admin/image-actions", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.post(
+        SERVER_URL + "/api/admin/image-actions",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
 
       return { ...res.data, id: data.id, action: data.action };
@@ -350,7 +375,7 @@ export const getImages = createAsyncThunk(
   `/admin/get-images`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/admin/get-images?" + urlParams;
+    let url = SERVER_URL + "/api/admin/get-images?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -367,9 +392,12 @@ export const getCalenderEvents = createAsyncThunk(
   `/admin/get-calender-events`,
   async (_: void, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/api/admin/get-calender-events", {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.get(
+        SERVER_URL + "/api/admin/get-calender-events",
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
 
       return res.data;
     } catch (err: any) {
@@ -382,7 +410,7 @@ export const getWorksheet = createAsyncThunk(
   `/admin/get-worksheets`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/admin/get-worksheets?" + urlParams;
+    let url = SERVER_URL + "/api/admin/get-worksheets?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -417,9 +445,13 @@ export const createNewPlannes = createAsyncThunk(
         }
       }
 
-      const res = await axios.post("/api/admin/create-plans", data, {
-        headers: { Authorization: getAuthToken() },
-      });
+      const res = await axios.post(
+        SERVER_URL + "/api/admin/create-plans",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
       console.log("res", res);
       return res.data;
     } catch (err: any) {
@@ -440,7 +472,7 @@ export const getPlans = createAsyncThunk(
   `/admin/get-planes`,
   async (data: any, { rejectWithValue }) => {
     const urlParams = queryString.stringify(data);
-    let url = "/api/admin/get-planes?" + urlParams;
+    let url = SERVER_URL + "/api/admin/get-planes?" + urlParams;
     try {
       const res = await axios.get(url, {
         headers: { Authorization: getAuthToken() },
@@ -458,7 +490,7 @@ export const activeDeactivePlanner = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     console.log("Data ::", data);
     try {
-      const res = await axios.delete("/api/admin/delete-planner", {
+      const res = await axios.delete(SERVER_URL + "/api/admin/delete-planner", {
         headers: { Authorization: getAuthToken() },
         data,
       });
