@@ -46,6 +46,7 @@ import AddNewMessage from "../view/Messages/NewMessage";
 import AdminContactUs from "../view/admin/AdminContactUs";
 import Calendar from "../view/Calendar/Calender";
 import TermsAndCondition from "./TemsConditionPage";
+import ExamTimeTable from "../view/admin/ExamTimeTable";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -98,6 +99,7 @@ const Dashboard = () => {
               <Route path="newmessages" element={<AddNewMessage />} />
               <Route path="contact" element={<AdminContactUs />} />
               <Route path="calendar" element={<Calendar />} />
+              <Route path="exam" element={<ExamTimeTable />} />
             </Route>
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>

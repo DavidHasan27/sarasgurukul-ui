@@ -15,13 +15,19 @@ import {
   faSchool,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { isEmailValid, isMobileValid } from "../../utils";
+import { getUserDetails, isEmailValid, isMobileValid } from "../../utils";
 
 import Select from "react-select";
 
 import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { BLOODGROUP, RELATIONSHIP } from "../../utils/constants";
+import {
+  BLOODGROUP,
+  RELATIONSHIP,
+  ROLE_ADMIN,
+  ROLE_SUPER_ADMIN,
+  ROLE_TEACHER,
+} from "../../utils/constants";
 import DatePicker from "../../component/app-component/DatePicker";
 import { getClassList } from "../../redux/class/classSlice";
 import OutsideClickHandler from "react-outside-click-handler";
@@ -35,6 +41,9 @@ import { useLocation } from "react-router-dom";
 
 const ViewEditStudent = () => {
   const location = useLocation();
+  const user = getUserDetails();
+  const isEditable =
+    user.role == ROLE_SUPER_ADMIN || ROLE_ADMIN || ROLE_TEACHER ? true : false;
   const currentObj = location.state;
   console.log("Current Object ::::", currentObj);
   const firstScreen = useRef<any>();
@@ -949,6 +958,7 @@ const ViewEditStudent = () => {
                           menuIsOpen={schoolMenu}
                           onMenuOpen={() => setSchoolMenu(true)}
                           closeMenuOnScroll={true}
+                          isDisabled={isEditable}
                         />
                       </OutsideClickHandler>
                       <label className="block text-sm text-left text-red-600 h-4">
@@ -998,7 +1008,7 @@ const ViewEditStudent = () => {
                           }
                         }}
                         value={classs ? classs : ""}
-                        isDisabled={!school}
+                        isDisabled={!school || isEditable}
                       />
 
                       <label className="block text-sm text-left text-red-600 h-4">
@@ -1023,7 +1033,7 @@ const ViewEditStudent = () => {
                             setSFirstName(event.target.value);
                             setSFirstNameError("");
                           }}
-                          disabled={!school || !classs}
+                          disabled={!school || !classs || isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {sFirstNameError && sFirstNameError}
@@ -1048,7 +1058,7 @@ const ViewEditStudent = () => {
                             setSMiddleName(event.target.value);
                             setSMiddleNameError("");
                           }}
-                          disabled={!school || !classs}
+                          disabled={!school || !classs || isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 ">
                           {smiddleNameError && smiddleNameError}
@@ -1073,7 +1083,7 @@ const ViewEditStudent = () => {
                             setSLastName(event.target.value);
                             setSLastNameError("");
                           }}
-                          disabled={!school || !classs}
+                          disabled={!school || !classs || isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {slastNameError && slastNameError}
@@ -1098,7 +1108,7 @@ const ViewEditStudent = () => {
                             setMotherName(event.target.value);
                             setMotherNameError("");
                           }}
-                          disabled={!school || !classs}
+                          disabled={!school || !classs || isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {motherNameError && motherNameError}
@@ -1123,7 +1133,7 @@ const ViewEditStudent = () => {
                             setGuardianName(event.target.value);
                             setGuardianNameError("");
                           }}
-                          disabled={!school || !classs}
+                          disabled={!school || !classs || isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {guardianNameError && guardianNameError}
@@ -1141,7 +1151,7 @@ const ViewEditStudent = () => {
                         {...getRootProps(style)}
                         className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
                       >
-                        <input {...getInputProps()} />
+                        <input {...getInputProps()} disabled={isEditable} />
                         {studentProfilePhoto ? (
                           <Avatar
                             variant="circular"
@@ -1209,7 +1219,7 @@ const ViewEditStudent = () => {
                           setSbloodGroupError("");
                         }}
                         value={sbloodGroup}
-                        isDisabled={!school || !classs}
+                        isDisabled={!school || !classs || isEditable}
                       />
                       <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {sbloodGroupError && sbloodGroupError}
@@ -1225,7 +1235,7 @@ const ViewEditStudent = () => {
                         startDate={sbirthDate}
                         minDate={new Date("2015-01-01")}
                         onDateChange={(date: any) => setSBirthDate(date)}
-                        disabled={!school || !classs}
+                        disabled={!school || !classs || isEditable}
                       />
                       <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {sbirthDateError && sbirthDateError}
@@ -1243,7 +1253,7 @@ const ViewEditStudent = () => {
                         maxDate={new Date()}
                         minDate={new Date("1980-01-01")}
                         onDateChange={(date: any) => setSJoiningDate(date)}
-                        disabled={!school || !classs}
+                        disabled={!school || !classs || isEditable}
                       />
                       <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {sjoiningDateError && sjoiningDateError}
@@ -1267,7 +1277,7 @@ const ViewEditStudent = () => {
                           setHobbies(event.target.value);
                           setHobbiesError("");
                         }}
-                        disabled={!school || !classs}
+                        disabled={!school || !classs || isEditable}
                       />
                       <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {hobbiesError && hobbiesError}
@@ -1292,7 +1302,7 @@ const ViewEditStudent = () => {
                         setPrecautions(event.target.value);
                         setPrecautionsError("");
                       }}
-                      disabled={!school || !classs}
+                      disabled={!school || !classs || isEditable}
                     ></textarea>
                     <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 mt-[-10px]">
                       {precautionsError && precautionsError}
@@ -1316,7 +1326,7 @@ const ViewEditStudent = () => {
                         setMedicalHistory(event.target.value);
                         setMedicalHistoryError("");
                       }}
-                      disabled={!school || !classs}
+                      disabled={!school || !classs || isEditable}
                     ></textarea>
                     <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 mt-[-10px]">
                       {medicalHistoryError && medicalHistoryError}
@@ -1332,7 +1342,10 @@ const ViewEditStudent = () => {
                         {...getRootDocumentsProps(style)}
                         className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
                       >
-                        <input {...getInputDocumentsProps()} />
+                        <input
+                          {...getInputDocumentsProps()}
+                          disabled={isEditable}
+                        />
                         {isDocDragActive ? (
                           <p>Click to select files or Drop the files here ..</p>
                         ) : (
@@ -1425,6 +1438,7 @@ const ViewEditStudent = () => {
                             setFirstName(event.target.value);
                             setFirstNameError("");
                           }}
+                          disabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {firstNameError && firstNameError}
@@ -1449,6 +1463,7 @@ const ViewEditStudent = () => {
                             setMiddleName(event.target.value);
                             setMiddleNameError("");
                           }}
+                          disabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 ">
                           {middleNameError && middleNameError}
@@ -1473,6 +1488,7 @@ const ViewEditStudent = () => {
                             setLastName(event.target.value);
                             setLastNameError("");
                           }}
+                          disabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {lastNameError && lastNameError}
@@ -1497,6 +1513,7 @@ const ViewEditStudent = () => {
                             setEmail(event.target.value);
                             setEmailError("");
                           }}
+                          disabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {emailError && emailError}
@@ -1524,6 +1541,7 @@ const ViewEditStudent = () => {
                               setPhone1Error("");
                             }
                           }}
+                          disabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {phone1Error && phone1Error}
@@ -1550,6 +1568,7 @@ const ViewEditStudent = () => {
                               setPhone2Error("");
                             }
                           }}
+                          disabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {phone2Error && phone2Error}
@@ -1588,6 +1607,7 @@ const ViewEditStudent = () => {
                             setBloodGroup(event);
                           }}
                           value={bloodGroup}
+                          isDisabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {/* {phone2Error && phone2Error} */}
@@ -1626,6 +1646,7 @@ const ViewEditStudent = () => {
                             setStudentRelationError("");
                           }}
                           value={studentRelation}
+                          isDisabled={isEditable}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                           {studentRelationError && studentRelationError}
@@ -1651,6 +1672,7 @@ const ViewEditStudent = () => {
                         setAboutStaff(event.target.value);
                         setAboutStaffError("");
                       }}
+                      disabled={isEditable}
                     ></textarea>
                     <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 mt-[-10px]">
                       {aboutStaffError ? "Please Enter About School Info" : ""}
@@ -1666,7 +1688,10 @@ const ViewEditStudent = () => {
                         {...getRootParentPhotoProps(style)}
                         className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
                       >
-                        <input {...getInputParentPhotoProps()} />
+                        <input
+                          {...getInputParentPhotoProps()}
+                          disabled={isEditable}
+                        />
                         {parentProfilePhoto ? (
                           <Avatar
                             variant="circular"
@@ -1719,6 +1744,7 @@ const ViewEditStudent = () => {
                         setAddressLine1(event.target.value);
                         setAddressError("");
                       }}
+                      disabled={isEditable}
                     />
                     <label className="block text-sm text-left text-red-600 h-4">
                       {addressError && addressError}
@@ -1740,6 +1766,7 @@ const ViewEditStudent = () => {
                       onChange={(event) => {
                         setAddressLine2(event.target.value);
                       }}
+                      disabled={isEditable}
                     />
                     <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                       {""}
@@ -1762,6 +1789,7 @@ const ViewEditStudent = () => {
                         onChange={(event) => {
                           setBranch(event.target.value);
                         }}
+                        disabled={isEditable}
                       />
                       <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {""}
@@ -1786,6 +1814,7 @@ const ViewEditStudent = () => {
                           setCity(event.target.value);
                           setCityError("");
                         }}
+                        disabled={isEditable}
                       />
                       <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {cityError && cityError}
@@ -1811,6 +1840,7 @@ const ViewEditStudent = () => {
                           setCountry(event.target.value);
                           setCountryError("");
                         }}
+                        disabled={isEditable}
                       />
                       <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {countryError && countryError}
@@ -1836,6 +1866,7 @@ const ViewEditStudent = () => {
                           setPincode(event.target.value);
                           setPincodeError("");
                         }}
+                        disabled={isEditable}
                       />
                       <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {pincodeError && pincodeError}
@@ -1861,6 +1892,7 @@ const ViewEditStudent = () => {
                           setState(event.target.value);
                           setStateError("");
                         }}
+                        disabled={isEditable}
                       />
                       <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {cityError && cityError}
@@ -1878,6 +1910,7 @@ const ViewEditStudent = () => {
                         maxDate={new Date()}
                         minDate={new Date("1980-01-01")}
                         onDateChange={(date: any) => setJoiningDate(date)}
+                        disabled={isEditable}
                       />
                       <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {joiningDateError && joiningDateError}
@@ -1904,6 +1937,7 @@ const ViewEditStudent = () => {
                             setRelativeNameError("");
                           }
                         }}
+                        disabled={isEditable}
                       />
                       <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {relativeNameError && relativeNameError}
@@ -1931,6 +1965,7 @@ const ViewEditStudent = () => {
                             setrelativeNoError("");
                           }
                         }}
+                        disabled={isEditable}
                       />
                       <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
                         {relativeNoError && relativeNoError}
@@ -1947,7 +1982,10 @@ const ViewEditStudent = () => {
                         {...getRootParentDocumentsProps(style)}
                         className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
                       >
-                        <input {...getInputParentDocumentsProps()} />
+                        <input
+                          {...getInputParentDocumentsProps()}
+                          disabled={isEditable}
+                        />
                         {isParentDocDragActive ? (
                           <p>Click to select files or Drop the files here ..</p>
                         ) : (
@@ -2007,20 +2045,22 @@ const ViewEditStudent = () => {
                   </div>
 
                   <div className="flex flex-row-reverse items-end w-full mt-4">
-                    <Button
-                      variant="gradient"
-                      color="blue"
-                      placeholder={"Submit"}
-                      onClick={() => onSubmitStudent()}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    >
-                      <FontAwesomeIcon
-                        icon={faUserPlus}
-                        className="mr-2 fa-1x p-0"
-                      />
-                      Update Student
-                    </Button>
+                    {!isEditable && (
+                      <Button
+                        variant="gradient"
+                        color="blue"
+                        placeholder={"Submit"}
+                        onClick={() => onSubmitStudent()}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
+                      >
+                        <FontAwesomeIcon
+                          icon={faUserPlus}
+                          className="mr-2 fa-1x p-0"
+                        />
+                        Update Student
+                      </Button>
+                    )}
                   </div>
                 </form>
               </div>

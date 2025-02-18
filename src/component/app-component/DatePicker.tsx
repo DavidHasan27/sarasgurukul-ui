@@ -13,6 +13,7 @@ const DatePickerComponent = ({
   onDateChange,
   className,
   placeholder,
+  disabled,
 }: any) => {
   //   const [startDate, setStartDate] = useState(new Date("1990-01-01"));
 
@@ -32,6 +33,7 @@ const DatePickerComponent = ({
       showMonthDropdown
       showYearDropdown
       placeholderText={placeholder}
+      disabled
     />
   );
 };

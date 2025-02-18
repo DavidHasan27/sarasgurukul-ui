@@ -28,7 +28,11 @@ import AsyncSelect from "react-select/async";
 
 import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { MESSAGE_TYPE } from "../../utils/constants";
+import {
+  MESSAGE_TYPE,
+  MESSAGE_TYPE_PARENT,
+  ROLE_PARENT,
+} from "../../utils/constants";
 
 import {
   getClassList,
@@ -54,6 +58,7 @@ import {
 } from "../../redux/message/messageSlice";
 
 const AddNewMessage = () => {
+  const userObj = getUserDetails();
   const [school, setSchool] = useState<any>([]);
   const [schoolError, setSchoolError] = useState<any>("");
 
@@ -569,7 +574,11 @@ const AddNewMessage = () => {
                         <Select
                           name="messageType"
                           placeholder="Message Type"
-                          options={MESSAGE_TYPE}
+                          options={
+                            userDetails.role == ROLE_PARENT
+                              ? MESSAGE_TYPE_PARENT
+                              : MESSAGE_TYPE
+                          }
                           getOptionLabel={(option: any) => option.option}
                           getOptionValue={(option) => option}
                           styles={{
@@ -610,183 +619,190 @@ const AddNewMessage = () => {
                         {messageTypeError ? messageTypeError : ""}
                       </label>
                     </div>
+                    {userDetails.role !== ROLE_PARENT && (
+                      <>
+                        <div className="inline-block mt-2 w-full pr-1">
+                          <label className="block text-sm text-gray-600 text-left mb-0">
+                            Schools
+                          </label>
+                          <OutsideClickHandler
+                            onOutsideClick={() => {
+                              setSchoolMenu(false);
+                            }}
+                          >
+                            <Select
+                              name="schools"
+                              placeholder="Select Schools"
+                              options={optionSchoolList}
+                              getOptionLabel={(option: any) =>
+                                option.schoolName
+                              }
+                              getOptionValue={(option) => option}
+                              styles={{
+                                control: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  backgroundColor: "#e5e7eb",
+                                  borderColor: state.isFocused
+                                    ? "#0f58bf"
+                                    : "#e1e4e8",
+                                  textAlign: "left",
+                                }),
+                                option: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  textAlign: "left",
+                                }),
+                                multiValue: (styles, { data }) => {
+                                  return {
+                                    ...styles,
+                                    backgroundColor: "white",
+                                    borderWidth: "1px",
+                                    borderColor: "black",
+                                    borderStyle: "#c4cad2",
+                                  };
+                                },
+                              }}
+                              classNamePrefix="Select Schools"
+                              onChange={(event: any) => {
+                                console.log("event :::1", event);
+                                setSchool(event);
+                                setClass([]);
+                                getReceiverData(event, undefined, roles, "");
+                                setUser([]);
+                              }}
+                              value={school}
+                              components={{ Option: formatOptionLabel }}
+                              menuIsOpen={schoolMenu}
+                              onMenuOpen={() => setSchoolMenu(true)}
+                              closeMenuOnScroll={true}
+                              isMulti
+                              isDisabled={!messageType}
+                            />
+                          </OutsideClickHandler>
+                        </div>
 
-                    <div className="inline-block mt-2 w-full pr-1">
-                      <label className="block text-sm text-gray-600 text-left mb-0">
-                        Schools
-                      </label>
-                      <OutsideClickHandler
-                        onOutsideClick={() => {
-                          setSchoolMenu(false);
-                        }}
-                      >
-                        <Select
-                          name="schools"
-                          placeholder="Select Schools"
-                          options={optionSchoolList}
-                          getOptionLabel={(option: any) => option.schoolName}
-                          getOptionValue={(option) => option}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              backgroundColor: "#e5e7eb",
-                              borderColor: state.isFocused
-                                ? "#0f58bf"
-                                : "#e1e4e8",
-                              textAlign: "left",
-                            }),
-                            option: (baseStyles, state) => ({
-                              ...baseStyles,
-                              textAlign: "left",
-                            }),
-                            multiValue: (styles, { data }) => {
-                              return {
-                                ...styles,
-                                backgroundColor: "white",
-                                borderWidth: "1px",
-                                borderColor: "black",
-                                borderStyle: "#c4cad2",
-                              };
-                            },
-                          }}
-                          classNamePrefix="Select Schools"
-                          onChange={(event: any) => {
-                            console.log("event :::1", event);
-                            setSchool(event);
-                            setClass([]);
-                            getReceiverData(event, undefined, roles, "");
-                            setUser([]);
-                          }}
-                          value={school}
-                          components={{ Option: formatOptionLabel }}
-                          menuIsOpen={schoolMenu}
-                          onMenuOpen={() => setSchoolMenu(true)}
-                          closeMenuOnScroll={true}
-                          isMulti
-                          isDisabled={!messageType}
-                        />
-                      </OutsideClickHandler>
-                    </div>
-
-                    <div className="inline-block mt-2 w-full pr-1">
-                      <label className="block text-sm text-gray-600 text-left mb-0">
-                        Class
-                      </label>
-                      <OutsideClickHandler
-                        onOutsideClick={() => {
-                          setClassMenu(false);
-                        }}
-                      >
-                        <Select
-                          name="class"
-                          placeholder="Select Class"
-                          options={optionClassList}
-                          getOptionLabel={(option: any) =>
-                            option.className + "(" + option.classIdentity + ")"
-                          }
-                          getOptionValue={(option) => option}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              backgroundColor: "#e5e7eb",
-                              borderColor: state.isFocused
-                                ? "#0f58bf"
-                                : "#e1e4e8",
-                              textAlign: "left",
-                            }),
-                            option: (baseStyles, state) => ({
-                              ...baseStyles,
-                              textAlign: "left",
-                            }),
-                            multiValue: (styles, { data }) => {
-                              return {
-                                ...styles,
-                                backgroundColor: "white",
-                                borderWidth: "1px",
-                                borderColor: "black",
-                                borderStyle: "#c4cad2",
-                              };
-                            },
-                          }}
-                          classNamePrefix="Select Class"
-                          onChange={(event: any) => {
-                            console.log("event :::1", event);
-                            setClass(event);
-                            setUser([]);
-                            getReceiverData(school, event, roles, "");
-                          }}
-                          value={classL}
-                          components={{ Option: formatOptionLabelClass }}
-                          menuIsOpen={classMenu}
-                          onMenuOpen={() => setClassMenu(true)}
-                          closeMenuOnScroll={true}
-                          isMulti
-                          isDisabled={school.length == 0}
-                        />
-                      </OutsideClickHandler>
-                      <label className="block text-sm text-left text-red-600 h-4">
-                        {classError ? classError : ""}
-                      </label>
-                    </div>
-                    <div className="inline-block mt-2 w-full pr-1">
-                      <label className="block text-sm text-gray-600 text-left mb-0">
-                        Roles
-                      </label>
-                      <OutsideClickHandler
-                        onOutsideClick={() => {
-                          setRoleMenu(false);
-                        }}
-                      >
-                        <Select
-                          name="users"
-                          placeholder="Select Roles"
-                          hideSelectedOptions={true}
-                          options={serverRoles}
-                          getOptionLabel={(option: any) => option.roleDesc}
-                          getOptionValue={(option) => option}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              backgroundColor: "#e5e7eb",
-                              borderColor: state.isFocused
-                                ? "#0f58bf"
-                                : "#e1e4e8",
-                              textAlign: "left",
-                            }),
-                            option: (baseStyles, state) => ({
-                              ...baseStyles,
-                              textAlign: "left",
-                            }),
-                            multiValue: (styles, { data }) => {
-                              return {
-                                ...styles,
-                                backgroundColor: "white",
-                                borderWidth: "1px",
-                                borderColor: "black",
-                                borderStyle: "#c4cad2",
-                              };
-                            },
-                          }}
-                          classNamePrefix="Select Schools"
-                          onChange={(event: any) => {
-                            console.log("event :::1", event);
-                            setRoles(event);
-                            getReceiverData(school, classL, event, "");
-                          }}
-                          value={roles}
-                          components={{ Option: formatOptionLabelForRole }}
-                          menuIsOpen={roleMenu}
-                          onMenuOpen={() => setRoleMenu(true)}
-                          closeMenuOnScroll={true}
-                          isMulti
-                          isDisabled={!messageType}
-                          isSearchable
-                          onInputChange={(event) => console.log(event)}
-                          isClearable
-                        />
-                      </OutsideClickHandler>
-                    </div>
-
+                        <div className="inline-block mt-2 w-full pr-1">
+                          <label className="block text-sm text-gray-600 text-left mb-0">
+                            Class
+                          </label>
+                          <OutsideClickHandler
+                            onOutsideClick={() => {
+                              setClassMenu(false);
+                            }}
+                          >
+                            <Select
+                              name="class"
+                              placeholder="Select Class"
+                              options={optionClassList}
+                              getOptionLabel={(option: any) =>
+                                option.className +
+                                "(" +
+                                option.classIdentity +
+                                ")"
+                              }
+                              getOptionValue={(option) => option}
+                              styles={{
+                                control: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  backgroundColor: "#e5e7eb",
+                                  borderColor: state.isFocused
+                                    ? "#0f58bf"
+                                    : "#e1e4e8",
+                                  textAlign: "left",
+                                }),
+                                option: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  textAlign: "left",
+                                }),
+                                multiValue: (styles, { data }) => {
+                                  return {
+                                    ...styles,
+                                    backgroundColor: "white",
+                                    borderWidth: "1px",
+                                    borderColor: "black",
+                                    borderStyle: "#c4cad2",
+                                  };
+                                },
+                              }}
+                              classNamePrefix="Select Class"
+                              onChange={(event: any) => {
+                                console.log("event :::1", event);
+                                setClass(event);
+                                setUser([]);
+                                getReceiverData(school, event, roles, "");
+                              }}
+                              value={classL}
+                              components={{ Option: formatOptionLabelClass }}
+                              menuIsOpen={classMenu}
+                              onMenuOpen={() => setClassMenu(true)}
+                              closeMenuOnScroll={true}
+                              isMulti
+                              isDisabled={school.length == 0}
+                            />
+                          </OutsideClickHandler>
+                          <label className="block text-sm text-left text-red-600 h-4">
+                            {classError ? classError : ""}
+                          </label>
+                        </div>
+                        <div className="inline-block mt-2 w-full pr-1">
+                          <label className="block text-sm text-gray-600 text-left mb-0">
+                            Roles
+                          </label>
+                          <OutsideClickHandler
+                            onOutsideClick={() => {
+                              setRoleMenu(false);
+                            }}
+                          >
+                            <Select
+                              name="users"
+                              placeholder="Select Roles"
+                              hideSelectedOptions={true}
+                              options={serverRoles}
+                              getOptionLabel={(option: any) => option.roleDesc}
+                              getOptionValue={(option) => option}
+                              styles={{
+                                control: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  backgroundColor: "#e5e7eb",
+                                  borderColor: state.isFocused
+                                    ? "#0f58bf"
+                                    : "#e1e4e8",
+                                  textAlign: "left",
+                                }),
+                                option: (baseStyles, state) => ({
+                                  ...baseStyles,
+                                  textAlign: "left",
+                                }),
+                                multiValue: (styles, { data }) => {
+                                  return {
+                                    ...styles,
+                                    backgroundColor: "white",
+                                    borderWidth: "1px",
+                                    borderColor: "black",
+                                    borderStyle: "#c4cad2",
+                                  };
+                                },
+                              }}
+                              classNamePrefix="Select Schools"
+                              onChange={(event: any) => {
+                                console.log("event :::1", event);
+                                setRoles(event);
+                                getReceiverData(school, classL, event, "");
+                              }}
+                              value={roles}
+                              components={{ Option: formatOptionLabelForRole }}
+                              menuIsOpen={roleMenu}
+                              onMenuOpen={() => setRoleMenu(true)}
+                              closeMenuOnScroll={true}
+                              isMulti
+                              isDisabled={!messageType}
+                              isSearchable
+                              onInputChange={(event) => console.log(event)}
+                              isClearable
+                            />
+                          </OutsideClickHandler>
+                        </div>
+                      </>
+                    )}
                     <div className="inline-block mt-2 w-full pr-1">
                       <label className="block text-sm text-gray-600 text-left mb-0">
                         Users

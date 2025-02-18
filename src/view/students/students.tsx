@@ -31,10 +31,19 @@ import {
   getStudentList,
   resetActivatetudent,
 } from "../../redux/students/studentSlice";
+import { getUserDetails } from "../../utils";
+import {
+  ROLE_ADMIN,
+  ROLE_PARENT,
+  ROLE_PRINCIPAL,
+  ROLE_SUPER_ADMIN,
+  ROLE_TEACHER,
+} from "../../utils/constants";
 
 const Students = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = getUserDetails();
   const [pageIndex, setPageIndex] = useState(1);
   const [warningDialog, setWarningDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -51,7 +60,7 @@ const Students = () => {
   );
 
   const { classList, success } = useAppSelector((state: any) => state.class);
-  console.log("userList List :", studentList);
+  console.log("userList List :", user.role);
 
   useEffect(() => {
     dispatch(getSchoolsForSelection());
@@ -84,6 +93,10 @@ const Students = () => {
 
     if (searchString) {
       body["search"] = searchString;
+    }
+
+    if (user.role == ROLE_PARENT) {
+      body["parentId"] = user.id;
     }
     dispatch(getStudentList(body));
   };
@@ -120,18 +133,6 @@ const Students = () => {
         </div>
       </div>
     );
-  };
-
-  const getSchoolString = (schools: any) => {
-    let schoolName = "";
-    for (let i = 0; i < schools.length; i++) {
-      if (!schoolName) {
-        schoolName = schools[i].schoolName;
-      } else {
-        schoolName = schoolName + ", " + schools[i].schoolName;
-      }
-    }
-    return schoolName;
   };
 
   const getImageURL = (item: any) => {
@@ -355,18 +356,23 @@ const Students = () => {
                   Search
                 </Button>
 
-                <Button
-                  className="flex items-center justify-center  min-w-[150px]"
-                  placeholder={"Add New Students"}
-                  color="blue"
-                  size="sm"
-                  onClick={() => navigate("/app/addStudent")}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  <FontAwesomeIcon icon={faSchool} className="mr-2" />
-                  Add New Student
-                </Button>
+                {user.role == ROLE_SUPER_ADMIN ||
+                  user.role == ROLE_ADMIN ||
+                  user.role == ROLE_PRINCIPAL ||
+                  (user.role == ROLE_TEACHER && (
+                    <Button
+                      className="flex items-center justify-center  min-w-[150px]"
+                      placeholder={"Add New Students"}
+                      color="blue"
+                      size="sm"
+                      onClick={() => navigate("/app/addStudent")}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
+                    >
+                      <FontAwesomeIcon icon={faSchool} className="mr-2" />
+                      Add New Student
+                    </Button>
+                  ))}
               </div>
             </div>
             {(!studentList ||
@@ -488,20 +494,23 @@ const Students = () => {
                                 <FontAwesomeIcon icon={faEye} />
                               </IconButton>
                             </Tooltip>
-                            <Tooltip content="Active/Deactive User">
-                              <IconButton
-                                placeholder={"View"}
-                                className="h-[30px] w-[30px] bg-blue-800 ml-2"
-                                onClick={() => {
-                                  setSelectedItem(item);
-                                  setWarningDialog(true);
-                                }}
-                                onPointerEnterCapture={undefined}
-                                onPointerLeaveCapture={undefined}
-                              >
-                                <FontAwesomeIcon icon={faTrash} />
-                              </IconButton>
-                            </Tooltip>
+                            {user.role == ROLE_SUPER_ADMIN ||
+                              (user.role == ROLE_ADMIN && (
+                                <Tooltip content="Active/Deactive User">
+                                  <IconButton
+                                    placeholder={"View"}
+                                    className="h-[30px] w-[30px] bg-blue-800 ml-2"
+                                    onClick={() => {
+                                      setSelectedItem(item);
+                                      setWarningDialog(true);
+                                    }}
+                                    onPointerEnterCapture={undefined}
+                                    onPointerLeaveCapture={undefined}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </IconButton>
+                                </Tooltip>
+                              ))}
                             <Tooltip content="View/Add Reports">
                               <IconButton
                                 placeholder={"View"}

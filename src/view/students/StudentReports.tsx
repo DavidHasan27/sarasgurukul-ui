@@ -27,11 +27,19 @@ import {
 import { clone, filter, find, orderBy } from "lodash";
 import KGReportDialog from "../../component/app-component/KGReportDialog";
 import WarningDialog from "../../component/app-component/WarningDialog";
+import { getUserDetails } from "../../utils";
+import {
+  ROLE_ADMIN,
+  ROLE_PRINCIPAL,
+  ROLE_SUPER_ADMIN,
+  ROLE_TEACHER,
+} from "../../utils/constants";
 
 const StudentReport = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentObj = location.state;
+  const user = getUserDetails();
   const dispatch = useAppDispatch();
   const [yearsMenu, setYearsMenu] = useState<any>();
   const [years, setYears] = useState<any>();
@@ -230,22 +238,26 @@ const StudentReport = () => {
                   isClearable
                 />
               </OutsideClickHandler>
-
-              <Button
-                variant="gradient"
-                color="blue"
-                placeholder={"Submit"}
-                className="mr-5 w-[200px] h-[40px] p-0"
-                onClick={() => {
-                  navigate("/app/newReport", {
-                    state: { student: currentObj, years },
-                  });
-                }}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              >
-                Add New Report
-              </Button>
+              {user.role === ROLE_SUPER_ADMIN ||
+                user.role === ROLE_ADMIN ||
+                user.role === ROLE_TEACHER ||
+                (user.role === ROLE_PRINCIPAL && (
+                  <Button
+                    variant="gradient"
+                    color="blue"
+                    placeholder={"Submit"}
+                    className="mr-5 w-[200px] h-[40px] p-0"
+                    onClick={() => {
+                      navigate("/app/newReport", {
+                        state: { student: currentObj, years },
+                      });
+                    }}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
+                    Add New Report
+                  </Button>
+                ))}
             </div>
           </div>
 

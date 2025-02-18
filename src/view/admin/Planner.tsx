@@ -31,7 +31,7 @@ import {
   getClassListBySchoolForDropdown,
   resetActivateDeactivateClass,
 } from "../../redux/class/classSlice";
-import { getOptionYearLabel } from "../../utils";
+import { getOptionYearLabel, getUserDetails } from "../../utils";
 import {
   activeDeactivePlanner,
   getPlans,
@@ -40,12 +40,19 @@ import {
 } from "../../redux/admin/adminSlice";
 import { find } from "lodash";
 import logoImage from "../../view/assets/sidebar_image.png";
+import {
+  ROLE_ADMIN,
+  ROLE_PRINCIPAL,
+  ROLE_TEACHER,
+  SUPER_ADMIN_MENU_LIST,
+} from "../../utils/constants";
 
 const Planner = () => {
   const ref = useRef(null);
   const reference = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = getUserDetails();
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
 
   const { yearList, loading, success, error, planner, planDelete } =
@@ -551,19 +558,23 @@ const Planner = () => {
                 >
                   Search
                 </Button>
-
-                <Button
-                  className="flex items-center justify-center gap-3 min-w-[170px]"
-                  placeholder={"Add New Plans"}
-                  color="blue"
-                  size="sm"
-                  onClick={() => navigate("/app/addPlans")}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  <FontAwesomeIcon icon={faCalendarDay} />
-                  Add New Plan
-                </Button>
+                {(user.role == ROLE_ADMIN ||
+                  user.role == ROLE_TEACHER ||
+                  user.role == SUPER_ADMIN_MENU_LIST ||
+                  user.role == ROLE_PRINCIPAL) && (
+                  <Button
+                    className="flex items-center justify-center gap-3 min-w-[170px]"
+                    placeholder={"Add New Plans"}
+                    color="blue"
+                    size="sm"
+                    onClick={() => navigate("/app/addPlans")}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
+                    <FontAwesomeIcon icon={faCalendarDay} />
+                    Add New Plan
+                  </Button>
+                )}
               </div>
             </div>
             {(!planner || !planner.content || planner.content.length === 0) &&

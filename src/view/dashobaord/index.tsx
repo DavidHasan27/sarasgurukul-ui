@@ -1,10 +1,11 @@
 import ParentLayout from "../../component/app-component/Parent";
+import comingSoon from "../assets/comingsoon.avif";
 
 const AppDashbord = () => {
   return (
     <ParentLayout>
-      <div className="flex h-[100%] w-[100%] bg-blue-gray-400">
-        Dashboar Screen
+      <div className="w-full h-screen overflow-x-hidden border-t flex flex-col justify-center items-center">
+        <img src={comingSoon} className="h-40 w-64" />
       </div>
     </ParentLayout>
   );

@@ -36,11 +36,19 @@ import Select1 from "react-select";
 import { find } from "lodash";
 import moment from "moment";
 import { useReactToPrint } from "react-to-print";
+import { getUserDetails } from "../../utils";
+import {
+  ROLE_ADMIN,
+  ROLE_PRINCIPAL,
+  ROLE_TEACHER,
+  SUPER_ADMIN_MENU_LIST,
+} from "../../utils/constants";
 
 const SchoolHolidays = () => {
   const reference = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = getUserDetails();
   const { loading, error, success } = useAppSelector(
     (state: any) => state.school
   );
@@ -414,19 +422,23 @@ const SchoolHolidays = () => {
                     </OutsideClickHandler>
                   </div>
                 </div>
-
-                <Button
-                  className="flex items-center justify-center gap-3 min-w-[200px]"
-                  placeholder={"Add New School"}
-                  color="blue"
-                  size="sm"
-                  onClick={() => navigate("/app/addHoliday")}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  <FontAwesomeIcon icon={faFaceGrinHearts} />
-                  Add New Holidays
-                </Button>
+                {(user.role == ROLE_ADMIN ||
+                  user.role == ROLE_TEACHER ||
+                  user.role == SUPER_ADMIN_MENU_LIST ||
+                  user.role == ROLE_PRINCIPAL) && (
+                  <Button
+                    className="flex items-center justify-center gap-3 min-w-[200px]"
+                    placeholder={"Add New School"}
+                    color="blue"
+                    size="sm"
+                    onClick={() => navigate("/app/addHoliday")}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
+                    <FontAwesomeIcon icon={faFaceGrinHearts} />
+                    Add New Holidays
+                  </Button>
+                )}
               </div>
             </div>
             {(!holiday || !holiday.content || holiday.content.length === 0) &&
@@ -474,6 +486,11 @@ const SchoolHolidays = () => {
                     {holiday &&
                       holiday.content.map((item: any, index: number) => {
                         const imgURL: any = getImageURL(item);
+                        const isDisabled =
+                          user.role == ROLE_ADMIN ||
+                          user.role == ROLE_TEACHER ||
+                          user.role == SUPER_ADMIN_MENU_LIST ||
+                          user.role == ROLE_PRINCIPAL;
                         return (
                           <tr
                             className={`${index % 2 != 0 ? "bg-gray-200" : ""}`}
@@ -528,6 +545,7 @@ const SchoolHolidays = () => {
                                   }}
                                   onPointerEnterCapture={undefined}
                                   onPointerLeaveCapture={undefined}
+                                  disabled={!isDisabled}
                                 >
                                   <FontAwesomeIcon icon={faTrash} />
                                 </IconButton>

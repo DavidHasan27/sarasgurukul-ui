@@ -15,7 +15,7 @@ const WebNavigation = ({ children, currentPath }: any) => {
   console.log("currentPath", currentPath, children);
 
   return (
-    <div className="max-h-[100vh] w-[100%] overflow-scroll">
+    <div className="h-[100vh] w-[100%] overflow-scroll">
       {APP_URL.indexOf(currentPath) === -1 && (
         <SGWebNavbar currentPath={currentPath} />
       )}

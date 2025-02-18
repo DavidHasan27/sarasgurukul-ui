@@ -61,7 +61,9 @@ const LoginScreen = () => {
           {/* <!-- Left: Image --> */}
           <div className="w-1/2 h-[100%] hidden lg:block">
             <img
-              src={dashImage}
+              src={
+                "https://saras-config.s3.ap-south-1.amazonaws.com/dashboard_image.png"
+              }
               alt="Placeholder Image"
               className="object-cover w-full h-full"
             />

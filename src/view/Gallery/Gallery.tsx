@@ -27,12 +27,20 @@ import Select1 from "react-select";
 
 import ImageActionMenu from "./ImageActionMenu";
 import ImageUpdateDialog from "./ImageUpdateDialog";
-import { IMAGE_TAG } from "../../utils/constants";
+import {
+  IMAGE_TAG,
+  ROLE_ADMIN,
+  ROLE_PRINCIPAL,
+  ROLE_TEACHER,
+  SUPER_ADMIN_MENU_LIST,
+} from "../../utils/constants";
 import { clone } from "lodash";
+import { getUserDetails } from "../../utils";
 
 const Gallery = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = getUserDetails();
 
   const [pageIndex, setPageIndex] = useState(1);
   const [warningDialog, setWarningDialog] = useState(false);
@@ -328,19 +336,23 @@ const Gallery = () => {
                     />
                   </div>
                 </div>
-
-                <Button
-                  className="flex items-center justify-center min-w-[200px] p-0 ml-2"
-                  placeholder={"Add New Worksheets"}
-                  color="blue"
-                  size="sm"
-                  onClick={() => navigate("/app/addImages")}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  <FontAwesomeIcon icon={faPhotoFilm} className="mr-2" />
-                  Add New Images
-                </Button>
+                {(user.role == ROLE_ADMIN ||
+                  user.role == ROLE_TEACHER ||
+                  user.role == SUPER_ADMIN_MENU_LIST ||
+                  user.role == ROLE_PRINCIPAL) && (
+                  <Button
+                    className="flex items-center justify-center min-w-[200px] p-0 ml-2"
+                    placeholder={"Add New Worksheets"}
+                    color="blue"
+                    size="sm"
+                    onClick={() => navigate("/app/addImages")}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
+                    <FontAwesomeIcon icon={faPhotoFilm} className="mr-2" />
+                    Add New Images
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -370,6 +382,11 @@ const Gallery = () => {
                 {imagesData &&
                   imagesData.content.map((obj: any, index: any) => {
                     const imageURL = getImageURL(obj.imageDetails);
+                    const isDisabled =
+                      user.role == ROLE_ADMIN ||
+                      user.role == ROLE_TEACHER ||
+                      user.role == SUPER_ADMIN_MENU_LIST ||
+                      user.role == ROLE_PRINCIPAL;
                     return (
                       <div
                         key={index}
@@ -379,18 +396,20 @@ const Gallery = () => {
                           setIsViewerOpen(true);
                         }}
                       >
-                        <ImageActionMenu
-                          index={index}
-                          onDelete={onDelete}
-                          onArchive={onArcive}
-                          onAddTag={onAddTag}
-                        >
-                          <FontAwesomeIcon
-                            icon={faEllipsisVertical}
-                            className=" h-[22px] absolute right-1 top-2 p-2"
-                            color="white"
-                          />
-                        </ImageActionMenu>
+                        {isDisabled && (
+                          <ImageActionMenu
+                            index={index}
+                            onDelete={onDelete}
+                            onArchive={onArcive}
+                            onAddTag={onAddTag}
+                          >
+                            <FontAwesomeIcon
+                              icon={faEllipsisVertical}
+                              className=" h-[22px] absolute right-1 top-2 p-2"
+                              color="white"
+                            />
+                          </ImageActionMenu>
+                        )}
                         <img
                           className="h-64 w-full max-w-full rounded-lg object-cover object-center"
                           src={imageURL}

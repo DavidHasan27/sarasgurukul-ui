@@ -49,9 +49,9 @@ const AppNavigation = ({ children, currentPath }: any) => {
   };
 
   return (
-    <div className="bg-gray-100 font-family-karla flex">
+    <div className="bg-gray-100 font-family-karla flex overflow-hidden">
       <aside className="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl bg-blue-gray-800">
-        <div className="p-6">
+        <div className="sticky p-6">
           <img src={logoImage} />
           {/* <a
             href="/dash"
@@ -63,69 +63,74 @@ const AppNavigation = ({ children, currentPath }: any) => {
             <i className="fas fa-plus mr-3"></i> New Report
           </button> */}
         </div>
-        <nav className="text-white text-base font-semibold pt-3 ">
-          {menuList.map((item: any) => {
-            if (!item.child) {
-              return (
-                <Link
-                  to={item.path}
-                  className={`flex items-center ${
-                    item.path === location.pathname ? "active-nav-link" : ""
-                  } text-white py-3 pl-3 nav-item`}
-                >
-                  <FontAwesomeIcon icon={item.icon} className="mr-3" />
-                  {item.name}
-                </Link>
-              );
-            } else {
-              return (
-                <>
-                  <button
+
+        <div className="h-[calc(100vh-14.75rem)] overflow-y-scroll overscroll-contain ">
+          <nav className="text-white text-base font-semibold pt-3">
+            {menuList.map((item: any) => {
+              if (!item.child) {
+                return (
+                  <Link
+                    to={item.path}
                     className={`flex items-center ${
                       item.path === location.pathname ? "active-nav-link" : ""
-                    } text-white py-4 pl-3 nav-item`}
-                    onClick={toggleIsExpanded}
+                    } text-white py-1 pl-3 nav-item`}
                   >
                     <FontAwesomeIcon icon={item.icon} className="mr-3" />
                     {item.name}
-                    <FontAwesomeIcon
-                      icon={isExpanded ? faAngleDown : faAngleRight}
-                      className="ml-16"
-                    />
-                  </button>
+                  </Link>
+                );
+              } else {
+                return (
+                  <>
+                    <button
+                      className={`flex items-center ${
+                        item.path === location.pathname ? "active-nav-link" : ""
+                      } text-white py-1 pl-3 nav-item`}
+                      onClick={toggleIsExpanded}
+                    >
+                      <FontAwesomeIcon icon={item.icon} className="mr-3" />
+                      {item.name}
+                      <FontAwesomeIcon
+                        icon={isExpanded ? faAngleDown : faAngleRight}
+                        className="ml-16"
+                      />
+                    </button>
 
-                  <div
-                    className="transition-height duration-300 overflow-hidden bg-sidebar"
-                    style={{ height: isExpanded ? "300px" : "0px" }}
-                  >
-                    {item.child.map((subItem: any) => (
-                      <Link
-                        to={subItem.path}
-                        className={`flex items-center ${
-                          subItem.path === location.pathname
-                            ? "active-nav-link"
-                            : ""
-                        } text-white py-1 pl-8 nav-item`}
-                      >
-                        <FontAwesomeIcon icon={subItem.icon} className="mr-3" />
-                        {subItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                </>
-              );
-              // <Link
-              //   to={item.path}
-              //   className={`flex items-center ${
-              //     item.path === location.pathname ? "active-nav-link" : ""
-              //   } text-white py-4 pl-6 nav-item`}
-              // >
-              //   <FontAwesomeIcon icon={item.icon} className="mr-3" />
-              //   {item.name}
-              // </Link>;
-            }
-          })}
-          {/* <a
+                    <div
+                      className="transition-height duration-300 overflow-hidden bg-sidebar"
+                      style={{ height: isExpanded ? "300px" : "0px" }}
+                    >
+                      {item.child.map((subItem: any) => (
+                        <Link
+                          to={subItem.path}
+                          className={`flex items-center ${
+                            subItem.path === location.pathname
+                              ? "active-nav-link"
+                              : ""
+                          } text-white py-1 pl-8 nav-item`}
+                        >
+                          <FontAwesomeIcon
+                            icon={subItem.icon}
+                            className="mr-3"
+                          />
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                );
+                // <Link
+                //   to={item.path}
+                //   className={`flex items-center ${
+                //     item.path === location.pathname ? "active-nav-link" : ""
+                //   } text-white py-4 pl-6 nav-item`}
+                // >
+                //   <FontAwesomeIcon icon={item.icon} className="mr-3" />
+                //   {item.name}
+                // </Link>;
+              }
+            })}
+            {/* <a
             href="index.html"
             className="flex items-center active-nav-link text-white py-4 pl-6 nav-item"
           >
@@ -167,10 +172,11 @@ const AppNavigation = ({ children, currentPath }: any) => {
             <i className="fas fa-calendar mr-3"></i>
             Calendar
           </a> */}
-        </nav>
+          </nav>
+        </div>
       </aside>
 
-      <div className="w-full flex flex-col h-screen overflow-y-hidden">
+      <div className="sticky w-full flex flex-col h-screen overflow-y-hidden">
         {/* Desktop Header */}
         <header className="w-full items-center bg-white py-2 px-6  sm:flex">
           <div className="w-1/2"></div>
@@ -213,7 +219,7 @@ const AppNavigation = ({ children, currentPath }: any) => {
           </div>
         </header>
 
-        <header
+        {/* <header
           x-data="{ isOpen: false }"
           className="w-full bg-sidebar py-5 px-6 sm:hidden"
         >
@@ -228,10 +234,10 @@ const AppNavigation = ({ children, currentPath }: any) => {
               <i x-show="!isOpen" className="fas fa-bars"></i>
               <i x-show="isOpen" className="fas fa-times"></i>
             </button>
-          </div>
+          </div> */}
 
-          {/* <!-- Dropdown Nav --> */}
-          <nav className="flex flex-col pt-4">
+        {/* <!-- Dropdown Nav --> */}
+        {/* <nav className="flex flex-col pt-4">
             <a
               href="index.html"
               className="flex items-center active-nav-link text-white py-2 pl-4 nav-item"
@@ -298,11 +304,11 @@ const AppNavigation = ({ children, currentPath }: any) => {
             <button className="w-full bg-white cta-btn font-semibold py-2 mt-3 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
               <i className="fas fa-arrow-circle-up mr-3"></i> Upgrade to Pro!
             </button>
-          </nav>
-          {/* <!-- <button className="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
+          </nav> */}
+        {/* <!-- <button className="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
                 <i className="fas fa-plus mr-3"></i> New Report
             </button> --> */}
-        </header>
+        {/* </header> */}
 
         <div className="w-full overflow-x-hidden border-t flex flex-col">
           {/* <main className="w-full flex-grow p-6">

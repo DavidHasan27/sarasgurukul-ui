@@ -52,6 +52,7 @@ export const APP_URL = [
   "/app/newmessages",
   "/app/contact",
   "/app/calendar",
+  "/app/exam",
 ];
 
 export const BLOODGROUP = [
@@ -79,6 +80,8 @@ export const MESSAGE_TYPE = [
   { option: "WhatsApp", value: "WHATSAPP" },
   { option: "Email", value: "EMAIL" },
 ];
+
+export const MESSAGE_TYPE_PARENT = [{ option: "Email", value: "EMAIL" }];
 export const MESSAGE_TYPE_WITH_ALL = [
   { option: "Notice", value: "NOTICE" },
   { option: "Notification", value: "NOTIFICATION" },
@@ -131,7 +134,7 @@ export const ADMIN_MENU = [
     icon: faFaceGrinHearts,
   },
   // { name: "Messages", path: "/app/messages", icon: faEnvelope },
-  { name: "Exam Time Table", path: "/app/staff", icon: faClipboard },
+  { name: "Exam Time Table", path: "/app/exam", icon: faClipboard },
   { name: "Planner", path: "/app/planner", icon: faCalendarDay },
   { name: "Worksheet", path: "/app/worksheets", icon: faBriefcase },
   { name: "Gallery", path: "/app/galleryview", icon: faPhotoFilm },
@@ -145,7 +148,7 @@ export const TEACHER_ADMIN_TOOLS = [
     icon: faFaceGrinHearts,
   },
   // { name: "Messages", path: "/app/messages", icon: faEnvelope },
-  { name: "Exam Time Table", path: "/app/staff", icon: faClipboard },
+  { name: "Exam Time Table", path: "/app/exam", icon: faClipboard },
   { name: "Planner", path: "/app/planner", icon: faCalendarDay },
   { name: "Worksheet", path: "/app/worksheets", icon: faBriefcase },
 ];
@@ -182,10 +185,19 @@ export const ASSISTANCE_MENU_LIST = [
   { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
 ];
 export const PARENT_MENU_LIST = [
-  { name: "Dashboard", path: "/app/dash", icon: "fa-tachometer-alt" },
-  { name: "Students", path: "" },
-  { name: "Message", path: "" },
-  { name: "Calendar", path: "/app/calendar", icon: "fa-calendar" },
+  { name: "Dashboard", path: "/app/dash", icon: faTableColumns },
+  { name: "Students", path: "/app/students", icon: faHandsHoldingChild },
+  { name: "Message", path: "/app/messages", icon: faMessage },
+  { name: "Calendar", path: "/app/calendar", icon: faCalendarDays },
+  { name: "Exam Time Table", path: "/app/exam", icon: faClipboard },
+  { name: "Planner", path: "/app/planner", icon: faCalendarDay },
+  { name: "Worksheet", path: "/app/worksheets", icon: faBriefcase },
+  { name: "Gallery", path: "/app/galleryview", icon: faPhotoFilm },
+  {
+    name: "School Holidays",
+    path: "/app/schoolHolidays",
+    icon: faFaceGrinHearts,
+  },
 ];
 export const HELPER_MENU_LIST = [
   { name: "Dashboard", path: "/app/dash", icon: "fa-tachometer-alt" },

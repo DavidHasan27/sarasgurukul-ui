@@ -41,9 +41,17 @@ import Select1 from "react-select";
 import { clone, find } from "lodash";
 import moment from "moment";
 import { getClassListBySchoolForDropdown } from "../../redux/class/classSlice";
+import { getUserDetails } from "../../utils";
+import {
+  ROLE_ADMIN,
+  ROLE_PRINCIPAL,
+  ROLE_TEACHER,
+  SUPER_ADMIN_MENU_LIST,
+} from "../../utils/constants";
 
 const Worksheets = () => {
   const navigate = useNavigate();
+  const user = getUserDetails();
   const dispatch = useAppDispatch();
   const { loading, error, success } = useAppSelector(
     (state: any) => state.school
@@ -480,19 +488,23 @@ const Worksheets = () => {
                     </Button>
                   </div>
                 </div>
-
-                <Button
-                  className="flex items-center justify-center min-w-[200px] p-0 ml-2"
-                  placeholder={"Add New Worksheets"}
-                  color="blue"
-                  size="sm"
-                  onClick={() => navigate("/app/addWorksheets")}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  <FontAwesomeIcon icon={faBriefcase} className="mr-2" />
-                  Add New Worksheets
-                </Button>
+                {user.role == ROLE_ADMIN ||
+                  user.role == ROLE_TEACHER ||
+                  user.role == SUPER_ADMIN_MENU_LIST ||
+                  (user.role == ROLE_PRINCIPAL && (
+                    <Button
+                      className="flex items-center justify-center min-w-[200px] p-0 ml-2"
+                      placeholder={"Add New Worksheets"}
+                      color="blue"
+                      size="sm"
+                      onClick={() => navigate("/app/addWorksheets")}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
+                    >
+                      <FontAwesomeIcon icon={faBriefcase} className="mr-2" />
+                      Add New Worksheets
+                    </Button>
+                  ))}
               </div>
             </div>
             {(!worksheets ||
