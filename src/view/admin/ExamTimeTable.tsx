@@ -98,9 +98,11 @@ const ExamTimeTable = () => {
   useEffect(() => {
     if (yearList && yearList.length > 0) {
       const year = find(yearList, (item: any) => item.active);
-      setSelectedYear(year);
+      if (year) {
+        setSelectedYear(year);
 
-      getPlannerData(0, undefined, undefined, searchString, true, year.id);
+        getPlannerData(0, undefined, undefined, searchString, true, year.id);
+      }
     }
   }, [yearList]);
 
@@ -344,7 +346,11 @@ const ExamTimeTable = () => {
         className="w-full h-screen overflow-x-hidden border-t flex flex-col justify-center items-center"
         ref={ref}
       >
-        <img src={comingSoon} className="h-40 w-64" />
+        <img
+          src={require("../assets/comingsoon.avif")}
+          className="h-40 w-64"
+          alt="Coming Soon"
+        />
       </div>
       {selectedItem && selectedItem.title && (
         <WarningDialog

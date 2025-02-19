@@ -40,6 +40,7 @@ import { getUserDetails } from "../../utils";
 import {
   ROLE_ADMIN,
   ROLE_PRINCIPAL,
+  ROLE_SUPER_ADMIN,
   ROLE_TEACHER,
   SUPER_ADMIN_MENU_LIST,
 } from "../../utils/constants";
@@ -91,8 +92,10 @@ const SchoolHolidays = () => {
   useEffect(() => {
     if (yearList && yearList.length > 0) {
       const year = find(yearList, (item: any) => item.active);
-      setSelectedYear(year);
-      getHolidayData(undefined, year.id);
+      if (year) {
+        setSelectedYear(year);
+        getHolidayData(undefined, year.id);
+      }
     }
   }, [yearList]);
 
@@ -424,7 +427,7 @@ const SchoolHolidays = () => {
                 </div>
                 {(user.role == ROLE_ADMIN ||
                   user.role == ROLE_TEACHER ||
-                  user.role == SUPER_ADMIN_MENU_LIST ||
+                  user.role == ROLE_SUPER_ADMIN ||
                   user.role == ROLE_PRINCIPAL) && (
                   <Button
                     className="flex items-center justify-center gap-3 min-w-[200px]"
@@ -489,7 +492,7 @@ const SchoolHolidays = () => {
                         const isDisabled =
                           user.role == ROLE_ADMIN ||
                           user.role == ROLE_TEACHER ||
-                          user.role == SUPER_ADMIN_MENU_LIST ||
+                          user.role == ROLE_SUPER_ADMIN ||
                           user.role == ROLE_PRINCIPAL;
                         return (
                           <tr

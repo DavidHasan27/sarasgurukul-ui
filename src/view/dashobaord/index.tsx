@@ -5,7 +5,7 @@ const AppDashbord = () => {
   return (
     <ParentLayout>
       <div className="w-full h-screen overflow-x-hidden border-t flex flex-col justify-center items-center">
-        <img src={comingSoon} className="h-40 w-64" />
+        <img src={comingSoon} className="h-40 w-64" alt="Coming Soon" />
       </div>
     </ParentLayout>
   );
