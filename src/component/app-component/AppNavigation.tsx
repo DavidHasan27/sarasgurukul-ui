@@ -8,8 +8,6 @@ import { MENU_LIST } from "../../utils/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import "../../view/main-view/mainview.css";
-import logoImage from "../../view/assets/sidebar_image.png";
-import user from "../../view/assets/user.png";
 
 const AppNavigation = ({ children, currentPath }: any) => {
   const [dropdown, setDropdown] = useState(false);
@@ -52,7 +50,7 @@ const AppNavigation = ({ children, currentPath }: any) => {
     <div className="bg-gray-100 font-family-karla flex overflow-hidden">
       <aside className="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl bg-blue-gray-800">
         <div className="sticky p-6">
-          <img src={logoImage} />
+          <img src="/img/app/sidebar_image.png" alt="logo" />
           {/* <a
             href="/dash"
             className="text-white text-3xl font-semibold uppercase hover:text-gray-300"

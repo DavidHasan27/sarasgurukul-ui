@@ -145,7 +145,7 @@ const Students = () => {
         imageData[1]
       );
     }
-    return studentPhoto;
+    return "/img/app/user.png";
   };
 
   const getRollNo = (rollNo: any) => {
