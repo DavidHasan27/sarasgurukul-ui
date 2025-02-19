@@ -347,8 +347,8 @@ const ExamTimeTable = () => {
         ref={ref}
       >
         <img
-          src={require("../assets/comingsoon.avif")}
-          className="h-40 w-64"
+          src="/img/app/coming-soon.png"
+          className="h-30 w-30"
           alt="Coming Soon"
         />
       </div>
