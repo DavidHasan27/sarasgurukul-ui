@@ -79,7 +79,7 @@ export const CASH_PAID_BY = [
 export const MESSAGE_TYPE = [
   { option: "Notice", value: "NOTICE" },
   { option: "Notification", value: "NOTIFICATION" },
-  { option: "WhatsApp", value: "WHATSAPP" },
+  // { option: "WhatsApp", value: "WHATSAPP" },
   { option: "Email", value: "EMAIL" },
 ];
 
@@ -87,7 +87,7 @@ export const MESSAGE_TYPE_PARENT = [{ option: "Email", value: "EMAIL" }];
 export const MESSAGE_TYPE_WITH_ALL = [
   { option: "Notice", value: "NOTICE" },
   { option: "Notification", value: "NOTIFICATION" },
-  { option: "WhatsApp", value: "WHATSAPP" },
+  // { option: "WhatsApp", value: "WHATSAPP" },
   { option: "Email", value: "EMAIL" },
   { option: "All", value: "" },
 ];

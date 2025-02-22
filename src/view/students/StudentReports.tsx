@@ -238,26 +238,26 @@ const StudentReport = () => {
                   isClearable
                 />
               </OutsideClickHandler>
-              {user.role === ROLE_SUPER_ADMIN ||
+              {(user.role === ROLE_SUPER_ADMIN ||
                 user.role === ROLE_ADMIN ||
                 user.role === ROLE_TEACHER ||
-                (user.role === ROLE_PRINCIPAL && (
-                  <Button
-                    variant="gradient"
-                    color="blue"
-                    placeholder={"Submit"}
-                    className="mr-5 w-[200px] h-[40px] p-0"
-                    onClick={() => {
-                      navigate("/app/newReport", {
-                        state: { student: currentObj, years },
-                      });
-                    }}
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  >
-                    Add New Report
-                  </Button>
-                ))}
+                user.role === ROLE_PRINCIPAL) && (
+                <Button
+                  variant="gradient"
+                  color="blue"
+                  placeholder={"Submit"}
+                  className="mr-5 w-[200px] h-[40px] p-0"
+                  onClick={() => {
+                    navigate("/app/newReport", {
+                      state: { student: currentObj, years },
+                    });
+                  }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                >
+                  Add New Report
+                </Button>
+              )}
             </div>
           </div>
 

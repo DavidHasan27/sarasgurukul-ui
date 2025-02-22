@@ -33,7 +33,7 @@ const DatePickerComponent = ({
       showMonthDropdown
       showYearDropdown
       placeholderText={placeholder}
-      disabled
+      disabled={disabled}
     />
   );
 };

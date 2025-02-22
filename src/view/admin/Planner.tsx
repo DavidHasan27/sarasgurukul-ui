@@ -43,6 +43,7 @@ import logoImage from "../../view/assets/sidebar_image.png";
 import {
   ROLE_ADMIN,
   ROLE_PRINCIPAL,
+  ROLE_SUPER_ADMIN,
   ROLE_TEACHER,
   SUPER_ADMIN_MENU_LIST,
 } from "../../utils/constants";
@@ -560,7 +561,7 @@ const Planner = () => {
                 </Button>
                 {(user.role == ROLE_ADMIN ||
                   user.role == ROLE_TEACHER ||
-                  user.role == SUPER_ADMIN_MENU_LIST ||
+                  user.role == ROLE_SUPER_ADMIN ||
                   user.role == ROLE_PRINCIPAL) && (
                   <Button
                     className="flex items-center justify-center gap-3 min-w-[170px]"

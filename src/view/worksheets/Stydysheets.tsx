@@ -45,6 +45,7 @@ import { getUserDetails } from "../../utils";
 import {
   ROLE_ADMIN,
   ROLE_PRINCIPAL,
+  ROLE_SUPER_ADMIN,
   ROLE_TEACHER,
   SUPER_ADMIN_MENU_LIST,
 } from "../../utils/constants";
@@ -488,23 +489,35 @@ const Worksheets = () => {
                     </Button>
                   </div>
                 </div>
-                {user.role == ROLE_ADMIN ||
+                <Button
+                  className="flex items-center justify-center min-w-[200px] p-0 ml-2"
+                  placeholder={"Add New Worksheets"}
+                  color="blue"
+                  size="sm"
+                  onClick={() => navigate("/app/addWorksheets")}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                >
+                  <FontAwesomeIcon icon={faBriefcase} className="mr-2" />
+                  Add New Worksheets
+                </Button>
+                {(user.role == ROLE_ADMIN ||
                   user.role == ROLE_TEACHER ||
-                  user.role == SUPER_ADMIN_MENU_LIST ||
-                  (user.role == ROLE_PRINCIPAL && (
-                    <Button
-                      className="flex items-center justify-center min-w-[200px] p-0 ml-2"
-                      placeholder={"Add New Worksheets"}
-                      color="blue"
-                      size="sm"
-                      onClick={() => navigate("/app/addWorksheets")}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    >
-                      <FontAwesomeIcon icon={faBriefcase} className="mr-2" />
-                      Add New Worksheets
-                    </Button>
-                  ))}
+                  user.role == ROLE_SUPER_ADMIN ||
+                  user.role == ROLE_PRINCIPAL) && (
+                  <Button
+                    className="flex items-center justify-center min-w-[200px] p-0 ml-2"
+                    placeholder={"Add New Worksheets"}
+                    color="blue"
+                    size="sm"
+                    onClick={() => navigate("/app/addWorksheets")}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
+                    <FontAwesomeIcon icon={faBriefcase} className="mr-2" />
+                    Add New Worksheets
+                  </Button>
+                )}
               </div>
             </div>
             {(!worksheets ||

@@ -356,23 +356,23 @@ const Students = () => {
                   Search
                 </Button>
 
-                {user.role == ROLE_SUPER_ADMIN ||
+                {(user.role == ROLE_SUPER_ADMIN ||
                   user.role == ROLE_ADMIN ||
                   user.role == ROLE_PRINCIPAL ||
-                  (user.role == ROLE_TEACHER && (
-                    <Button
-                      className="flex items-center justify-center  min-w-[150px]"
-                      placeholder={"Add New Students"}
-                      color="blue"
-                      size="sm"
-                      onClick={() => navigate("/app/addStudent")}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    >
-                      <FontAwesomeIcon icon={faSchool} className="mr-2" />
-                      Add New Student
-                    </Button>
-                  ))}
+                  user.role == ROLE_TEACHER) && (
+                  <Button
+                    className="flex items-center justify-center  min-w-[150px]"
+                    placeholder={"Add New Students"}
+                    color="blue"
+                    size="sm"
+                    onClick={() => navigate("/app/addStudent")}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
+                    <FontAwesomeIcon icon={faSchool} className="mr-2" />
+                    Add New Student
+                  </Button>
+                )}
               </div>
             </div>
             {(!studentList ||
