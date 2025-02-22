@@ -38,44 +38,45 @@ const Footer = () => {
               style={{ display: "flex", justifyContent: "start" }}
             >
               <a
-                className="btn btn-outline-primary rounded-circle text-center mr-2 px-0"
+                className="btn  rounded-circle text-center mr-2 px-0 border-white"
                 style={{ width: 38, height: 38 }}
                 href="#"
               >
-                <i className="fab fa-twitter"></i>
+                <i className="fab fa-twitter text-white"></i>
               </a>
               <a
-                className="btn btn-outline-primary rounded-circle text-center mr-2 px-0"
+                className="btn btn-outline-primary rounded-circle text-center mr-2 px-0 border-white"
                 style={{ width: 38, height: 38 }}
-                href="#"
+                href="https://www.facebook.com/sarasgurukul"
               >
-                <i className="fab fa-facebook-f"></i>
+                <i className="fab fa-facebook-f text-white"></i>
               </a>
               <a
-                className="btn btn-outline-primary rounded-circle text-center mr-2 px-0"
+                className="btn btn-outline-primary rounded-circle text-center mr-2 px-0 border-white"
                 style={{ width: 38, height: 38 }}
                 href="#"
               >
-                <i className="fab fa-linkedin-in"></i>
+                <i className="fab fa-linkedin-in text-white"></i>
               </a>
               <a
-                className="btn btn-outline-primary rounded-circle text-center mr-2 px-0"
+                className="btn btn-outline-primary rounded-circle text-center mr-2 px-0 border-white"
                 style={{ width: 38, height: 38 }}
-                href="#"
+                href="https://www.instagram.com/saras_gurukul_pune/"
+                target=""
               >
-                <i className="fab fa-instagram"></i>
+                <i className="fab fa-instagram text-white"></i>
               </a>
             </div>
           </div>
           <div className="col-lg-3 col-md-6 mb-5">
             <h3
-              className="mb-4 text-[#f85317] font-bold"
-              style={{ textAlign: "left" }}
+              className="mb-4 text-[#f85317]"
+              style={{ textAlign: "left", fontWeight: 700 }}
             >
               Get In Touch
             </h3>
             <div className="d-flex">
-              <h4 className="fa fa-map-marker-alt text-primary"></h4>
+              <h4 className="fa fa-map-marker-alt text-white"></h4>
               <div className="pl-3">
                 <h5 className="text-white" style={{ textAlign: "left" }}>
                   Address
@@ -90,7 +91,7 @@ const Footer = () => {
               </div>
             </div>
             <div className="d-flex">
-              <h4 className="fa fa-envelope text-primary"></h4>
+              <h4 className="fa fa-envelope text-white"></h4>
               <div className="pl-3">
                 <h5 className="text-white" style={{ textAlign: "left" }}>
                   Email
@@ -99,7 +100,7 @@ const Footer = () => {
               </div>
             </div>
             <div className="d-flex">
-              <h4 className="fa fa-phone-alt text-primary"></h4>
+              <h4 className="fa fa-phone-alt text-white"></h4>
               <div className="pl-3">
                 <h5 className="text-white" style={{ textAlign: "left" }}>
                   Phone

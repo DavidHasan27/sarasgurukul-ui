@@ -539,6 +539,32 @@ const Teachers = () => {
               <h4>Asha Lenekar</h4>
               <i>Nursary Teacher</i>
             </div>
+
+            <div className="col-md-6 col-lg-3 text-center team mb-5">
+              <div
+                className="position-relative overflow-hidden mb-4"
+                style={{ borderRadius: "100%" }}
+              >
+                <img
+                  className="img-fluid w-100"
+                  src="img/sayali_bhosale_nursary.png"
+                  alt=""
+                />
+                {/* <Popover open={openPopover2} handler={setOpenPopover2}>
+                  <PopoverHandler {...triggers2}>
+                    <div className="team-social d-flex align-items-center justify-content-center w-100 h-100 position-absolute"></div>
+                  </PopoverHandler>
+                  <SGTeamInfopopup
+                    name={"Asha Lenekar"}
+                    src={"img/asha_lenekar-nursery.png"}
+                    desc={`Asha Lenekar`}
+                  />
+                </Popover> */}
+              </div>
+              <h4>Sayali Bhosale</h4>
+              <i>Nursary Teacher</i>
+            </div>
+
             <div className="col-md-6 col-lg-3 text-center team mb-5">
               <div
                 className="position-relative overflow-hidden mb-4"
