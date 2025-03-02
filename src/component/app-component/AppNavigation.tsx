@@ -197,7 +197,10 @@ const AppNavigation = ({ children, currentPath }: any) => {
               <Typography
                 className="block px-4 py-2 account-link hover:text-white font-medium"
                 placeholder={"Sign Out"}
-                onClick={() => setDropdown(!dropdown)}
+                onClick={() => {
+                  setDropdown(!dropdown);
+                  navigate("/app/profile");
+                }}
               >
                 Profile
               </Typography>

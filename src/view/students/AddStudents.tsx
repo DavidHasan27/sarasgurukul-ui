@@ -30,6 +30,7 @@ import {
 } from "../../redux/students/studentSlice";
 import { getSchoolYear } from "../../redux/admin/adminSlice";
 import { clone, find } from "lodash";
+import { getReceiverList, getUserRoles } from "../../redux/user/userSlice";
 
 const AddStudent = () => {
   const firstScreen = useRef<any>();
@@ -141,6 +142,8 @@ const AddStudent = () => {
 
   const [schoolMenu, setSchoolMenu] = useState<any>();
   const [YearMenu, setYearMenu] = useState<any>();
+  const [existingParentMenu, setExistingParentMenu] = useState<any>();
+  const [selectedParent, setSelectedParent] = useState<any>();
   const [selectedYear, setSelectedYear] = useState<any>();
   const [studentProfilePhoto, setStudentProfilePhoto] = useState<any>();
   const [studentDocuments, setStudentDocuments] = useState<any>([]);
@@ -152,27 +155,21 @@ const AddStudent = () => {
   //   (state: any) => state.user
   // );
 
-  const { loading, error, success, roleList, newStudent } = useAppSelector(
+  const { loading, error, success, newStudent } = useAppSelector(
     (state: any) => state.student
   );
 
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
   const { classList } = useAppSelector((state: any) => state.class);
   const { yearList } = useAppSelector((state: any) => state.admin);
+  const { roleList, receiverList } = useAppSelector((state: any) => state.user);
+
+  console.log("receiverList", receiverList);
 
   useEffect(() => {
-    const requiredRoles = [];
+    console.log("Role List ", roleList);
     if (roleList && roleList.length > 0) {
-      for (let i = 0; i < roleList.length; i++) {
-        if (
-          roleList[i].roleName !== "PARENT" &&
-          roleList[i].roleName !== "STUDENT" &&
-          roleList[i].roleName !== "OTHER"
-        ) {
-          requiredRoles.push(roleList[i]);
-        }
-      }
-      setRequiredRoleList(requiredRoles);
+      getParentList();
     }
   }, [roleList]);
 
@@ -186,6 +183,7 @@ const AddStudent = () => {
   useEffect(() => {
     dispatch(getSchoolsForSelection());
     dispatch(getSchoolYear());
+    if (!roleList || roleList.length == 0) dispatch(getUserRoles());
   }, []);
 
   const onDrop = useCallback((acceptedFiles: any) => {
@@ -405,6 +403,7 @@ const AddStudent = () => {
     setStudentProfilePhoto("");
     setParentProfilePhoto("");
     setParentsDocuments([]);
+    setSelectedParent("");
   };
 
   const onSubmitSchool = () => {
@@ -470,87 +469,89 @@ const AddStudent = () => {
       return;
     }
 
-    if (!firstName && !firstName.trim()) {
-      setFirstNameError("Please enter first name");
-      isError = true;
-    }
+    if (!selectedParent) {
+      if (!firstName && !firstName.trim()) {
+        setFirstNameError("Please enter first name");
+        isError = true;
+      }
 
-    if (!middleName && !middleName.trim()) {
-      setMiddleNameError("Please enter middle name");
-      isError = true;
-    }
+      if (!middleName && !middleName.trim()) {
+        setMiddleNameError("Please enter middle name");
+        isError = true;
+      }
 
-    if (!lastName && !lastName.trim()) {
-      setLastNameError("Please enter last name");
-      isError = true;
-    }
+      if (!lastName && !lastName.trim()) {
+        setLastNameError("Please enter last name");
+        isError = true;
+      }
 
-    if (!email || !email.trim()) {
-      setEmailError("Please enter email id");
-      isError = true;
-    } else if (email && !isEmailValid(email)) {
-      setEmailError("Please enter valid email id");
-      isError = true;
-    }
+      if (!email || !email.trim()) {
+        setEmailError("Please enter email id");
+        isError = true;
+      } else if (email && !isEmailValid(email)) {
+        setEmailError("Please enter valid email id");
+        isError = true;
+      }
 
-    if (!phone1 || !phone1.trim()) {
-      setPhone1Error("Please enter school phone number");
-      isError = true;
-    } else if (phone1 && !isMobileValid(phone1)) {
-      setPhone1Error("Please enter valid phone number");
-      isError = true;
-    }
-    if (phone2 && !isMobileValid(phone2)) {
-      setPhone2Error("Please enter valid phone number");
-      isError = true;
-    }
+      if (!phone1 || !phone1.trim()) {
+        setPhone1Error("Please enter school phone number");
+        isError = true;
+      } else if (phone1 && !isMobileValid(phone1)) {
+        setPhone1Error("Please enter valid phone number");
+        isError = true;
+      }
+      if (phone2 && !isMobileValid(phone2)) {
+        setPhone2Error("Please enter valid phone number");
+        isError = true;
+      }
 
-    if (!addressLine1 && !addressLine1.trim()) {
-      setAddressError("Please enter address line 1");
-      isError = true;
-    }
+      if (!addressLine1 && !addressLine1.trim()) {
+        setAddressError("Please enter address line 1");
+        isError = true;
+      }
 
-    if (!city && !city.trim()) {
-      setCityError("Please enter city");
-      isError = true;
-    }
+      if (!city && !city.trim()) {
+        setCityError("Please enter city");
+        isError = true;
+      }
 
-    if (!pincode && !pincode.trim()) {
-      setPincodeError("Please enter pincode");
-      isError = true;
-    }
+      if (!pincode && !pincode.trim()) {
+        setPincodeError("Please enter pincode");
+        isError = true;
+      }
 
-    if (!state && !state.trim()) {
-      setStateError("Please enter state");
-      isError = true;
-    }
+      if (!state && !state.trim()) {
+        setStateError("Please enter state");
+        isError = true;
+      }
 
-    if (!joiningDate && !joiningDate.trim()) {
-      setJoiningDate("Please enter joining date");
-      isError = true;
-    }
+      if (!joiningDate && !joiningDate.trim()) {
+        setJoiningDate("Please enter joining date");
+        isError = true;
+      }
 
-    if (!relativeName && !relativeName.trim()) {
-      setRelativeNameError("Please enter relative name");
-      isError = true;
-    }
+      if (!relativeName && !relativeName.trim()) {
+        setRelativeNameError("Please enter relative name");
+        isError = true;
+      }
 
-    if (!relativeNo && !relativeNo.trim()) {
-      setrelativeNoError("Please enter relative mobile number");
-      isError = true;
-    } else if (relativeNo && !isMobileValid(relativeNo)) {
-      setrelativeNoError("Please enter valid relative phone number");
-      isError = true;
-    }
+      if (!relativeNo && !relativeNo.trim()) {
+        setrelativeNoError("Please enter relative mobile number");
+        isError = true;
+      } else if (relativeNo && !isMobileValid(relativeNo)) {
+        setrelativeNoError("Please enter valid relative phone number");
+        isError = true;
+      }
 
-    if (!aboutStaff || !aboutStaff.trim()) {
-      setAboutStaffError("Please enter about staff");
-      isError = true;
-    }
+      if (!aboutStaff || !aboutStaff.trim()) {
+        setAboutStaffError("Please enter about staff");
+        isError = true;
+      }
 
-    if (!studentRelation) {
-      setStudentRelationError("Please select relation with student");
-      isError = true;
+      if (!studentRelation) {
+        setStudentRelationError("Please select relation with student");
+        isError = true;
+      }
     }
 
     if (isError) {
@@ -592,7 +593,12 @@ const AddStudent = () => {
       precaution: precautions ? precautions : null,
       medicalHistory: medicalHistory ? medicalHistory : null,
       yearId: selectedYear.id,
-      parents: {
+    };
+
+    if (selectedParent) {
+      studentBody["parents"] = { id: selectedParent.id };
+    } else {
+      studentBody["parents"] = {
         firstName: firstName,
         middleName: middleName,
         lastName: lastName,
@@ -613,8 +619,8 @@ const AddStudent = () => {
         relativeName: relativeName,
         relativeNo: relativeNo,
         bloodGroup: bloodGroup ? bloodGroup.value : null,
-      },
-    };
+      };
+    }
 
     if (studentProfilePhoto) {
       studentBody["studentPhoto"] = {
@@ -693,6 +699,18 @@ const AddStudent = () => {
     dispatch(createNewStudent(studentBody));
   };
 
+  const getParentList = () => {
+    const body: any = {
+      active: true,
+    };
+    const parentRole = roleList.find((obj: any) => obj.roleName == "PARENT");
+
+    if (parentRole) {
+      body["roleId"] = [parentRole.id];
+    }
+    return dispatch(getReceiverList(body));
+  };
+
   const formatOptionLabel = ({ value, label }: any) => {
     return (
       <div
@@ -740,6 +758,31 @@ const AddStudent = () => {
     );
   };
 
+  const formatOptionLabelForParents = ({ value, label }: any) => {
+    console.log("Value ::", value);
+    return (
+      <div
+        className="flex flex-col text-left  border-b-[1px] border-gray-400 "
+        onClick={() => {
+          setSelectedParent(value);
+          setExistingParentMenu(false);
+        }}
+      >
+        <div
+          className={`text-blue-gray-900 text-[16px] ${
+            value.active ? "bg-blue-gray-100" : ""
+          }  px-3`}
+        >
+          {" "}
+          {`${value.firstName} ${value.middleName} ${value.lastName}`}
+        </div>
+        <div className="text-gray-500 text-[12px] -mt-[12px] px-3">
+          {value.email}
+        </div>
+      </div>
+    );
+  };
+
   const getOptionLabel = (option: any) => {
     return (
       option.startMonth +
@@ -750,6 +793,10 @@ const AddStudent = () => {
       " " +
       option.endYear
     );
+  };
+
+  const getOptionParentLabel = (option: any) => {
+    return option.firstName + " " + option.middleName + "  " + option.lastName;
   };
 
   return (
@@ -1078,6 +1125,65 @@ const AddStudent = () => {
                         </div>
                       </div>
                     </div>
+
+                    <div className="inline-block mt-2 w-full pr-1">
+                      <label className="block text-sm text-gray-600 text-left mb-0">
+                        Existing Parent(If Parent Already Exist)
+                      </label>
+                      <OutsideClickHandler
+                        onOutsideClick={() => {
+                          setExistingParentMenu(false);
+                        }}
+                      >
+                        <Select
+                          name="parent"
+                          placeholder="Select Existing Parent"
+                          options={receiverList}
+                          getOptionLabel={(option: any) =>
+                            getOptionParentLabel(option)
+                          }
+                          getOptionValue={(option) => option}
+                          styles={{
+                            control: (baseStyles, state) => ({
+                              ...baseStyles,
+                              backgroundColor: "#e5e7eb",
+                              borderColor: state.isFocused
+                                ? "#0f58bf"
+                                : "#e1e4e8",
+                              textAlign: "left",
+                            }),
+                            option: (baseStyles, state) => ({
+                              ...baseStyles,
+                              textAlign: "left",
+                            }),
+                            multiValue: (styles, { data }) => {
+                              return {
+                                ...styles,
+                                backgroundColor: "white",
+                                borderWidth: "1px",
+                                borderColor: "black",
+                                borderStyle: "#c4cad2",
+                              };
+                            },
+                          }}
+                          classNamePrefix="Select Parent"
+                          onChange={(event: any) => {
+                            console.log("ABC >>>>", event);
+                            setSelectedParent(event);
+                            setExistingParentMenu(false);
+                          }}
+                          value={selectedParent}
+                          components={{ Option: formatOptionLabelForParents }}
+                          menuIsOpen={existingParentMenu}
+                          onMenuOpen={() => setExistingParentMenu(true)}
+                          closeMenuOnScroll={true}
+                          isClearable={true}
+                        />
+                      </OutsideClickHandler>
+                      <label className="block text-sm text-left text-red-600 h-4">
+                        {schoolError ? schoolError : ""}
+                      </label>
+                    </div>
                   </div>
 
                   <div className="grid">
@@ -1310,6 +1416,25 @@ const AddStudent = () => {
                       </label>
                     </div>
                   </div>
+
+                  {selectedParent && (
+                    <div className="flex flex-row-reverse items-end w-full mt-2">
+                      <Button
+                        variant="gradient"
+                        color="blue"
+                        placeholder={"Submit"}
+                        onClick={() => onSubmitSchool()}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
+                      >
+                        <FontAwesomeIcon
+                          icon={faUserPlus}
+                          className="mr-2 fa-1x p-0"
+                        />
+                        Add New Student
+                      </Button>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
@@ -1317,259 +1442,494 @@ const AddStudent = () => {
 
           {/* Parent Info */}
 
-          <div className="flex flex-wrap mt-5">
-            <div className="w-full lg:w-1/2 my-1 pr-0 lg:pr-2 mt-2 ">
-              <p className="text-xl flex items-center">
-                <i className="fas fa-list mr-3"></i> Parents Info
-              </p>
-              <div className="leading-loose">
-                <form className="p-10 bg-white rounded shadow-xl min-h-[470px]">
-                  <div className="">
-                    <div className="inline-block mt-2 w-1/2 pr-1">
-                      <label
-                        className="block text-sm text-gray-600 text-left"
-                        ref={secondScreen}
-                      >
-                        First Name
-                      </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="firstName"
-                          name="firstName"
-                          required
-                          placeholder="First Name"
-                          aria-label="firstName"
-                          value={firstName}
-                          onChange={(event) => {
-                            setFirstName(event.target.value);
-                            setFirstNameError("");
-                          }}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {firstNameError && firstNameError}
+          {!selectedParent && (
+            <div className="flex flex-wrap mt-5">
+              <div className="w-full lg:w-1/2 my-1 pr-0 lg:pr-2 mt-2 ">
+                <p className="text-xl flex items-center">
+                  <i className="fas fa-list mr-3"></i> Parents Info
+                </p>
+                <div className="leading-loose">
+                  <form className="p-10 bg-white rounded shadow-xl min-h-[470px]">
+                    <div className="">
+                      <div className="inline-block mt-2 w-1/2 pr-1">
+                        <label
+                          className="block text-sm text-gray-600 text-left"
+                          ref={secondScreen}
+                        >
+                          First Name
+                        </label>
+                        <div className="flex flex-col">
+                          <input
+                            className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                            id="firstName"
+                            name="firstName"
+                            required
+                            placeholder="First Name"
+                            aria-label="firstName"
+                            value={firstName}
+                            onChange={(event) => {
+                              setFirstName(event.target.value);
+                              setFirstNameError("");
+                            }}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                            {firstNameError && firstNameError}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="inline-block w-1/2 pr-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Middle Name
+                        </label>
+                        <div className="flex flex-col">
+                          <input
+                            className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                            id="middleName"
+                            name="middleName"
+                            required
+                            placeholder="Middle Name"
+                            aria-label="middleName"
+                            value={middleName}
+                            onChange={(event) => {
+                              setMiddleName(event.target.value);
+                              setMiddleNameError("");
+                            }}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 ">
+                            {middleNameError && middleNameError}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="inline-block w-1/2 pr-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Last Name
+                        </label>
+                        <div className="flex flex-col">
+                          <input
+                            className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                            id="lastName"
+                            name="lastName"
+                            required
+                            placeholder="Last Name"
+                            aria-label="lastName"
+                            value={lastName}
+                            onChange={(event) => {
+                              setLastName(event.target.value);
+                              setLastNameError("");
+                            }}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                            {lastNameError && lastNameError}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="inline-block w-1/2 pr-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Email
+                        </label>
+                        <div className="flex flex-col">
+                          <input
+                            className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                            id="email"
+                            name="email"
+                            required
+                            placeholder="Email Id"
+                            aria-label="email"
+                            value={email}
+                            onChange={(event) => {
+                              setEmail(event.target.value);
+                              setEmailError("");
+                            }}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                            {emailError && emailError}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="inline-block w-1/2 pr-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Primary Number
+                        </label>
+                        <div className="flex flex-col">
+                          <input
+                            className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                            id="Phone1"
+                            name="Phone1"
+                            type="number"
+                            required
+                            placeholder="Phone1"
+                            aria-label="Phone1"
+                            value={phone1}
+                            onChange={(event) => {
+                              if (event.target.value.length <= 10) {
+                                setPhone1(event.target.value);
+                                setPhone1Error("");
+                              }
+                            }}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                            {phone1Error && phone1Error}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="inline-block w-1/2 pr-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Secondary Number
+                        </label>
+                        <div className="flex flex-col">
+                          <input
+                            className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                            id="Phone2"
+                            name="Phone2"
+                            type="number"
+                            required
+                            placeholder="Phone2"
+                            aria-label="Phone2"
+                            value={phone2}
+                            onChange={(event) => {
+                              if (event.target.value.length <= 10) {
+                                setPhone2(event.target.value);
+                                setPhone2Error("");
+                              }
+                            }}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                            {phone2Error && phone2Error}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="inline-block  w-1/2 pr-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Blood Group
+                        </label>
+                        <div className="flex flex-col">
+                          <Select
+                            name="role"
+                            placeholder="Select Blood Group"
+                            options={BLOODGROUP}
+                            getOptionLabel={(option: any) => option.option}
+                            getOptionValue={(option) => option.value}
+                            styles={{
+                              control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                backgroundColor: "#e5e7eb",
+                                borderColor: state.isFocused
+                                  ? "#0f58bf"
+                                  : "#e1e4e8",
+                                textAlign: "left",
+                              }),
+                              option: (baseStyles, state) => ({
+                                ...baseStyles,
+                                textAlign: "left",
+                              }),
+                            }}
+                            classNamePrefix="Select Blood Group"
+                            onChange={(event) => {
+                              console.log("Bloood Group >>>>>", event);
+                              setBloodGroup(event);
+                            }}
+                            value={bloodGroup}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                            {/* {phone2Error && phone2Error} */}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="inline-block  w-1/2 pr-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Student Relationship
+                        </label>
+                        <div className="flex flex-col">
+                          <Select
+                            name="role"
+                            placeholder="Select Relationship"
+                            options={RELATIONSHIP}
+                            getOptionLabel={(option: any) => option.option}
+                            getOptionValue={(option) => option.value}
+                            styles={{
+                              control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                backgroundColor: "#e5e7eb",
+                                borderColor: state.isFocused
+                                  ? "#0f58bf"
+                                  : "#e1e4e8",
+                                textAlign: "left",
+                              }),
+                              option: (baseStyles, state) => ({
+                                ...baseStyles,
+                                textAlign: "left",
+                              }),
+                            }}
+                            classNamePrefix="Select Relationship"
+                            onChange={(event) => {
+                              setStudentRelation(event);
+                              setStudentRelationError("");
+                            }}
+                            value={studentRelation}
+                          />
+                          <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                            {studentRelationError && studentRelationError}
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="inline-block w-1/2 pr-1">
+                    <div className="mt-1">
                       <label className="block text-sm text-gray-600 text-left">
-                        Middle Name
+                        About Staff
                       </label>
-                      <div className="flex flex-col">
-                        <input
-                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="middleName"
-                          name="middleName"
-                          required
-                          placeholder="Middle Name"
-                          aria-label="middleName"
-                          value={middleName}
-                          onChange={(event) => {
-                            setMiddleName(event.target.value);
-                            setMiddleNameError("");
-                          }}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 ">
-                          {middleNameError && middleNameError}
+                      <textarea
+                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                        id="message"
+                        name="message"
+                        rows={2}
+                        required
+                        placeholder="About Staff"
+                        aria-label="Email"
+                        value={aboutStaff}
+                        onChange={(event) => {
+                          setAboutStaff(event.target.value);
+                          setAboutStaffError("");
+                        }}
+                      ></textarea>
+                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 mt-[-10px]">
+                        {aboutStaffError
+                          ? "Please Enter About School Info"
+                          : ""}
+                      </label>
+                    </div>
+
+                    <div className="grid">
+                      <div className="inline-block w-full">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Parent Photo
+                        </label>
+                        <div
+                          {...getRootParentPhotoProps(style)}
+                          className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                        >
+                          <input {...getInputParentPhotoProps()} />
+                          {parentProfilePhoto ? (
+                            <Avatar
+                              variant="circular"
+                              alt="candice"
+                              src={URL.createObjectURL(parentProfilePhoto)}
+                              placeholder={undefined}
+                              size="xxl"
+                              className="object-fill"
+                            />
+                          ) : (
+                            <>
+                              {isParentPhotoDragActive ? (
+                                <p>Drop the files here ...</p>
+                              ) : (
+                                <p>Click to select files</p>
+                              )}
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
+                  </form>
+                </div>
+              </div>
 
+              <div className="w-full lg:w-1/2 pl-0 lg:pl-2 mt-2">
+                <p className="text-xl flex items-center">
+                  <i className="fas fa-list mr-3"></i> Other Details
+                </p>
+                <div className="leading-loose">
+                  <form className="p-10 bg-white rounded shadow-xl min-h-[470px]">
+                    <div className="inline-block w-1/2 pr-1">
+                      <label className=" block text-sm text-gray-600 text-left">
+                        Address1
+                      </label>
+                      <input
+                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                        id="address1"
+                        name="address1"
+                        type="text"
+                        required
+                        placeholder="Address Line 1"
+                        aria-label="Address1"
+                        value={addressLine1}
+                        onChange={(event) => {
+                          setAddressLine1(event.target.value);
+                          setAddressError("");
+                        }}
+                      />
+                      <label className="block text-sm text-left text-red-600 h-4">
+                        {addressError && addressError}
+                      </label>
+                    </div>
                     <div className="inline-block w-1/2 pr-1">
                       <label className="block text-sm text-gray-600 text-left">
-                        Last Name
+                        Address2
+                      </label>
+                      <input
+                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                        id="address2"
+                        name="address2"
+                        type="text"
+                        required
+                        placeholder="Address Line 2"
+                        aria-label="Address2"
+                        value={addressLine2}
+                        onChange={(event) => {
+                          setAddressLine2(event.target.value);
+                        }}
+                      />
+                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                        {""}
+                      </label>
+                    </div>
+                    <div className="inline-block  w-1/2 pr-1">
+                      <label className="text-left text-sm block text-gray-600">
+                        Area
                       </label>
                       <div className="flex flex-col">
                         <input
                           className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="lastName"
-                          name="lastName"
+                          id="area"
+                          name="area"
+                          type="text"
                           required
-                          placeholder="Last Name"
-                          aria-label="lastName"
-                          value={lastName}
+                          placeholder="Area"
+                          aria-label="Area"
+                          value={branch}
                           onChange={(event) => {
-                            setLastName(event.target.value);
-                            setLastNameError("");
+                            setBranch(event.target.value);
                           }}
                         />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {lastNameError && lastNameError}
-                        </div>
+                        <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {""}
+                        </label>
                       </div>
                     </div>
-
-                    <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Email
+                    <div className="inline-block  w-1/2 pr-1">
+                      <label className="text-left text-[12px] mt-[-5px] mb-2 block text-gray-600">
+                        City
                       </label>
                       <div className="flex flex-col">
                         <input
                           className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="email"
-                          name="email"
+                          id="city"
+                          name="city"
+                          type="text"
                           required
-                          placeholder="Email Id"
-                          aria-label="email"
-                          value={email}
+                          placeholder="City"
+                          aria-label="City"
+                          value={city}
                           onChange={(event) => {
-                            setEmail(event.target.value);
-                            setEmailError("");
+                            setCity(event.target.value);
+                            setCityError("");
                           }}
                         />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {emailError && emailError}
-                        </div>
+                        <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {cityError && cityError}
+                        </label>
                       </div>
                     </div>
-
-                    <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Primary Number
+                    <div className="inline-block  w-1/2 pr-1">
+                      <label className="text-left block text-sm text-gray-600">
+                        Country
                       </label>
                       <div className="flex flex-col">
                         <input
                           className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="Phone1"
-                          name="Phone1"
+                          id="country"
+                          name="country"
+                          type="text"
+                          required
+                          placeholder="Country"
+                          aria-label="Country"
+                          value={country}
+                          readOnly
+                          onChange={(event) => {
+                            setCountry(event.target.value);
+                            setCountryError("");
+                          }}
+                        />
+                        <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {countryError && countryError}
+                        </label>
+                      </div>
+                    </div>
+                    <div className="inline-block  -mx-1 pl-1 w-1/2">
+                      <label className="text-left block text-sm text-gray-600">
+                        Pincode
+                      </label>
+                      <div className="flex flex-col">
+                        <input
+                          className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
+                          id="zip"
+                          name="zip"
                           type="number"
                           required
-                          placeholder="Phone1"
-                          aria-label="Phone1"
-                          value={phone1}
+                          placeholder="Pincode"
+                          aria-label="Zip"
+                          maxLength={6}
+                          value={pincode}
                           onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
-                            }
+                            setPincode(event.target.value);
+                            setPincodeError("");
                           }}
                         />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
-                        </div>
+                        <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {pincodeError && pincodeError}
+                        </label>
                       </div>
                     </div>
-                    <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Secondary Number
+
+                    <div className="inline-block  w-1/2 pr-1">
+                      <label className="text-sm text-left block text-gray-600">
+                        State
                       </label>
                       <div className="flex flex-col">
                         <input
                           className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                          id="Phone2"
-                          name="Phone2"
-                          type="number"
+                          id="state"
+                          name="state"
+                          type="text"
                           required
-                          placeholder="Phone2"
-                          aria-label="Phone2"
-                          value={phone2}
+                          placeholder="State"
+                          aria-label="State"
+                          value={state}
                           onChange={(event) => {
-                            if (event.target.value.length <= 10) {
-                              setPhone2(event.target.value);
-                              setPhone2Error("");
-                            }
+                            setState(event.target.value);
+                            setStateError("");
                           }}
                         />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {phone2Error && phone2Error}
-                        </div>
+                        <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {cityError && cityError}
+                        </label>
                       </div>
                     </div>
 
                     <div className="inline-block  w-1/2 pr-1">
                       <label className="block text-sm text-gray-600 text-left">
-                        Blood Group
-                      </label>
-                      <div className="flex flex-col">
-                        <Select
-                          name="role"
-                          placeholder="Select Blood Group"
-                          options={BLOODGROUP}
-                          getOptionLabel={(option: any) => option.option}
-                          getOptionValue={(option) => option.value}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              backgroundColor: "#e5e7eb",
-                              borderColor: state.isFocused
-                                ? "#0f58bf"
-                                : "#e1e4e8",
-                              textAlign: "left",
-                            }),
-                            option: (baseStyles, state) => ({
-                              ...baseStyles,
-                              textAlign: "left",
-                            }),
-                          }}
-                          classNamePrefix="Select Blood Group"
-                          onChange={(event) => {
-                            console.log("Bloood Group >>>>>", event);
-                            setBloodGroup(event);
-                          }}
-                          value={bloodGroup}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {/* {phone2Error && phone2Error} */}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="inline-block  w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Student Relationship
-                      </label>
-                      <div className="flex flex-col">
-                        <Select
-                          name="role"
-                          placeholder="Select Relationship"
-                          options={RELATIONSHIP}
-                          getOptionLabel={(option: any) => option.option}
-                          getOptionValue={(option) => option.value}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              backgroundColor: "#e5e7eb",
-                              borderColor: state.isFocused
-                                ? "#0f58bf"
-                                : "#e1e4e8",
-                              textAlign: "left",
-                            }),
-                            option: (baseStyles, state) => ({
-                              ...baseStyles,
-                              textAlign: "left",
-                            }),
-                          }}
-                          classNamePrefix="Select Relationship"
-                          onChange={(event) => {
-                            setStudentRelation(event);
-                            setStudentRelationError("");
-                          }}
-                          value={studentRelation}
-                        />
-                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {studentRelationError && studentRelationError}
-                        </div>
-                      </div>
-                    </div>
-                    {/* <div className="inline-block w-1/2 pr-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Birth Date
+                        Joining Date
                       </label>
                       <div className="flex flex-col">
                         <DatePicker
-                          startDate={birthDate}
-                          maxDate={new Date("2012-01-01")}
+                          startDate={joiningDate}
+                          maxDate={new Date()}
                           minDate={new Date("1980-01-01")}
-                          onDateChange={(date: any) => setBirthDate(date)}
+                          onDateChange={(date: any) => setJoiningDate(date)}
                         />
                         <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                          {birthDateError && birthDateError}
+                          {joiningDateError && joiningDateError}
                         </div>
                       </div>
-                    </div> */}
+                    </div>
 
-                    {/* <div className="inline-block w-1/2 pr-1">
+                    <div className="inline-block w-1/2 pr-1">
                       <label className="block text-sm text-gray-600 text-left">
                         Relative Name
                       </label>
@@ -1581,16 +1941,16 @@ const AddStudent = () => {
                           required
                           placeholder="Relative Name"
                           aria-label="relativename"
-                          value={phone1}
+                          value={relativeName}
                           onChange={(event) => {
                             if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
+                              setRelativeName(event.target.value);
+                              setRelativeNameError("");
                             }
                           }}
                         />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
+                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {relativeNameError && relativeNameError}
                         </div>
                       </div>
                     </div>
@@ -1608,459 +1968,87 @@ const AddStudent = () => {
                           required
                           placeholder="Relative number"
                           aria-label="Phone1"
-                          value={phone1}
+                          value={relativeNo}
                           onChange={(event) => {
                             if (event.target.value.length <= 10) {
-                              setPhone1(event.target.value);
-                              setPhone1Error("");
+                              setrelativeNo(event.target.value);
+                              setrelativeNoError("");
                             }
                           }}
                         />
-                        <div className="block text-sm text-left text-red-600 h-4">
-                          {phone1Error && phone1Error}
+                        <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {relativeNoError && relativeNoError}
                         </div>
                       </div>
-                    </div> */}
+                    </div>
 
-                    {/* <label className="block text-sm text-gray-600 text-left mb-0">
-                      Schools
-                    </label>
-                    <Select
-                      isMulti
-                      name="schools"
-                      placeholder="Select Schools"
-                      options={optionSchoolList}
-                      getOptionLabel={(option: any) => option.schoolName}
-                      getOptionValue={(option) => option.id}
-                      styles={{
-                        control: (baseStyles, state) => ({
-                          ...baseStyles,
-                          backgroundColor: "#e5e7eb",
-                          borderColor: state.isFocused ? "#0f58bf" : "#e1e4e8",
-                          textAlign: "left",
-                        }),
-                        option: (baseStyles, state) => ({
-                          ...baseStyles,
-                          textAlign: "left",
-                        }),
-                        multiValue: (styles, { data }) => {
-                          return {
-                            ...styles,
-                            backgroundColor: "white",
-                            borderWidth: "1px",
-                            borderColor: "black",
-                            borderStyle: "#c4cad2",
-                          };
-                        },
-                      }}
-                      classNamePrefix="Select Schools"
-                      onChange={(event: any) => {
-                        setSchoolList(event);
-                        if (event.length !== 0) {
-                          setSchoolListError("");
-                        }
-                      }}
-                      value={schoolList}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {schoolListError && schoolListError}
-                    </label> */}
+                    <div className="grid mt-[-10px]">
+                      <div className="inline-block ml-1">
+                        <label className="block text-sm text-gray-600 text-left">
+                          Documents(Max 3 Files)
+                        </label>
+                        <div
+                          {...getRootParentDocumentsProps(style)}
+                          className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                        >
+                          <input {...getInputParentDocumentsProps()} />
+                          {isParentDocDragActive ? (
+                            <p>
+                              Click to select files or Drop the files here ..
+                            </p>
+                          ) : (
+                            <p>Click to select files</p>
+                          )}
+                        </div>
 
-                    {/* <label className="block text-sm text-gray-600 text-left mb-0 mt-4">
-                      Roles
-                    </label>
-                    <Select
-                      name="role"
-                      placeholder="Select User Role"
-                      options={requiredRoleList}
-                      getOptionLabel={(option: any) => option.roleDesc}
-                      getOptionValue={(option) => option.id}
-                      styles={{
-                        control: (baseStyles, state) => ({
-                          ...baseStyles,
-                          backgroundColor: "#e5e7eb",
-                          borderColor: state.isFocused ? "#0f58bf" : "#e1e4e8",
-                          textAlign: "left",
-                        }),
-                        option: (baseStyles, state) => ({
-                          ...baseStyles,
-                          textAlign: "left",
-                        }),
-                      }}
-                      classNamePrefix="Select Role"
-                      onChange={(role) => setRole(role)}
-                      value={role}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {roleError && roleError}
-                    </label> */}
-                  </div>
+                        <div className="flex flex-wrap flex-row w-full ">
+                          {parentsDocuments.map((obj: any, index: any) => {
+                            return (
+                              <>
+                                <Chip
+                                  open={true}
+                                  value={obj.name}
+                                  onClose={() => {
+                                    const fileList = clone(parentsDocuments);
+                                    fileList.splice(index, 1);
+                                    setParentsDocuments(fileList);
+                                  }}
+                                  className={`${
+                                    index != 0 ? "ml-0" : ""
+                                  } mt-2 mr-2`}
+                                  color="teal"
+                                />
+                              </>
+                            );
+                          })}
+                        </div>
 
-                  <div className="mt-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      About Staff
-                    </label>
-                    <textarea
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="message"
-                      name="message"
-                      rows={2}
-                      required
-                      placeholder="About Staff"
-                      aria-label="Email"
-                      value={aboutStaff}
-                      onChange={(event) => {
-                        setAboutStaff(event.target.value);
-                        setAboutStaffError("");
-                      }}
-                    ></textarea>
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4 mt-[-10px]">
-                      {aboutStaffError ? "Please Enter About School Info" : ""}
-                    </label>
-                  </div>
+                        <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
+                          {schoolImageError ? "Please select school image" : ""}
+                        </label>
+                      </div>
+                    </div>
 
-                  <div className="grid">
-                    <div className="inline-block w-full">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Parent Photo
-                      </label>
-                      <div
-                        {...getRootParentPhotoProps(style)}
-                        className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
+                    <div className="flex flex-row-reverse items-end w-full mt-4">
+                      <Button
+                        variant="gradient"
+                        color="blue"
+                        placeholder={"Submit"}
+                        onClick={() => onSubmitSchool()}
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
                       >
-                        <input {...getInputParentPhotoProps()} />
-                        {parentProfilePhoto ? (
-                          <Avatar
-                            variant="circular"
-                            alt="candice"
-                            src={URL.createObjectURL(parentProfilePhoto)}
-                            placeholder={undefined}
-                            size="xxl"
-                            className="object-fill"
-                          />
-                        ) : (
-                          <>
-                            {isParentPhotoDragActive ? (
-                              <p>Drop the files here ...</p>
-                            ) : (
-                              <p>Click to select files</p>
-                            )}
-                          </>
-                        )}
-                      </div>
+                        <FontAwesomeIcon
+                          icon={faUserPlus}
+                          className="mr-2 fa-1x p-0"
+                        />
+                        Add New Student
+                      </Button>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
-            </div>
-
-            <div className="w-full lg:w-1/2 pl-0 lg:pl-2 mt-2">
-              <p className="text-xl flex items-center">
-                <i className="fas fa-list mr-3"></i> Other Details
-              </p>
-              <div className="leading-loose">
-                <form className="p-10 bg-white rounded shadow-xl min-h-[470px]">
-                  <div className="inline-block w-1/2 pr-1">
-                    <label className=" block text-sm text-gray-600 text-left">
-                      Address1
-                    </label>
-                    <input
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="address1"
-                      name="address1"
-                      type="text"
-                      required
-                      placeholder="Address Line 1"
-                      aria-label="Address1"
-                      value={addressLine1}
-                      onChange={(event) => {
-                        setAddressLine1(event.target.value);
-                        setAddressError("");
-                      }}
-                    />
-                    <label className="block text-sm text-left text-red-600 h-4">
-                      {addressError && addressError}
-                    </label>
-                  </div>
-                  <div className="inline-block w-1/2 pr-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Address2
-                    </label>
-                    <input
-                      className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                      id="address2"
-                      name="address2"
-                      type="text"
-                      required
-                      placeholder="Address Line 2"
-                      aria-label="Address2"
-                      value={addressLine2}
-                      onChange={(event) => {
-                        setAddressLine2(event.target.value);
-                      }}
-                    />
-                    <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                      {""}
-                    </label>
-                  </div>
-                  <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-left text-sm block text-gray-600">
-                      Area
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="area"
-                        name="area"
-                        type="text"
-                        required
-                        placeholder="Area"
-                        aria-label="Area"
-                        value={branch}
-                        onChange={(event) => {
-                          setBranch(event.target.value);
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {""}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-left text-[12px] mt-[-5px] mb-2 block text-gray-600">
-                      City
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="city"
-                        name="city"
-                        type="text"
-                        required
-                        placeholder="City"
-                        aria-label="City"
-                        value={city}
-                        onChange={(event) => {
-                          setCity(event.target.value);
-                          setCityError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {cityError && cityError}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-left block text-sm text-gray-600">
-                      Country
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="country"
-                        name="country"
-                        type="text"
-                        required
-                        placeholder="Country"
-                        aria-label="Country"
-                        value={country}
-                        readOnly
-                        onChange={(event) => {
-                          setCountry(event.target.value);
-                          setCountryError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {countryError && countryError}
-                      </label>
-                    </div>
-                  </div>
-                  <div className="inline-block  -mx-1 pl-1 w-1/2">
-                    <label className="text-left block text-sm text-gray-600">
-                      Pincode
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="zip"
-                        name="zip"
-                        type="number"
-                        required
-                        placeholder="Pincode"
-                        aria-label="Zip"
-                        maxLength={6}
-                        value={pincode}
-                        onChange={(event) => {
-                          setPincode(event.target.value);
-                          setPincodeError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {pincodeError && pincodeError}
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="inline-block  w-1/2 pr-1">
-                    <label className="text-sm text-left block text-gray-600">
-                      State
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="state"
-                        name="state"
-                        type="text"
-                        required
-                        placeholder="State"
-                        aria-label="State"
-                        value={state}
-                        onChange={(event) => {
-                          setState(event.target.value);
-                          setStateError("");
-                        }}
-                      />
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {cityError && cityError}
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="inline-block  w-1/2 pr-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Joining Date
-                    </label>
-                    <div className="flex flex-col">
-                      <DatePicker
-                        startDate={joiningDate}
-                        maxDate={new Date()}
-                        minDate={new Date("1980-01-01")}
-                        onDateChange={(date: any) => setJoiningDate(date)}
-                      />
-                      <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {joiningDateError && joiningDateError}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="inline-block w-1/2 pr-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Relative Name
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="relativename"
-                        name="relativename"
-                        required
-                        placeholder="Relative Name"
-                        aria-label="relativename"
-                        value={relativeName}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setRelativeName(event.target.value);
-                            setRelativeNameError("");
-                          }
-                        }}
-                      />
-                      <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {relativeNameError && relativeNameError}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="inline-block w-1/2 pr-1">
-                    <label className="block text-sm text-gray-600 text-left">
-                      Relative Number
-                    </label>
-                    <div className="flex flex-col">
-                      <input
-                        className="w-full px-2 py-2 text-gray-700 bg-[#e5e7eb]  rounded"
-                        id="Phone1"
-                        name="Phone1"
-                        type="number"
-                        required
-                        placeholder="Relative number"
-                        aria-label="Phone1"
-                        value={relativeNo}
-                        onChange={(event) => {
-                          if (event.target.value.length <= 10) {
-                            setrelativeNo(event.target.value);
-                            setrelativeNoError("");
-                          }
-                        }}
-                      />
-                      <div className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {relativeNoError && relativeNoError}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid mt-[-10px]">
-                    <div className="inline-block ml-1">
-                      <label className="block text-sm text-gray-600 text-left">
-                        Documents(Max 3 Files)
-                      </label>
-                      <div
-                        {...getRootParentDocumentsProps(style)}
-                        className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
-                      >
-                        <input {...getInputParentDocumentsProps()} />
-                        {isParentDocDragActive ? (
-                          <p>Click to select files or Drop the files here ..</p>
-                        ) : (
-                          <p>Click to select files</p>
-                        )}
-                      </div>
-
-                      <div className="flex flex-wrap flex-row w-full ">
-                        {parentsDocuments.map((obj: any, index: any) => {
-                          return (
-                            <>
-                              <Chip
-                                open={true}
-                                value={obj.name}
-                                onClose={() => {
-                                  const fileList = clone(parentsDocuments);
-                                  fileList.splice(index, 1);
-                                  setParentsDocuments(fileList);
-                                }}
-                                className={`${
-                                  index != 0 ? "ml-0" : ""
-                                } mt-2 mr-2`}
-                                color="teal"
-                              />
-                            </>
-                          );
-                        })}
-                      </div>
-
-                      <label className="block text-[12px] mt-[-5px] mb-2 text-left text-red-600 h-4">
-                        {schoolImageError ? "Please select school image" : ""}
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-row-reverse items-end w-full mt-4">
-                    <Button
-                      variant="gradient"
-                      color="blue"
-                      placeholder={"Submit"}
-                      onClick={() => onSubmitSchool()}
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    >
-                      <FontAwesomeIcon
-                        icon={faUserPlus}
-                        className="mr-2 fa-1x p-0"
-                      />
-                      Add New Student
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            {/* <div className="flex flex-row-reverse items-end w-full mt-5">
+              {/* <div className="flex flex-row-reverse items-end w-full mt-5">
               <Button
                 variant="gradient"
                 color="blue"
@@ -2071,7 +2059,8 @@ const AddStudent = () => {
                 Add New School
               </Button>
             </div> */}
-          </div>
+            </div>
+          )}
         </main>
       </div>
     </ParentLayout>

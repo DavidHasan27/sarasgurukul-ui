@@ -1,19 +1,10 @@
 import ParentLayout from "../../component/app-component/Parent";
-import { useDropzone } from "react-dropzone";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Accordion,
   AccordionBody,
   AccordionHeader,
   Button,
-  Checkbox,
-  IconButton,
   Tab,
   TabPanel,
   Tabs,
@@ -32,11 +23,9 @@ import {
   faPrint,
 } from "@fortawesome/free-solid-svg-icons";
 import Select from "react-select";
-import Select1 from "react-select";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import {
   CASH_PAID_BY,
-  CLASS_IDENTITY,
   LATE_FEE,
   ROLE_SUPER_ADMIN,
 } from "../../utils/constants";
@@ -48,12 +37,10 @@ import { useReactToPrint } from "react-to-print";
 import {
   getStudentClassFees,
   getStudentFeesDetails,
-  resetStudentFee,
   resetUpdateFee,
   updateStudentFeesDetails,
 } from "../../redux/students/studentSlice";
 import moment from "moment";
-import Toggle from "react-toggle";
 import "react-toggle/style.css";
 import { getFormattedfee, getUserDetails } from "../../utils";
 import logoImage from "../../view/assets/sidebar_image.png";
@@ -845,15 +832,15 @@ const StudentFeeDetails = () => {
 
       // console.log("Discont");
       var val = total - total * (discount / 100);
-      console.log("Discount >>>>", discount, total, val);
+
       let paidAmount = getPaidAmount();
       let pendingAmount: any = total - paidAmount;
 
       paidAmount =
         "₹ " + paidAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      let pendingAmountString =
-        "₹ " + pendingAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      total = "₹ " + total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      // let pendingAmountString =
+      //   "₹ " + pendingAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      // total = "₹ " + total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
       return (
         <>
@@ -1053,48 +1040,52 @@ const StudentFeeDetails = () => {
                         <div className="flex flex-row">
                           {!obj.student.submit ? (
                             <div className="flex flex-row">
-                              <Button
-                                placeholder={undefined}
-                                className="p-0 h-[35px] w-[200px] mt-4"
-                                onClick={() =>
-                                  onChangeStudentValue(
-                                    index,
-                                    "markItPaid",
-                                    true
-                                  )
-                                }
-                                onPointerEnterCapture={undefined}
-                                onPointerLeaveCapture={undefined}
-                                disabled={userObj.role !== ROLE_SUPER_ADMIN}
-                              >
-                                <FontAwesomeIcon
-                                  icon={faCircleCheck}
-                                  size="2xl"
-                                  className="mr-2 opacity-50"
-                                />
-                                MARK IT PAID
-                              </Button>
-                              <Button
-                                placeholder={undefined}
-                                className="p-0 h-[35px] w-[200px] mt-4 ml-2"
-                                color="blue"
-                                onClick={() =>
-                                  onChangeStudentValue(
-                                    index,
-                                    "markItPaid",
-                                    true
-                                  )
-                                }
-                                onPointerEnterCapture={undefined}
-                                onPointerLeaveCapture={undefined}
-                              >
-                                <FontAwesomeIcon
-                                  icon={faBell}
-                                  size="2xl"
-                                  className="mr-2"
-                                />
-                                Send Notification
-                              </Button>
+                              {userObj.role === ROLE_SUPER_ADMIN && (
+                                <Button
+                                  placeholder={undefined}
+                                  className="p-0 h-[35px] w-[200px] mt-4"
+                                  onClick={() =>
+                                    onChangeStudentValue(
+                                      index,
+                                      "markItPaid",
+                                      true
+                                    )
+                                  }
+                                  onPointerEnterCapture={undefined}
+                                  onPointerLeaveCapture={undefined}
+                                  disabled={userObj.role !== ROLE_SUPER_ADMIN}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faCircleCheck}
+                                    size="2xl"
+                                    className="mr-2 opacity-50"
+                                  />
+                                  MARK IT PAID
+                                </Button>
+                              )}
+                              {userObj.role === ROLE_SUPER_ADMIN && (
+                                <Button
+                                  placeholder={undefined}
+                                  className="p-0 h-[35px] w-[200px] mt-4 ml-2"
+                                  color="blue"
+                                  onClick={() =>
+                                    onChangeStudentValue(
+                                      index,
+                                      "markItPaid",
+                                      true
+                                    )
+                                  }
+                                  onPointerEnterCapture={undefined}
+                                  onPointerLeaveCapture={undefined}
+                                >
+                                  <FontAwesomeIcon
+                                    icon={faBell}
+                                    size="2xl"
+                                    className="mr-2"
+                                  />
+                                  Send Notification
+                                </Button>
+                              )}
 
                               <Button
                                 placeholder={undefined}

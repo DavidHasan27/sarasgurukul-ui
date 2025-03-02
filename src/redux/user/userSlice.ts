@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { getAuthToken, setSessionStorage } from "../../utils";
 import queryString from "query-string";
-import { cloneDeep, remove } from "lodash";
+import { clone, cloneDeep, remove } from "lodash";
 import { uploadFiles } from "../admin/adminSlice";
 import { SERVER_URL } from "../../utils/constants";
 
@@ -18,6 +18,7 @@ const initialState = {
   updatedUser: "",
   receiverList: [],
   receiverLoding: false,
+  userDetails: undefined,
 };
 
 export const getUserRoles = createAsyncThunk(
@@ -25,6 +26,28 @@ export const getUserRoles = createAsyncThunk(
   async (_: void, { rejectWithValue }: any) => {
     try {
       const res = await axios.get(SERVER_URL + "/api/user/get-user-role", {
+        headers: { Authorization: getAuthToken() },
+      });
+      return res.data;
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        throw rejectWithValue(
+          err.response.data.status === 400
+            ? "Please enter valid credintial"
+            : "Something went wrong, Please try again later"
+        );
+      } else {
+        throw rejectWithValue("Something went wrong, Please try again later");
+      }
+    }
+  }
+);
+
+export const getUserDetailsInfo = createAsyncThunk(
+  `/user/getUser/`,
+  async (id: any, { rejectWithValue }: any) => {
+    try {
+      const res = await axios.get(SERVER_URL + "/api/user/getUser/" + id, {
         headers: { Authorization: getAuthToken() },
       });
       return res.data;
@@ -214,6 +237,37 @@ export const updateUser = createAsyncThunk(
       });
       console.log("res", res);
       return res.data;
+    } catch (err: any) {
+      throw rejectWithValue("Something went wrong, Please try again later");
+    }
+  }
+);
+
+export const updateUserPasswordOrImage = createAsyncThunk(
+  `/user/change-user-details`,
+  async (data: any, { rejectWithValue }) => {
+    try {
+      let imageResult = undefined;
+      if (data.imageURL && !isString(data.imageURL)) {
+        const result = await uploadFiles(data.imageURL);
+        const finalResult =
+          result.data.bucket +
+          "|" +
+          result.data.name +
+          "|" +
+          data.imageURL.file.name;
+        data.imageURL = finalResult;
+        imageResult = finalResult;
+      }
+      const res = await axios.put(
+        SERVER_URL + "/api/user/change-user-details",
+        data,
+        {
+          headers: { Authorization: getAuthToken() },
+        }
+      );
+      console.log("res", res);
+      return { res: res.data, image: imageResult };
     } catch (err: any) {
       throw rejectWithValue("Something went wrong, Please try again later");
     }
@@ -440,6 +494,49 @@ const userSlice = createSlice({
       state.receiverLoding = true;
       state.error = null;
       state.receiverList = [];
+    });
+
+    builder.addCase(getUserDetailsInfo.fulfilled, (state, action) => {
+      state.loading = false;
+      state.userDetails = action.payload;
+      state.success = true;
+      state.error = null;
+    });
+    builder.addCase(getUserDetailsInfo.rejected, (state, action: any) => {
+      console.log("Create User Error ::", action.payload);
+      state.loading = false;
+      state.userDetails = undefined;
+      state.error = action.payload;
+    });
+    builder.addCase(getUserDetailsInfo.pending, (state, action) => {
+      console.log("Create User pending ::", action.payload);
+      state.loading = true;
+      state.error = null;
+      state.userDetails = undefined;
+    });
+
+    builder.addCase(updateUserPasswordOrImage.fulfilled, (state, action) => {
+      if (action.payload.image) {
+        const tempIser: any = clone(state.userDetails);
+        tempIser.userProfilePhoto = action.payload.image;
+        state.userDetails = tempIser;
+      }
+      state.loading = false;
+      state.success = true;
+      state.error = null;
+    });
+    builder.addCase(
+      updateUserPasswordOrImage.rejected,
+      (state, action: any) => {
+        console.log("Create User Error ::", action.payload);
+        state.loading = false;
+        state.error = action.payload;
+      }
+    );
+    builder.addCase(updateUserPasswordOrImage.pending, (state, action) => {
+      console.log("Create User pending ::", action.payload);
+      state.loading = true;
+      state.error = null;
     });
   },
 });

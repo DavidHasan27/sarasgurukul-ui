@@ -20,6 +20,8 @@ const DatePickerComponent = ({
   //   const maxDate = new Date("2012-01-01");
   //   const minDate = new Date("1980-01-01");
 
+  console.log("Plave holder ", placeholder, className);
+
   return (
     <DatePicker
       selected={startDate}

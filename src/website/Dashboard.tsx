@@ -47,6 +47,7 @@ import AdminContactUs from "../view/admin/AdminContactUs";
 import Calendar from "../view/Calendar/Calender";
 import TermsAndCondition from "./TemsConditionPage";
 import ExamTimeTable from "../view/admin/ExamTimeTable";
+import Profile from "../view/user/Profile";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -100,6 +101,7 @@ const Dashboard = () => {
               <Route path="contact" element={<AdminContactUs />} />
               <Route path="calendar" element={<Calendar />} />
               <Route path="exam" element={<ExamTimeTable />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>

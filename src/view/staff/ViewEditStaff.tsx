@@ -271,47 +271,6 @@ const ViewEditStaff = () => {
   //     }
   //   }, [newuser]);
 
-  const resetAllData = () => {
-    setFirstName("");
-    setFirstNameError("");
-    setLastName("");
-    setLastNameError("");
-    setMiddleName("");
-    setMiddleNameError("");
-    setAboutStaff("");
-    setAboutStaffError("");
-    setPhone1("");
-    setPhone1Error("");
-    setPhone2("");
-    setPhone2Error("");
-    setEmail("");
-    setEmailError("");
-    setAddressLine1("");
-    setAddressLine2("");
-    setAddressError("");
-    setBranch("");
-    setCity("");
-    setCityError("");
-    setPincode("");
-    setPincodeError("");
-    setBirthDate(null);
-    setBirthDateError("");
-    setRelativeName("");
-    setRelativeNameError("");
-    setBloodGroup("");
-    setrelativeNo("");
-    setrelativeNoError("");
-    setState("");
-    setStateError("");
-    setJoiningDate("");
-    setJoiningDateError("");
-    setSchoolListError("");
-    setRole("");
-    setRoleError("");
-    setBloodGroup(null);
-    setSchoolList([]);
-  };
-
   const onSubmitSchool = () => {
     let isError = false;
 

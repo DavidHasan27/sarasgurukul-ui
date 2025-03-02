@@ -240,7 +240,6 @@ const AddNewPlans = () => {
       {
         title: title,
         description: description,
-        imageUrl: "string",
         date: holidaysDate,
         years: {
           id: selectedYear.id,
