@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getUserDetails } from "../utils";
+import { getAuthToken } from "../utils";
 import { SERVER_URL } from "../utils/constants";
 
 export const axiosPublic = axios.create({
@@ -10,9 +10,9 @@ export const axiosPrivate = axios.create({
 });
 axiosPrivate.interceptors.request.use(
   async (config) => {
-    const token = getUserDetails().token;
-    if (token) {
-      config.headers["authorization"] = `Bearer ${token}`;
+    const auth = getAuthToken();
+    if (auth) {
+      config.headers["Authorization"] = auth;
     }
     return config;
   },

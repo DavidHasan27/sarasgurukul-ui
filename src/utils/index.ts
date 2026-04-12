@@ -71,3 +71,5 @@ export const getOptionYearLabel = (option: any) => {
     option.endYear
   );
 };
+
+export { getApiErrorMessage } from "./apiError";

@@ -10,12 +10,14 @@ import reportReducer from "./students/reportSlice";
 import adminReducer from "./admin/adminSlice";
 import feesReducer from "./fees/feesSlice";
 import messageReducer from "./message/messageSlice";
+import dashboardReducer from "./dashboard/dashboardSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
   reducer: {
     contactus: contactReducer,
     auth: authReducer,
+    dashboard: dashboardReducer,
     website: webReducer,
     school: schoolReducer,
     user: userReducer,

@@ -3,7 +3,7 @@ import { error } from "console";
 import { axiosPublic } from "../network";
 import { RootState } from "../store";
 import axios from "axios";
-import { getAuthToken } from "../../utils";
+import { getApiErrorMessage, getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove, unionBy } from "lodash";
 import fileDownload from "js-file-download";
@@ -15,6 +15,8 @@ const initialState = {
   error: "",
   yearList: [],
   updated: false,
+  /** Only set by activeDeactiveYears success — use for Years screen toast, not generic `updated` */
+  yearActivatedSuccess: false,
   newHoliday: undefined,
   holiday: undefined,
   newWorksheet: undefined,
@@ -27,6 +29,7 @@ const initialState = {
   planner: undefined,
   planDelete: "",
   calenderEvents: undefined,
+  exams: undefined,
 };
 
 export const getSchoolYear = createAsyncThunk(
@@ -40,7 +43,7 @@ export const getSchoolYear = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -57,7 +60,7 @@ export const getSchoolHolidays = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -77,7 +80,7 @@ export const activeDeactiveYears = createAsyncThunk(
       getSchoolYear();
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -97,7 +100,7 @@ export const activeDeactiveSchoolHoliday = createAsyncThunk(
       getSchoolYear();
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -117,7 +120,24 @@ export const activeDeactiveWorksheet = createAsyncThunk(
       getSchoolYear();
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
+    }
+  }
+);
+
+export const activeDeactiveExam = createAsyncThunk(
+  `/exam/delete`,
+  async (data: any, { rejectWithValue }) => {
+    console.log("Data ::", data);
+    try {
+      const res = await axios.delete(SERVER_URL + "/api/exam/delete", {
+        headers: { Authorization: getAuthToken() },
+        data,
+      });
+      getSchoolYear();
+      return { ...res.data, id: data.id, active: data.active };
+    } catch (err: any) {
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -189,29 +209,7 @@ export const createNewHoliday = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      const message = err?.response?.data?.message;
-      console.log("Message >>>", message);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        if (
-          message.includes("duplicate key value violates unique constraint ")
-        ) {
-          if (message.includes("(date)=")) {
-            throw rejectWithValue(
-              "you have already declared holiday for this date"
-            );
-          } else {
-            throw rejectWithValue(
-              "you have already declared holiday for this date"
-            );
-          }
-        } else {
-          throw rejectWithValue(err?.response?.data?.message);
-        }
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -249,29 +247,7 @@ export const createNewWorksheet = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      const message = err?.response?.data?.message;
-      console.log("Message >>>", message);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        if (
-          message.includes("duplicate key value violates unique constraint ")
-        ) {
-          if (message.includes("(date)=")) {
-            throw rejectWithValue(
-              "you have already declared holiday for this date"
-            );
-          } else {
-            throw rejectWithValue(
-              "you have already declared holiday for this date"
-            );
-          }
-        } else {
-          throw rejectWithValue(err?.response?.data?.message);
-        }
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -300,29 +276,7 @@ export const createNewImages = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      const message = err?.response?.data?.message;
-      console.log("Message >>>", message);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        if (
-          message.includes("duplicate key value violates unique constraint ")
-        ) {
-          if (message.includes("(date)=")) {
-            throw rejectWithValue(
-              "you have already declared holiday for this date"
-            );
-          } else {
-            throw rejectWithValue(
-              "you have already declared holiday for this date"
-            );
-          }
-        } else {
-          throw rejectWithValue(err?.response?.data?.message);
-        }
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -338,7 +292,7 @@ export const getImageTags = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -358,15 +312,7 @@ export const updateImageActions = createAsyncThunk(
 
       return { ...res.data, id: data.id, action: data.action };
     } catch (err: any) {
-      const message = err?.response?.data?.message;
-      console.log("Message >>>", message);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        throw rejectWithValue(message);
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -383,7 +329,7 @@ export const getImages = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -401,7 +347,7 @@ export const getCalenderEvents = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -418,7 +364,7 @@ export const getWorksheet = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -455,15 +401,7 @@ export const createNewPlannes = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      const message = err?.response?.data?.message;
-      console.log("Message >>>", message);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        throw rejectWithValue(err?.response?.data?.message);
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -480,7 +418,7 @@ export const getPlans = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -497,7 +435,7 @@ export const activeDeactivePlanner = createAsyncThunk(
       getSchoolYear();
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -510,6 +448,23 @@ const mergeArray = (array1: any, array2: any) => {
   );
 };
 
+export const getSchoolExams = createAsyncThunk(
+  `/exam/get-exams`,
+  async (data: any, { rejectWithValue }) => {
+    const urlParams = queryString.stringify(data);
+    let url = SERVER_URL + "/api/exam/get-exams?" + urlParams;
+    try {
+      const res = await axios.get(url, {
+        headers: { Authorization: getAuthToken() },
+      });
+
+      return res.data;
+    } catch (err: any) {
+      throw rejectWithValue(getApiErrorMessage(err));
+    }
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState,
@@ -518,11 +473,13 @@ const adminSlice = createSlice({
       state.loading = false;
       state.success = false;
       state.updated = false;
+      state.yearActivatedSuccess = false;
     },
     resetNewHoliday: (state) => {
       state.loading = false;
       state.success = false;
       state.updated = false;
+      state.yearActivatedSuccess = false;
       state.newHoliday = undefined;
       state.newWorksheet = undefined;
       state.newImages = undefined;
@@ -548,15 +505,18 @@ const adminSlice = createSlice({
       state.loading = false;
       state.success = true;
       state.updated = true;
+      state.yearActivatedSuccess = true;
     });
     builder.addCase(activeDeactiveYears.rejected, (state) => {
       state.loading = false;
       state.success = false;
       state.updated = false;
+      state.yearActivatedSuccess = false;
     });
     builder.addCase(activeDeactiveYears.pending, (state) => {
       state.loading = true;
       state.updated = false;
+      state.yearActivatedSuccess = false;
     });
     builder.addCase(createNewHoliday.fulfilled, (state, action) => {
       state.loading = false;
@@ -790,6 +750,21 @@ const adminSlice = createSlice({
     builder.addCase(getCalenderEvents.pending, (state) => {
       state.loading = true;
       state.updated = false;
+    });
+
+    builder.addCase(getSchoolExams.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = false;
+      state.exams = action.payload;
+    });
+    builder.addCase(getSchoolExams.rejected, (state) => {
+      state.loading = false;
+      state.success = false;
+      state.exams = undefined;
+    });
+    builder.addCase(getSchoolExams.pending, (state) => {
+      state.loading = true;
+      state.exams = undefined;
     });
   },
 });

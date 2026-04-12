@@ -70,13 +70,16 @@ const ViewEditStaff = () => {
     option: currentObj.userDetails.bloodGroup,
     value: currentObj.userDetails.bloodGroup,
   });
-
-  const tempDate = currentObj.userDetails.birthDate.substring(
-    0,
-    currentObj.userDetails.birthDate.indexOf("T")
+  let tempDate = "";
+  if (currentObj.userDetails.birthDate) {
+    tempDate = currentObj.userDetails.birthDate.substring(
+      0,
+      currentObj.userDetails.birthDate.indexOf("T")
+    );
+  }
+  const [birthDate, setBirthDate] = useState<any>(
+    tempDate ? new Date(tempDate) : ""
   );
-
-  const [birthDate, setBirthDate] = useState<any>(new Date(tempDate));
   const [birthDateError, setBirthDateError] = useState("");
 
   const [joiningDate, setJoiningDate] = useState<any>(

@@ -42,12 +42,12 @@ const ParentLayout = ({
   return (
     <Fragment>
       {error && (
-        <div className="flex  justify-center absolute w-[100%]">
+        <div className="fixed inset-x-0 top-0 z-[100] flex justify-center px-4 pt-4">
           <Alert
             icon={<ErrorIcon />}
             open={true}
             color="red"
-            className="sm:w-[100%] lg:w-[50%]"
+            className="w-full max-w-lg sm:max-w-[50%]"
             animate={{
               mount: { y: 10 },
               unmount: { y: 100 },
@@ -60,12 +60,12 @@ const ParentLayout = ({
       )}
 
       {success && (
-        <div className="flex  justify-center absolute w-[100%]">
+        <div className="fixed inset-x-0 top-0 z-[100] flex justify-center px-4 pt-4">
           <Alert
             icon={<FontAwesomeIcon icon={faCircleCheck} />}
             open={true}
             color="green"
-            className="sm:w-[100%] lg:w-[50%]"
+            className="w-full max-w-lg sm:max-w-[50%]"
             animate={{
               mount: { y: 10 },
               unmount: { y: 100 },
@@ -78,7 +78,7 @@ const ParentLayout = ({
       )}
       {loading && (
         <div
-          className="absolute h-[100vh] w-[100%] top-0 left-0 flex flex-col items-center justify-center z-50"
+          className="fixed inset-0 z-[90] flex flex-col items-center justify-center"
           style={{ backgroundColor: "rgb(0,0,0, 0.3)" }}
         >
           <Spinner className="h-10 w-10" color="blue" />
@@ -87,7 +87,10 @@ const ParentLayout = ({
 
       {children}
 
-      {isExpired && location.pathname !== "/login" && (
+      {isExpired &&
+        location.pathname !== "/login" &&
+        location.pathname !== "/forgot-password" &&
+        location.pathname !== "/reset-password" && (
         <SessionExpiredDialog
           open={sessionExpired}
           onClose={() => setSessionExpired(false)}

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getAuthToken, setSessionStorage } from "../../utils";
+import { getApiErrorMessage, getAuthToken, setSessionStorage } from "../../utils";
 import queryString from "query-string";
 import { clone, cloneDeep, remove } from "lodash";
 import { uploadFiles } from "../admin/adminSlice";
@@ -30,15 +30,13 @@ export const getUserRoles = createAsyncThunk(
       });
       return res.data;
     } catch (err: any) {
-      if (err.response && err.response.data) {
+      if (err.response?.status === 400) {
+        const m = err.response?.data?.message;
         throw rejectWithValue(
-          err.response.data.status === 400
-            ? "Please enter valid credintial"
-            : "Something went wrong, Please try again later"
+          typeof m === "string" && m.trim() ? m : "Please enter valid credintial"
         );
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
       }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -52,15 +50,13 @@ export const getUserDetailsInfo = createAsyncThunk(
       });
       return res.data;
     } catch (err: any) {
-      if (err.response && err.response.data) {
+      if (err.response?.status === 400) {
+        const m = err.response?.data?.message;
         throw rejectWithValue(
-          err.response.data.status === 400
-            ? "Please enter valid credintial"
-            : "Something went wrong, Please try again later"
+          typeof m === "string" && m.trim() ? m : "Please enter valid credintial"
         );
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
       }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -104,21 +100,7 @@ export const createNewUser = createAsyncThunk(
       return res.data;
     } catch (err: any) {
       console.log(err);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        if (
-          message.includes("duplicate key value violates unique constraint ")
-        ) {
-          throw rejectWithValue(
-            "Email id '" + data.email + "' already exist in application"
-          );
-        } else {
-          throw rejectWithValue(err?.response?.data?.message);
-        }
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -136,15 +118,13 @@ export const getUserForDropdown = createAsyncThunk(
       );
       return res.data;
     } catch (err: any) {
-      if (err.response && err.response.data) {
+      if (err.response?.status === 400) {
+        const m = err.response?.data?.message;
         throw rejectWithValue(
-          err.response.data.status === 400
-            ? "Please enter valid credintial"
-            : "Something went wrong, Please try again later"
+          typeof m === "string" && m.trim() ? m : "Please enter valid credintial"
         );
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
       }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -162,15 +142,13 @@ export const getUsersList = createAsyncThunk(
       );
       return res.data;
     } catch (err: any) {
-      if (err.response && err.response.data) {
+      if (err.response?.status === 400) {
+        const m = err.response?.data?.message;
         throw rejectWithValue(
-          err.response.data.status === 400
-            ? "Please enter valid credintial"
-            : "Something went wrong, Please try again later"
+          typeof m === "string" && m.trim() ? m : "Please enter valid credintial"
         );
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
       }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -185,7 +163,7 @@ export const activeDeactiveUser = createAsyncThunk(
       });
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -238,7 +216,7 @@ export const updateUser = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -269,7 +247,7 @@ export const updateUserPasswordOrImage = createAsyncThunk(
       console.log("res", res);
       return { res: res.data, image: imageResult };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -287,15 +265,13 @@ export const getReceiverList = createAsyncThunk(
       );
       return res.data;
     } catch (err: any) {
-      if (err.response && err.response.data) {
+      if (err.response?.status === 400) {
+        const m = err.response?.data?.message;
         throw rejectWithValue(
-          err.response.data.status === 400
-            ? "Please enter valid credintial"
-            : "Something went wrong, Please try again later"
+          typeof m === "string" && m.trim() ? m : "Please enter valid credintial"
         );
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
       }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );

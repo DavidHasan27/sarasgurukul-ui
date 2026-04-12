@@ -32,6 +32,28 @@ import { getSchoolYear } from "../../redux/admin/adminSlice";
 import { clone, find } from "lodash";
 import { getReceiverList, getUserRoles } from "../../redux/user/userSlice";
 
+/** Student / parent profile photos — images only */
+const ACCEPT_PROFILE_IMAGES = {
+  "image/jpeg": [".jpg", ".jpeg"],
+  "image/png": [".png"],
+  "image/gif": [".gif"],
+  "image/webp": [".webp"],
+  "image/bmp": [".bmp"],
+};
+
+/** Document uploads — images, PDF, Word */
+const ACCEPT_DOCUMENTS = {
+  "image/jpeg": [".jpg", ".jpeg"],
+  "image/png": [".png"],
+  "image/gif": [".gif"],
+  "image/webp": [".webp"],
+  "application/pdf": [".pdf"],
+  "application/msword": [".doc"],
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+    ".docx",
+  ],
+};
+
 const AddStudent = () => {
   const firstScreen = useRef<any>();
   const secondScreen = useRef<any>();
@@ -186,9 +208,15 @@ const AddStudent = () => {
     if (!roleList || roleList.length == 0) dispatch(getUserRoles());
   }, []);
 
-  const onDrop = useCallback((acceptedFiles: any) => {
-    console.log("Profile Photo", acceptedFiles);
-    var totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
+  const onProfileImageRejected = useCallback(() => {
+    alert(
+      "Only image files are allowed for photos (JPG, PNG, GIF, WebP, BMP). Max size 1 MB."
+    );
+  }, []);
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (!acceptedFiles?.length) return;
+    const totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
     if (totalSizeMB > 1) {
       alert("Maximum size for file is 1MB");
     } else {
@@ -202,11 +230,17 @@ const AddStudent = () => {
     isFocused,
     isDragAccept,
     isDragReject,
-  } = useDropzone({ onDrop });
+  } = useDropzone({
+    onDrop,
+    accept: ACCEPT_PROFILE_IMAGES,
+    maxFiles: 1,
+    multiple: false,
+    onDropRejected: onProfileImageRejected,
+  });
 
-  const onParentProfilePhotoDrop = useCallback((acceptedFiles: any) => {
-    console.log("Profile Photo", acceptedFiles);
-    var totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
+  const onParentProfilePhotoDrop = useCallback((acceptedFiles: File[]) => {
+    if (!acceptedFiles?.length) return;
+    const totalSizeMB = acceptedFiles[0].size / Math.pow(1024, 2);
     if (totalSizeMB > 1) {
       alert("Maximum size for file is 1MB");
     } else {
@@ -220,7 +254,19 @@ const AddStudent = () => {
     isFocused: isParentPhotoFocused,
     isDragAccept: isParentPhotoAccept,
     isDragReject: isParentPhotoDragReject,
-  } = useDropzone({ onDrop: onParentProfilePhotoDrop });
+  } = useDropzone({
+    onDrop: onParentProfilePhotoDrop,
+    accept: ACCEPT_PROFILE_IMAGES,
+    maxFiles: 1,
+    multiple: false,
+    onDropRejected: onProfileImageRejected,
+  });
+
+  const onDocumentDropRejected = useCallback(() => {
+    alert(
+      "Only images, PDF, or Word documents are allowed (e.g. JPG, PNG, PDF, DOC, DOCX). Max 1 MB per file."
+    );
+  }, []);
 
   const onDropDocuments = (acceptedFiles: any) => {
     const tempFileList = clone(studentDocuments);
@@ -255,9 +301,11 @@ const AddStudent = () => {
     isDragReject: isDocDragReject,
   } = useDropzone({
     onDrop: onDropDocuments,
+    accept: ACCEPT_DOCUMENTS,
     multiple: true,
     maxFiles: 3,
     disabled: studentDocuments.length == 3,
+    onDropRejected: onDocumentDropRejected,
   });
 
   const onParentDropDocuments = (acceptedFiles: any) => {
@@ -293,9 +341,11 @@ const AddStudent = () => {
     isDragReject: isParentDocDragReject,
   } = useDropzone({
     onDrop: onParentDropDocuments,
+    accept: ACCEPT_DOCUMENTS,
     multiple: true,
     maxFiles: 3,
     disabled: parentsDocuments.length == 3,
+    onDropRejected: onDocumentDropRejected,
   });
 
   const baseStyle = {
@@ -1191,6 +1241,9 @@ const AddStudent = () => {
                       <label className="block text-sm text-gray-600 text-left">
                         Student Photo
                       </label>
+                      <p className="mb-1 text-left text-xs text-gray-500">
+                        Images only (JPG, PNG, GIF, WebP, BMP). Max 1 MB.
+                      </p>
                       <div
                         {...getRootProps(style)}
                         className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
@@ -1375,8 +1428,11 @@ const AddStudent = () => {
                   <div className="grid mt-[-10px]">
                     <div className="inline-block ml-1">
                       <label className="block text-sm text-gray-600 text-left">
-                        Documents(Max 3 Files)
+                        Documents (max 3 files)
                       </label>
+                      <p className="mb-1 text-left text-xs text-gray-500">
+                        Image, PDF, or Word (.pdf, .doc, .docx). Max 1 MB each.
+                      </p>
                       <div
                         {...getRootDocumentsProps(style)}
                         className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
@@ -1710,6 +1766,9 @@ const AddStudent = () => {
                         <label className="block text-sm text-gray-600 text-left">
                           Parent Photo
                         </label>
+                        <p className="mb-1 text-left text-xs text-gray-500">
+                          Images only (JPG, PNG, GIF, WebP, BMP). Max 1 MB.
+                        </p>
                         <div
                           {...getRootParentPhotoProps(style)}
                           className="bg-[#e5e7eb] flex flex-col items-center p-2 h-36 justify-center border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"
@@ -1985,8 +2044,11 @@ const AddStudent = () => {
                     <div className="grid mt-[-10px]">
                       <div className="inline-block ml-1">
                         <label className="block text-sm text-gray-600 text-left">
-                          Documents(Max 3 Files)
+                          Documents (max 3 files)
                         </label>
+                        <p className="mb-1 text-left text-xs text-gray-500">
+                          Image, PDF, or Word (.pdf, .doc, .docx). Max 1 MB each.
+                        </p>
                         <div
                           {...getRootParentDocumentsProps(style)}
                           className="bg-[#e5e7eb] flex flex-col items-center justify-center p-2 h-32  border-2 rounded-sm border-[#9c9c9c] border-dashed text-[#B5B5B5] hover:border-[#8f8f8f]"

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getAuthToken } from "../../utils";
+import { getApiErrorMessage, getAuthToken } from "../../utils";
 import { cloneDeep, findIndex } from "lodash";
 import { SERVER_URL } from "../../utils/constants";
 
@@ -23,7 +23,7 @@ export const createNewSchool = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -50,7 +50,7 @@ export const getSchoolList = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -65,7 +65,7 @@ export const getSchoolsForSelection = createAsyncThunk(
       });
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -80,7 +80,7 @@ export const activeDeactiveSchool = createAsyncThunk(
       });
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -95,7 +95,7 @@ export const updateSchool = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );

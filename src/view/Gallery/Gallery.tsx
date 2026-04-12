@@ -9,6 +9,7 @@ import { Button, Typography } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import ImageViewer from "react-simple-image-viewer";
 
 import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
@@ -493,15 +494,20 @@ const Gallery = () => {
         />
       ) : null}
 
-      {isViewerOpen && (
-        <ImageViewer
-          src={imagesUrl}
-          currentIndex={currentImage}
-          disableScroll={false}
-          closeOnClickOutside={true}
-          onClose={closeImageViewer}
-        />
-      )}
+      {isViewerOpen &&
+        createPortal(
+          <ImageViewer
+            src={imagesUrl}
+            currentIndex={currentImage}
+            disableScroll={false}
+            closeOnClickOutside={true}
+            onClose={closeImageViewer}
+            backgroundStyle={{
+              zIndex: 99999,
+            }}
+          />,
+          document.body
+        )}
     </ParentLayout>
   );
 };

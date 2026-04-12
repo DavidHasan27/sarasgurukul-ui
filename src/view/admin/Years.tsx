@@ -12,10 +12,11 @@ import { Button } from "@material-tailwind/react";
 
 const Year = () => {
   const dispatch = useAppDispatch();
-  const { yearList, updated, loading, error } = useAppSelector(
-    (state: any) => state.admin
-  );
+  const { yearList, updated, loading, error, yearActivatedSuccess } =
+    useAppSelector((state: any) => state.admin);
+
   useEffect(() => {
+    dispatch(resetActivateYear());
     dispatch(getSchoolYear());
   }, []);
 
@@ -45,7 +46,7 @@ const Year = () => {
     <ParentLayout
       loading={loading}
       error={error}
-      success={updated ? "Activated year successfully" : ""}
+      success={yearActivatedSuccess ? "Activated year successfully" : ""}
       onCloseSuccessAlert={() => dispatch(resetActivateYear())}
       onCloseAlert={() => dispatch(resetActivateYear())}
     >

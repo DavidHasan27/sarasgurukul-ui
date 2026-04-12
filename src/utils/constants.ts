@@ -21,6 +21,8 @@ import {
 
 export const APP_URL = [
   "/login",
+  "/forgot-password",
+  "/reset-password",
   "/app/dash",
   "/app/addschool",
   "/app/schools",

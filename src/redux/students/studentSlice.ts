@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getAuthToken } from "../../utils";
+import { getApiErrorMessage, getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { cloneDeep, remove } from "lodash";
 import { uploadFiles } from "../admin/adminSlice";
@@ -41,7 +41,7 @@ export const getStudentList = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -115,21 +115,7 @@ export const createNewStudent = createAsyncThunk(
       return res.data;
     } catch (err: any) {
       console.log(err);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        if (
-          message.includes("duplicate key value violates unique constraint ")
-        ) {
-          throw rejectWithValue(
-            "Email id '" + data.email + "' already exist in application"
-          );
-        } else {
-          throw rejectWithValue(err?.response?.data?.message);
-        }
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -217,7 +203,7 @@ export const updateStudentDetails = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -236,7 +222,7 @@ export const updateStudentFeesDetails = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -251,7 +237,7 @@ export const activeDeactiveStudent = createAsyncThunk(
       });
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -269,7 +255,7 @@ export const getStudentClassFees = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -287,7 +273,7 @@ export const getStudentFeesDetails = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -368,26 +354,38 @@ const studentSlice = createSlice({
     builder.addCase(createNewStudent.fulfilled, (state, action) => {
       state.loading = false;
       state.success = true;
+      state.error = "";
       state.newStudent = action.payload;
     });
-    builder.addCase(createNewStudent.rejected, (state) => {
+    builder.addCase(createNewStudent.rejected, (state, action) => {
       state.loading = false;
       state.success = false;
+      state.error =
+        typeof action.payload === "string"
+          ? action.payload
+          : "Something went wrong. Please try again.";
     });
     builder.addCase(createNewStudent.pending, (state) => {
       state.loading = true;
+      state.error = "";
     });
     builder.addCase(updateStudentDetails.fulfilled, (state, action) => {
       state.loading = false;
       state.success = true;
+      state.error = "";
       state.updateStudent = action.payload;
     });
-    builder.addCase(updateStudentDetails.rejected, (state) => {
+    builder.addCase(updateStudentDetails.rejected, (state, action) => {
       state.loading = false;
       state.success = false;
+      state.error =
+        typeof action.payload === "string"
+          ? action.payload
+          : "Something went wrong. Please try again.";
     });
     builder.addCase(updateStudentDetails.pending, (state) => {
       state.loading = true;
+      state.error = "";
     });
     builder.addCase(activeDeactiveStudent.fulfilled, (state, action) => {
       state.loading = false;

@@ -4,7 +4,7 @@ import { axiosPublic } from "../network";
 import { RootState } from "../store";
 import axios from "axios";
 import queryString from "query-string";
-import { getAuthToken } from "../../utils";
+import { getApiErrorMessage, getAuthToken } from "../../utils";
 import { cloneDeep, filter, orderBy, remove } from "lodash";
 import { SERVER_URL } from "../../utils/constants";
 
@@ -43,7 +43,7 @@ export const getReportQuestion = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -63,7 +63,7 @@ export const getStudentYears = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -78,31 +78,7 @@ export const createNewReport = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      const message = err?.response?.data?.message;
-      console.log("Message >>>", message);
-      if (err?.response?.data?.message) {
-        const message = err?.response?.data?.message;
-        console.log("Message >>>", message);
-        if (
-          message.includes("duplicate key value violates unique constraint ")
-        ) {
-          if (message.includes("(user_id)=")) {
-            throw rejectWithValue(
-              "Selected teacher already class teacher of another class"
-            );
-          } else {
-            throw rejectWithValue(
-              "Class identity '" +
-                data.classIdentity +
-                "' already exist in application"
-            );
-          }
-        } else {
-          throw rejectWithValue(err?.response?.data?.message);
-        }
-      } else {
-        throw rejectWithValue("Something went wrong, Please try again later");
-      }
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -122,7 +98,7 @@ export const getStudentReports = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -159,7 +135,7 @@ export const updateReportCard = createAsyncThunk(
       console.log("res", res);
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -174,7 +150,7 @@ export const activeDeactiveStudentReport = createAsyncThunk(
       });
       return { ...res.data, id: data.id, active: data.active };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );

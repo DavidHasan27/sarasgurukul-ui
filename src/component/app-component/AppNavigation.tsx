@@ -1,5 +1,4 @@
-import { Typography } from "@material-tailwind/react";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { clearSession, getUserDetails } from "../../utils";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -9,16 +8,27 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import "../../view/main-view/mainview.css";
 
+function AppPageFallback() {
+  return (
+    <div className="flex min-h-[40vh] w-full items-center justify-center bg-gray-50">
+      <div
+        className="h-9 w-9 animate-spin rounded-full border-2 border-[#193474] border-t-transparent"
+        aria-hidden
+      />
+    </div>
+  );
+}
+
 const AppNavigation = ({ children, currentPath }: any) => {
   const [dropdown, setDropdown] = useState(false);
   const [menuList, setMenulist] = useState([]);
   const location = useLocation();
-  const [selectedName, setSelecteName] = useState("");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user: any = useAppSelector((state) => state.auth.user);
   const [isExpanded, setIsExpanded] = useState(false);
   const userDetails = getUserDetails();
+  const accountMenuRef = useRef<HTMLDivElement>(null);
   const toggleIsExpanded = useCallback(() => {
     setIsExpanded((isExpanded) => !isExpanded);
   }, []);
@@ -31,7 +41,19 @@ const AppNavigation = ({ children, currentPath }: any) => {
     }
   }, [user]);
 
-  console.log("User Details ::", userDetails, menuList);
+  useEffect(() => {
+    if (!dropdown) return;
+    const closeOnOutside = (e: MouseEvent) => {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(e.target as Node)
+      ) {
+        setDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", closeOnOutside);
+    return () => document.removeEventListener("mousedown", closeOnOutside);
+  }, [dropdown]);
 
   const getImageURL = () => {
     if (userDetails && userDetails.userProfilePhoto) {
@@ -43,13 +65,20 @@ const AppNavigation = ({ children, currentPath }: any) => {
         imageData[1]
       );
     }
-    return user;
+    return "/img/user.jpg";
+  };
+
+  const onSignOut = () => {
+    setDropdown(false);
+    clearSession();
+    dispatch(resetUserDetails());
+    navigate("/login", { replace: true });
   };
 
   return (
-    <div className="bg-gray-100 font-family-karla flex overflow-hidden">
-      <aside className="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl bg-blue-gray-800">
-        <div className="sticky p-6">
+    <div className="font-family-karla flex h-full min-h-0 w-full flex-1 overflow-hidden bg-gray-100">
+      <aside className="relative hidden h-full min-h-0 w-64 flex-shrink-0 flex-col overflow-hidden bg-sidebar sm:flex">
+        <div className="shrink-0 p-6">
           <img src="/img/app/sidebar_image.png" alt="logo" />
           {/* <a
             href="/dash"
@@ -62,7 +91,7 @@ const AppNavigation = ({ children, currentPath }: any) => {
           </button> */}
         </div>
 
-        <div className="h-[calc(100vh-14.75rem)] overflow-y-scroll overscroll-contain ">
+        <div className="sidebar-nav-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain">
           <nav className="text-white text-base font-semibold pt-3">
             {menuList.map((item: any) => {
               if (!item.child) {
@@ -174,49 +203,50 @@ const AppNavigation = ({ children, currentPath }: any) => {
         </div>
       </aside>
 
-      <div className="sticky w-full flex flex-col h-screen overflow-y-hidden">
-        {/* Desktop Header */}
-        <header className="w-full items-center bg-white py-2 px-6  sm:flex">
-          <div className="w-1/2"></div>
-          <div className="relative w-1/2 flex justify-end">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        {/* Desktop Header — z-50 + no overflow clip so the account menu can open below */}
+        <header className="relative z-50 flex w-full shrink-0 items-center justify-end bg-white py-2 px-6 sm:flex">
+          <div ref={accountMenuRef} className="relative flex justify-end">
             <button
-              className="realtive z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-gray-400 hover:border-gray-300 focus:border-gray-300 focus:outline-none"
-              onClick={() => setDropdown(!dropdown)}
-              onMouseEnter={() => setDropdown(!dropdown)}
+              type="button"
+              aria-expanded={dropdown}
+              aria-haspopup="menu"
+              className="relative z-10 h-12 w-12 overflow-hidden rounded-full border-4 border-gray-400 hover:border-gray-300 focus:border-gray-300 focus:outline-none"
+              onClick={() => setDropdown((open) => !open)}
             >
-              <img src={getImageURL()} alt="profileImage" />
+              <img
+                src={getImageURL()}
+                alt="Profile"
+                className="h-full w-full object-cover"
+              />
             </button>
 
-            <div
-              x-show={dropdown}
-              className={`absolute w-32 bg-white rounded-lg shadow-lg py-2 mt-16 ${
-                !dropdown ? "hidden" : ""
-              }`}
-              onMouseLeave={() => setDropdown(!dropdown)}
-            >
-              <Typography
-                className="block px-4 py-2 account-link hover:text-white font-medium"
-                placeholder={"Sign Out"}
-                onClick={() => {
-                  setDropdown(!dropdown);
-                  navigate("/app/profile");
-                }}
+            {dropdown && (
+              <div
+                className="absolute right-0 top-full z-50 mt-2 w-40 rounded-lg border border-gray-100 bg-white py-1 shadow-lg"
+                role="menu"
               >
-                Profile
-              </Typography>
-              <Typography
-                className="block px-4 py-2 account-link hover:text-white font-medium"
-                placeholder={"Sign Out"}
-                onClick={() => {
-                  navigate("/login");
-                  setDropdown(!dropdown);
-                  clearSession();
-                  dispatch(resetUserDetails());
-                }}
-              >
-                Sign Out
-              </Typography>
-            </div>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="block w-full px-4 py-2 text-left text-sm font-medium account-link hover:text-white"
+                  onClick={() => {
+                    setDropdown(false);
+                    navigate("/app/profile");
+                  }}
+                >
+                  Profile
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="block w-full px-4 py-2 text-left text-sm font-medium account-link hover:text-white"
+                  onClick={onSignOut}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -311,12 +341,10 @@ const AppNavigation = ({ children, currentPath }: any) => {
             </button> --> */}
         {/* </header> */}
 
-        <div className="w-full overflow-x-hidden border-t flex flex-col">
-          {/* <main className="w-full flex-grow p-6">
-            <h1 className="text-3xl text-black pb-6">Dashboard</h1>
-          </main> */}
-
-          <Outlet />
+        <div className="app-main-scroll flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain border-t">
+          <Suspense fallback={<AppPageFallback />}>
+            <Outlet />
+          </Suspense>
 
           {/* {children} */}
         </div>

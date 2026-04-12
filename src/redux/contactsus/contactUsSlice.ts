@@ -3,7 +3,7 @@ import { error } from "console";
 import { axiosPublic } from "../network";
 import { RootState } from "../store";
 import axios from "axios";
-import { getAuthToken } from "../../utils";
+import { getApiErrorMessage, getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { clone, findIndex, remove } from "lodash";
 import { SERVER_URL } from "../../utils/constants";
@@ -36,7 +36,7 @@ export const getContactUs = createAsyncThunk(
       });
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -55,7 +55,7 @@ export const updateContacts = createAsyncThunk(
       );
       return data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );

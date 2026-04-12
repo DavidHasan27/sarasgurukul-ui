@@ -4,7 +4,7 @@ import { axiosPublic } from "../network";
 import { RootState } from "../store";
 import axios from "axios";
 import { uploadFiles } from "../admin/adminSlice";
-import { getAuthToken } from "../../utils";
+import { getApiErrorMessage, getAuthToken } from "../../utils";
 import queryString from "query-string";
 import { da } from "date-fns/locale";
 import { clone, findIndex, remove } from "lodash";
@@ -78,7 +78,7 @@ export const getMessageList = createAsyncThunk(
 
       return res.data;
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );
@@ -96,7 +96,7 @@ export const deleteMessage = createAsyncThunk(
       );
       return { ...res.data, ...data };
     } catch (err: any) {
-      throw rejectWithValue("Something went wrong, Please try again later");
+      throw rejectWithValue(getApiErrorMessage(err));
     }
   }
 );

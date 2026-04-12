@@ -28,6 +28,18 @@ import {
 } from "../../redux/user/userSlice";
 import { getClassList } from "../../redux/class/classSlice";
 import { getUserDetails } from "../../utils";
+import { filter } from "lodash";
+import {
+  ROLE_ADMIN,
+  ROLE_ASSISTANCE,
+  ROLE_HELPER,
+  ROLE_OTHER,
+  ROLE_PARENT,
+  ROLE_PRINCIPAL,
+  ROLE_STUDENT,
+  ROLE_SUPER_ADMIN,
+  ROLE_TEACHER,
+} from "../../utils/constants";
 
 const Staff = () => {
   const navigate = useNavigate();
@@ -42,13 +54,28 @@ const Staff = () => {
   const [role, setRole] = useState<any>("");
   const [classs, setClasss] = useState<any>();
   const [active, setActive] = useState<boolean>(true);
+  const [roleData, setRoleData] = useState<any>([]);
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
   const { loading, error, updatedUser, roleList, userList } = useAppSelector(
     (state: any) => state.user
   );
 
+  useEffect(() => {
+    if (roleList && roleList.length > 0) {
+      const list = filter(
+        roleList,
+        (obj: any) =>
+          obj.roleName == ROLE_TEACHER ||
+          obj.roleName == ROLE_SUPER_ADMIN ||
+          obj.roleName == ROLE_ADMIN ||
+          obj.roleName == ROLE_PRINCIPAL
+      );
+      setRoleData(list);
+    }
+  }, [roleList]);
+
   const { classList } = useAppSelector((state: any) => state.class);
-  console.log("userList List :", user);
+  console.log("userList List :", user, roleList);
 
   useEffect(() => {
     dispatch(getSchoolsForSelection());
@@ -83,6 +110,24 @@ const Staff = () => {
 
     if (role) {
       body["roleId"] = role.id;
+    }
+
+    if (roleList && roleList.length > 0) {
+      const list = filter(
+        roleList,
+        (obj: any) =>
+          obj.roleName == ROLE_ASSISTANCE ||
+          obj.roleName == ROLE_HELPER ||
+          obj.roleName == ROLE_OTHER ||
+          obj.roleName == ROLE_PARENT ||
+          obj.roleName == ROLE_STUDENT
+      );
+
+      const idList = [];
+      for (let i = 0; i < list.length; i++) {
+        idList.push(list[i].id);
+      }
+      body["notRoleId"] = idList;
     }
 
     if (searchString) {
@@ -181,7 +226,7 @@ const Staff = () => {
                   <Select1
                     name="role"
                     placeholder="Select Role"
-                    options={roleList}
+                    options={roleData}
                     getOptionLabel={(option: any) => option.roleDesc}
                     getOptionValue={(option) => option.id}
                     styles={{
