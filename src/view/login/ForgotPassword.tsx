@@ -1,7 +1,7 @@
 import { Typography } from "@material-tailwind/react";
 import logo from "../assets/logo.png";
 import dashImage from "../assets/dashboard_image.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { isEmailValid } from "../../utils";
 import ParentLayout from "../../component/app-component/Parent";
@@ -15,6 +15,7 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string>();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const {
     forgotPasswordLoading,
     forgotPasswordError,
@@ -27,6 +28,14 @@ const ForgotPassword = () => {
       dispatch(resetForgotPasswordState());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!forgotPasswordSuccessMessage) return;
+    const t = window.setTimeout(() => {
+      navigate("/login", { replace: true });
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [forgotPasswordSuccessMessage, navigate]);
 
   const onSendLink = () => {
     if (!email || !email.trim()) {

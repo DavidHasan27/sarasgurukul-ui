@@ -4,6 +4,16 @@
 @tailwind variants;
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700&display=swap");
 
+/* react-datepicker (month + year dropdowns): hide redundant month title row that duplicates the dropdowns */
+.sg-react-datepicker-calendar h2.react-datepicker__current-month {
+  display: none;
+}
+
+/* Popper above app main scroll / side nav */
+.sg-react-datepicker-popper.react-datepicker-popper {
+  z-index: 100;
+}
+
 /* Let the app shell fill the viewport without a page-level vertical scroll */
 #root {
   min-height: 100vh;

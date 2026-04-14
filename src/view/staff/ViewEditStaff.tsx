@@ -1,6 +1,12 @@
 import ParentLayout from "../../component/app-component/Parent";
 import { useDropzone } from "react-dropzone";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Avatar, Button, Chip } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,6 +18,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { isEmailValid, isMobileValid } from "../../utils";
 import {
+  getUserDetailsInfo,
   getUserRoles,
   resetUpdatedUserDetails,
   updateUser,
@@ -22,122 +29,175 @@ import { getSchoolsForSelection } from "../../redux/schools/schoolSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { BLOODGROUP } from "../../utils/constants";
 import DatePicker from "../../component/app-component/DatePicker";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { clone } from "lodash";
 import { downloadFile } from "../../redux/admin/adminSlice";
 
+function readStaffField(api: any, key: string) {
+  if (!api) return undefined;
+  const nested = api.userDetails;
+  if (
+    nested &&
+    typeof nested === "object" &&
+    nested[key] !== undefined &&
+    nested[key] !== null &&
+    nested[key] !== ""
+  ) {
+    return nested[key];
+  }
+  if (api[key] !== undefined && api[key] !== null) return api[key];
+  return undefined;
+}
+
+function parseBirthDateValue(v: any) {
+  if (!v) return "";
+  if (typeof v === "string" && v.includes("T")) {
+    return new Date(v.substring(0, v.indexOf("T")));
+  }
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? "" : d;
+}
+
+function parseJoiningDateValue(v: any) {
+  if (!v) return "";
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? "" : d;
+}
+
+function buildDocumentsList(api: any) {
+  const list: any[] = [];
+  const d1 = readStaffField(api, "doc1");
+  const d2 = readStaffField(api, "doc2");
+  const d3 = readStaffField(api, "doc3");
+  if (d1) list.push(d1);
+  if (d2) list.push(d2);
+  if (d3) list.push(d3);
+  return list;
+}
+
+function resolveStaffRole(api: any, list: any[]) {
+  if (!api || !list?.length) return null;
+  if (api.roles && typeof api.roles === "object" && api.roles.id != null) {
+    const found = list.find((x) => x.id === api.roles.id);
+    return found ?? api.roles;
+  }
+  const name = api.roleName ?? api.role;
+  if (typeof name === "string") {
+    const found = list.find((x) => x.roleName === name);
+    if (found) return found;
+  }
+  const rid = api.roleId;
+  if (rid != null) {
+    const found = list.find(
+      (x) => x.id === Number(rid) || x.id === rid
+    );
+    if (found) return found;
+  }
+  return null;
+}
+
 const ViewEditStaff = () => {
   const location = useLocation();
-  const currentObj = location.state;
+  const navigate = useNavigate();
+  const routeState = location.state as Record<string, any> | null;
+  const userId =
+    routeState && typeof routeState === "object"
+      ? routeState["userId"] ?? routeState["id"]
+      : undefined;
 
-  const docList = [];
-  if (currentObj.userDetails.doc1) {
-    docList.push(currentObj.userDetails.doc1);
-  }
-  if (currentObj.userDetails.doc2) {
-    docList.push(currentObj.userDetails.doc2);
-  }
-  if (currentObj.userDetails.doc3) {
-    docList.push(currentObj.userDetails.doc3);
-  }
-
-  const [firstName, setFirstName] = useState(currentObj.firstName);
+  const [firstName, setFirstName] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
 
-  const [lastName, setLastName] = useState(currentObj.lastName);
+  const [lastName, setLastName] = useState("");
   const [lastNameError, setLastNameError] = useState("");
 
-  const [middleName, setMiddleName] = useState(currentObj.middleName);
+  const [middleName, setMiddleName] = useState("");
   const [middleNameError, setMiddleNameError] = useState("");
 
-  const [aboutStaff, setAboutStaff] = useState(
-    currentObj.userDetails.description
-  );
+  const [aboutStaff, setAboutStaff] = useState("");
   const [aboutStaffError, setAboutStaffError] = useState("");
 
   const [schoolImage, setSchoolImage] = useState("");
   const [schoolImageError, setSchoolImageError] = useState("");
 
-  const [phone1, setPhone1] = useState(currentObj.phone);
+  const [phone1, setPhone1] = useState("");
   const [phone1Error, setPhone1Error] = useState("");
-  const [phone2, setPhone2] = useState(currentObj.userDetails.phone2);
+  const [phone2, setPhone2] = useState("");
   const [phone2Error, setPhone2Error] = useState("");
 
-  const [email, setEmail] = useState(currentObj.email);
+  const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
 
   const [bloodGroup, setBloodGroup] = useState<any>({
-    option: currentObj.userDetails.bloodGroup,
-    value: currentObj.userDetails.bloodGroup,
+    option: "",
+    value: "",
   });
-  let tempDate = "";
-  if (currentObj.userDetails.birthDate) {
-    tempDate = currentObj.userDetails.birthDate.substring(
-      0,
-      currentObj.userDetails.birthDate.indexOf("T")
-    );
-  }
-  const [birthDate, setBirthDate] = useState<any>(
-    tempDate ? new Date(tempDate) : ""
-  );
+  const [birthDate, setBirthDate] = useState<any>("");
   const [birthDateError, setBirthDateError] = useState("");
 
-  const [joiningDate, setJoiningDate] = useState<any>(
-    new Date(currentObj.userDetails.joiningDate)
-  );
+  const [joiningDate, setJoiningDate] = useState<any>("");
   const [joiningDateError, setJoiningDateError] = useState("");
 
-  const [addressLine1, setAddressLine1] = useState(
-    currentObj.userDetails.addressLine1
-  );
-  const [addressLine2, setAddressLine2] = useState(
-    currentObj.userDetails.addressLine2
-  );
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
 
-  const [state, setState] = useState(currentObj.userDetails.state);
+  const [state, setState] = useState("");
   const [stateError, setStateError] = useState("");
 
-  const [relativeName, setRelativeName] = useState(
-    currentObj.userDetails.relativeName
-  );
+  const [relativeName, setRelativeName] = useState("");
   const [relativeNameError, setRelativeNameError] = useState("");
 
-  const [relativeNo, setrelativeNo] = useState(
-    currentObj.userDetails.relativeNo
-  );
+  const [relativeNo, setrelativeNo] = useState("");
   const [relativeNoError, setrelativeNoError] = useState("");
 
-  const [branch, setBranch] = useState(currentObj.userDetails.area);
+  const [branch, setBranch] = useState("");
 
   const [country, setCountry] = useState("India");
   const [countryError, setCountryError] = useState("");
 
-  const [city, setCity] = useState(currentObj.userDetails.city);
+  const [city, setCity] = useState("");
   const [cityError, setCityError] = useState("");
 
-  const [schoolList, setSchoolList] = useState(currentObj.schoolses);
+  const [schoolList, setSchoolList] = useState<any[]>([]);
   const [schoolListError, setSchoolListError] = useState("");
 
-  const [role, setRole] = useState<any>(currentObj.roles);
+  const [role, setRole] = useState<any>(null);
   const [roleError, setRoleError] = useState("");
 
-  const [pincode, setPincode] = useState(currentObj.userDetails.pinCode);
+  const [pincode, setPincode] = useState("");
   const [pincodeError, setPincodeError] = useState("");
   const [addressError, setAddressError] = useState("");
 
   const [requiredRoleList, setRequiredRoleList] = useState<any>([]);
+  const [staffDetailsLoading, setStaffDetailsLoading] = useState(true);
+  const hydratedForIdRef = useRef<string | null>(null);
+
   const dispatch = useAppDispatch();
-  const { loading, error, success, roleList, updatedUser } = useAppSelector(
+  const { loading, error, roleList, updatedUser, userDetails } = useAppSelector(
     (state: any) => state.user
   );
 
   const { optionSchoolList } = useAppSelector((state: any) => state.school);
-  const [profilePhoto, setProfilePhoto] = useState<any>(
-    currentObj.userProfilePhoto
-  );
-  const [documentsFile, setDocumentsFile] = useState<any>(docList);
+  const [profilePhoto, setProfilePhoto] = useState<any>("");
+  const [documentsFile, setDocumentsFile] = useState<any[]>([]);
 
-  // console.log("Current Object ", currentObj);
+  const detailsMatch =
+    userDetails != null &&
+    userId != null &&
+    String(userDetails.id) === String(userId);
+
+  useEffect(() => {
+    if (!userId) {
+      navigate("/app/staff", { replace: true });
+      return;
+    }
+    hydratedForIdRef.current = null;
+    setStaffDetailsLoading(true);
+    dispatch(getUserDetailsInfo(userId))
+      .unwrap()
+      .catch(() => {})
+      .finally(() => setStaffDetailsLoading(false));
+  }, [userId, dispatch, navigate]);
 
   useEffect(() => {
     const requiredRoles = [];
@@ -154,6 +214,51 @@ const ViewEditStaff = () => {
       setRequiredRoleList(requiredRoles);
     }
   }, [roleList]);
+
+  useEffect(() => {
+    if (!detailsMatch || !userDetails) return;
+    if (hydratedForIdRef.current === String(userId)) return;
+    hydratedForIdRef.current = String(userId);
+
+    setFirstName(readStaffField(userDetails, "firstName") ?? "");
+    setLastName(readStaffField(userDetails, "lastName") ?? "");
+    setMiddleName(readStaffField(userDetails, "middleName") ?? "");
+    setAboutStaff(readStaffField(userDetails, "description") ?? "");
+    setPhone1(
+      readStaffField(userDetails, "phone") ??
+        readStaffField(userDetails, "phone1") ??
+        ""
+    );
+    setPhone2(readStaffField(userDetails, "phone2") ?? "");
+    setEmail(readStaffField(userDetails, "email") ?? "");
+    const bg = readStaffField(userDetails, "bloodGroup");
+    setBloodGroup({ option: bg ?? "", value: bg ?? "" });
+    const bd = readStaffField(userDetails, "birthDate");
+    setBirthDate(bd ? parseBirthDateValue(bd) : "");
+    const jd = readStaffField(userDetails, "joiningDate");
+    setJoiningDate(jd ? parseJoiningDateValue(jd) : "");
+    setAddressLine1(readStaffField(userDetails, "addressLine1") ?? "");
+    setAddressLine2(readStaffField(userDetails, "addressLine2") ?? "");
+    setState(readStaffField(userDetails, "state") ?? "");
+    setRelativeName(readStaffField(userDetails, "relativeName") ?? "");
+    setrelativeNo(readStaffField(userDetails, "relativeNo") ?? "");
+    setBranch(readStaffField(userDetails, "area") ?? "");
+    setCity(readStaffField(userDetails, "city") ?? "");
+    setPincode(readStaffField(userDetails, "pinCode") ?? "");
+    setSchoolList(userDetails.schoolses ?? userDetails.schoolList ?? []);
+    const photo =
+      readStaffField(userDetails, "userProfilePhoto") ??
+      userDetails.userProfilePhoto ??
+      "";
+    setProfilePhoto(photo);
+    setDocumentsFile(buildDocumentsList(userDetails));
+  }, [detailsMatch, userDetails, userId]);
+
+  useEffect(() => {
+    if (!detailsMatch || !userDetails || !roleList?.length) return;
+    const resolved = resolveStaffRole(userDetails, roleList);
+    if (resolved) setRole(resolved);
+  }, [detailsMatch, userDetails, roleList]);
 
   useEffect(() => {
     dispatch(getUserRoles());
@@ -347,8 +452,8 @@ const ViewEditStaff = () => {
       isError = true;
     }
 
-    if (!joiningDate && !joiningDate.trim()) {
-      setJoiningDate("Please enter joining date");
+    if (!joiningDate) {
+      setJoiningDateError("Please enter joining date");
       isError = true;
     }
 
@@ -394,7 +499,7 @@ const ViewEditStaff = () => {
     }
 
     const body: any = {
-      id: currentObj.id,
+      id: userId,
       firstName: firstName,
       lastName: lastName,
       middleName: middleName,
@@ -443,8 +548,10 @@ const ViewEditStaff = () => {
     dispatch(updateUser(body));
   };
 
-  const getImageURL = (item: any) => {
-    const imageData = currentObj.userProfilePhoto.split("|");
+  const getImageURL = (photoKey: string) => {
+    if (!photoKey || typeof photoKey !== "string") return "";
+    const imageData = photoKey.split("|");
+    if (imageData.length < 2) return "";
     return (
       "https://" + imageData[0] + ".s3.ap-south-1.amazonaws.com/" + imageData[1]
     );
@@ -456,14 +563,14 @@ const ViewEditStaff = () => {
 
   return (
     <ParentLayout
-      loading={loading}
+      loading={staffDetailsLoading || loading}
       error={error}
       success={updatedUser}
       onCloseSuccessAlert={() => dispatch(resetUpdatedUserDetails())}
       onCloseAlert={() => dispatch(resetUpdatedUserDetails())}
     >
-      <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
-        <main className="w-full flex-grow p-6">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden border-t">
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain p-6">
           <div className="flex flex-row w-full justify-between">
             <div className="flex flex-row w-36 ">
               <a
@@ -480,7 +587,7 @@ const ViewEditStaff = () => {
 
             <span>
               <FontAwesomeIcon icon={faUserPlus} className="mr-2 fa-4x p-0" />
-              <h1 className="w-full text-3xl text-black ">Add New Staff</h1>
+              <h1 className="w-full text-3xl text-black ">Staff Details</h1>
             </span>
 
             <div className="flex flex-row  w-36"></div>
@@ -788,7 +895,7 @@ const ViewEditStaff = () => {
                             alt="candice"
                             src={
                               isString(profilePhoto)
-                                ? getImageURL(currentObj)
+                                ? getImageURL(String(profilePhoto))
                                 : URL.createObjectURL(profilePhoto)
                             }
                             placeholder={undefined}

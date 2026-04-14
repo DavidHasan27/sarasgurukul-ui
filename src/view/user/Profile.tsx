@@ -254,8 +254,8 @@ const Profile = () => {
 
   return (
     <ParentLayout loading={loading} error={error}>
-      <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
-        <main className="w-full flex-grow p-10">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden border-t">
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain p-10">
           <h1 className="text-3xl text-black pb-6">Profile</h1>
           {userDetails ? (
             <>

@@ -1,10 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
-
-// CSS Modules, react-datepicker-cssmodules.css
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
 const DatePickerComponent = ({
   startDate,
@@ -14,13 +11,13 @@ const DatePickerComponent = ({
   className,
   placeholder,
   disabled,
+  calendarClassName,
+  scrollableYearDropdown = true,
+  yearDropdownItemNumber = 100,
 }: any) => {
-  //   const [startDate, setStartDate] = useState(new Date("1990-01-01"));
-
-  //   const maxDate = new Date("2012-01-01");
-  //   const minDate = new Date("1980-01-01");
-
-  console.log("Plave holder ", placeholder, className);
+  const calendarCls = ["sg-react-datepicker-calendar", calendarClassName]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <DatePicker
@@ -34,6 +31,11 @@ const DatePickerComponent = ({
       minDate={minDate}
       showMonthDropdown
       showYearDropdown
+      dropdownMode="select"
+      scrollableYearDropdown={scrollableYearDropdown}
+      yearDropdownItemNumber={yearDropdownItemNumber}
+      calendarClassName={calendarCls}
+      popperClassName="sg-react-datepicker-popper"
       placeholderText={placeholder}
       disabled={disabled}
     />

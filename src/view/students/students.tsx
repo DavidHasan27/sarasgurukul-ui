@@ -64,9 +64,9 @@ const Students = () => {
 
   useEffect(() => {
     dispatch(getSchoolsForSelection());
-    getStudentData();
   }, []);
 
+  /** Single initial fetch via pageIndex; avoids double getStudents on mount. */
   useEffect(() => {
     getStudentData(school, classs, searchString, active, pageIndex - 1);
   }, [pageIndex]);

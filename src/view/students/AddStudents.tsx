@@ -857,8 +857,8 @@ const AddStudent = () => {
       onCloseSuccessAlert={() => dispatch(resetNewStudent())}
       onCloseAlert={() => dispatch(resetNewStudent())}
     >
-      <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
-        <main className="w-full flex-grow p-6">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden border-t">
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain p-6">
           <div className="flex flex-row w-full justify-between">
             <div className="flex flex-row w-24 ">
               <a

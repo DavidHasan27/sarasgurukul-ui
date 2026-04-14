@@ -204,15 +204,15 @@ const AddSchool = () => {
       success={success ? "New School Added Successfully" : ""}
       onCloseSuccessAlert={() => dispatch(resetNewSchoolDetails())}
     >
-      <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
-        <main className="w-full flex-grow p-6">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden border-t">
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain p-6">
           <span>
             <FontAwesomeIcon icon={faSchool} className="mr-2 fa-4x p-0" />
             <h1 className="w-full text-3xl text-black pb-6">Add New School</h1>
           </span>
 
-          <div className="flex flex-wrap">
-            <div className="w-full lg:w-1/2 my-6 pr-0 lg:pr-2 ">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-5">
+            <div className="min-w-0">
               <p className="text-xl pb-6 flex items-center">
                 <i className="fas fa-list mr-3"></i> School Details
               </p>
@@ -290,7 +290,7 @@ const AddSchool = () => {
               </div>
             </div>
 
-            <div className="w-full lg:w-1/2 mt-6 pl-0 lg:pl-2">
+            <div className="min-w-0">
               <p className="text-xl pb-6 flex items-center">
                 <i className="fas fa-list mr-3"></i> School Contact/Location
                 Info
@@ -513,19 +513,19 @@ const AddSchool = () => {
                 </form>
               </div>
             </div>
-            <div className="flex flex-row-reverse items-end w-full mt-5">
-              <Button
-                variant="gradient"
-                color="blue"
-                placeholder={"Submit"}
-                onClick={() => onSubmitSchool()}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              >
-                <FontAwesomeIcon icon={faSchool} className="mr-2 fa-1x p-0" />
-                Add New School
-              </Button>
-            </div>
+          </div>
+          <div className="mt-6 flex w-full flex-row-reverse items-end">
+            <Button
+              variant="gradient"
+              color="blue"
+              placeholder={"Submit"}
+              onClick={() => onSubmitSchool()}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            >
+              <FontAwesomeIcon icon={faSchool} className="mr-2 fa-1x p-0" />
+              Add New School
+            </Button>
           </div>
         </main>
       </div>

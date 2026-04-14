@@ -442,8 +442,8 @@ const AddStaff = () => {
       onCloseSuccessAlert={() => dispatch(resetNewUserDetails())}
       onCloseAlert={() => dispatch(resetNewUserDetails())}
     >
-      <div className="w-full h-screen overflow-x-hidden border-t flex flex-col">
-        <main className="w-full flex-grow p-6">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden border-t">
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain p-6">
           <span>
             <FontAwesomeIcon icon={faUserPlus} className="mr-2 fa-4x p-0" />
             <h1 className="w-full text-3xl text-black ">Add New Staff</h1>
@@ -651,7 +651,7 @@ const AddStaff = () => {
                       <div className="flex flex-col">
                         <DatePicker
                           startDate={birthDate}
-                          maxDate={new Date("2012-01-01")}
+                          maxDate={new Date()}
                           minDate={new Date("1980-01-01")}
                           onDateChange={(date: any) => setBirthDate(date)}
                         />

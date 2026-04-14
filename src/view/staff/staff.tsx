@@ -80,12 +80,13 @@ const Staff = () => {
   useEffect(() => {
     dispatch(getSchoolsForSelection());
     dispatch(getUserRoles());
-    getUserData();
   }, []);
 
+  /** One list fetch: after roles exist (for notRoleId), and when page changes. Avoids double getUsersByFilter on mount. */
   useEffect(() => {
+    if (!roleList || roleList.length === 0) return;
     getUserData(school, classs, role, searchString, active, pageIndex - 1);
-  }, [pageIndex]);
+  }, [roleList, pageIndex]);
 
   const getUserData = (
     selectedSchool: any = undefined,
@@ -493,15 +494,15 @@ const Staff = () => {
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            {item.roles ? item.roles.roleName : "-"}
+                            {item.roleName ? item.roleName : "-"}
                           </td>
                           <td
                             className={`w-1/3 text-left py-3 px-4 ${
                               !item.active ? "opacity-35" : "opacity-100"
                             }`}
                           >
-                            {item.schoolses && item.schoolses.length > 0
-                              ? getSchoolString(item.schoolses)
+                            {item.schoolName
+                              ? item.schoolName
                               : "-"}
                           </td>
                           <td className="w-1/7 text-left py-3 px-4">
@@ -511,7 +512,7 @@ const Staff = () => {
                                 className="h-[30px] w-[30px] bg-blue-800 ml-2"
                                 onClick={() =>
                                   navigate("/app/view-edit-staff", {
-                                    state: item,
+                                    state: { userId: item.id },
                                   })
                                 }
                                 disabled={!item.active}

@@ -5,7 +5,11 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { resetUserDetails } from "../../redux/user_auth/authSlice";
 import { MENU_LIST } from "../../utils/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleRight, faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleRight,
+  faAngleDown,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../view/main-view/mainview.css";
 
 function AppPageFallback() {
@@ -55,18 +59,20 @@ const AppNavigation = ({ children, currentPath }: any) => {
     return () => document.removeEventListener("mousedown", closeOnOutside);
   }, [dropdown]);
 
-  const getImageURL = () => {
-    if (userDetails && userDetails.userProfilePhoto) {
-      const imageData = userDetails.userProfilePhoto.split("|");
-      return (
-        "https://" +
-        imageData[0] +
-        ".s3.ap-south-1.amazonaws.com/" +
-        imageData[1]
-      );
+  /** S3 bucket|key URL, or null when no valid profile photo */
+  const getProfilePhotoUrl = (): string | null => {
+    const raw = userDetails?.userProfilePhoto;
+    if (!raw || typeof raw !== "string") return null;
+    const trimmed = raw.trim();
+    if (!trimmed.includes("|")) return null;
+    const parts = trimmed.split("|");
+    if (parts.length < 2 || !parts[0]?.trim() || !parts[1]?.trim()) {
+      return null;
     }
-    return "/img/user.jpg";
+    return `https://${parts[0].trim()}.s3.ap-south-1.amazonaws.com/${parts[1].trim()}`;
   };
+
+  const profilePhotoUrl = getProfilePhotoUrl();
 
   const onSignOut = () => {
     setDropdown(false);
@@ -211,14 +217,21 @@ const AppNavigation = ({ children, currentPath }: any) => {
               type="button"
               aria-expanded={dropdown}
               aria-haspopup="menu"
-              className="relative z-10 h-12 w-12 overflow-hidden rounded-full border-4 border-gray-400 hover:border-gray-300 focus:border-gray-300 focus:outline-none"
+              aria-label="Account menu"
+              className="relative z-10 h-12 w-12 overflow-hidden rounded-full border-4 border-gray-400 bg-gray-100 hover:border-gray-300 focus:border-gray-300 focus:outline-none"
               onClick={() => setDropdown((open) => !open)}
             >
-              <img
-                src={getImageURL()}
-                alt="Profile"
-                className="h-full w-full object-cover"
-              />
+              {profilePhotoUrl ? (
+                <img
+                  src={profilePhotoUrl}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center text-gray-500">
+                  <FontAwesomeIcon icon={faUser} className="text-xl" />
+                </span>
+              )}
             </button>
 
             {dropdown && (
