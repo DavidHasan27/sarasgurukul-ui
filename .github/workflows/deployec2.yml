@@ -1,9 +1,9 @@
-name: 🚀 Deploy React App to EC2
+name: 🚀 Deploy React App
 
 on:
   push:
     branches:
-      - main   # change if needed
+      - main
 
 jobs:
   deploy:
@@ -19,35 +19,26 @@ jobs:
           node-version: 24.7.0
 
       - name: 📦 Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: 🏗 Build React App
-        run: npm run build
+        run: CI=false npm run build
 
       - name: 🔐 Setup SSH Key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
           chmod 600 key.pem
 
-      - name: 📤 Upload Build to EC2
+      - name: 📤 Upload Build
         run: |
           scp -i key.pem -o StrictHostKeyChecking=no -r build/* ubuntu@15.206.65.30:/home/ubuntu/build/
 
-      - name: 🚀 Deploy on Server
+      - name: 🚀 Deploy
         run: |
           ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@15.206.65.30 << 'EOF'
-
-            echo "🧹 Cleaning old files..."
             sudo rm -rf /var/www/html/*
-
-            echo "📂 Copying new build..."
             sudo cp -r /home/ubuntu/build/* /var/www/html/
-
-            echo "🔄 Reloading Nginx..."
             sudo systemctl reload nginx
-
-            echo "✅ Deployment Done"
-
           EOF
 
       - name: 🌐 Health Check
